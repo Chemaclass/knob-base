@@ -1,8 +1,10 @@
 {
     "name": "chemaclass/knob-base",
     "description": "Project base to use Knob MVC PHP Framework.",
+    "homepage": "https://knob.chemaclass.com",
+    "keywords": ["knob","mvc","wordpress"],
     "require": {
-    
+        "php": ">=5.3.0"
     },
     "authors": [
         {
