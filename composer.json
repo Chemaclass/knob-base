@@ -1,0 +1,13 @@
+{
+    "name": "chemaclass/knob-base",
+    "description": "Project base to use Knob MVC PHP Framework.",
+    "require": {
+    
+    },
+    "authors": [
+        {
+            "name": "Chemaclass",
+            "email": "chemaclass@outlook.es"
+        }
+    ]
+}
