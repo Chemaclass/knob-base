@@ -12,6 +12,9 @@
             "email": "chemaclass@outlook.es"
         }
     ],
+    "psr-0": { 
+    	"Knob": "src/" 
+    }
     "classmap": [
      	"src/"
     ]
