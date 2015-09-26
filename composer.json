@@ -8,8 +8,9 @@
     },
     "authors": [
         {
-            "name": "Chemaclass",
-            "email": "chemaclass@outlook.es"
+            "name": "José María Valera Reales",
+            "email": "chemaclass@outlook.es",
+            "homepage": "https://chemaclass.com"
         }
     ],
     "psr-0": { 
