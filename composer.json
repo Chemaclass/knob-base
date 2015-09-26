@@ -13,10 +13,12 @@
             "homepage": "https://chemaclass.com"
         }
     ],
-    "psr-0": { 
-    	"Knob": "src/" 
-    },
-    "classmap": [
-     	"src/"
-    ]
+     "autoload": {
+        "psr-0": {
+        	"Knob": "src/" 
+        },
+	    "classmap": [
+	     	"src/"
+	    ]
+    }
 }
