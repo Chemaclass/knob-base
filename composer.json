@@ -1,11 +1,10 @@
 {
     "name": "chemaclass/knob-base",
     "description": "Project base to use Knob MVC PHP Framework.",
-    "homepage": "https://knob.chemaclass.com",
     "keywords": ["knob","mvc","wordpress"],
-    "require": {
-        "php": ">=5.4"
-    },
+    "homepage": "https://knob.chemaclass.com",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "José María Valera Reales",
@@ -13,12 +12,12 @@
             "homepage": "https://chemaclass.com"
         }
     ],
+    "require": {
+        "php": ">=5.4"
+    },
      "autoload": {
         "psr-0": {
-        	"Knob": "src/" 
-        },
-	    "classmap": [
-	     	"src/"
-	    ]
+        	"Knob\\": "src/" 
+        }
     }
 }
