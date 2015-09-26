@@ -1,6 +1,6 @@
 <?php
 
-namespace KnobModels;
+namespace Knob\Models;
 
 /**
  *

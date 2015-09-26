@@ -1,6 +1,6 @@
 <?php
 
-namespace KnobModels;
+namespace Knob\Models;
 
 use I18n\I18n;
 use Libs\Utils;

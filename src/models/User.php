@@ -1,8 +1,8 @@
 <?php
 
-namespace KnobModels;
+namespace Knob\Models;
 
-use KnobLibs\Utils;
+use Knob\Libs\Utils;
 
 /**
  * User Model
