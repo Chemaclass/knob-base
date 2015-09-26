@@ -14,7 +14,7 @@
     ],
     "psr-0": { 
     	"Knob": "src/" 
-    }
+    },
     "classmap": [
      	"src/"
     ]
