@@ -22,9 +22,6 @@
 			"Knob\\Libs": "src/",
 			"Knob\\Models": "src/",
 			"Knob\\Widgets": "src/"
-	    },
-	     "classmap": [
-	     	"src/"
-        ]
+	    }
     }
 }
