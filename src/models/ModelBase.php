@@ -1,6 +1,6 @@
 <?php
 
-namespace Models;
+namespace KnobModels;
 
 /**
  * Base abstract for all Models

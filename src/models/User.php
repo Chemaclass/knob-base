@@ -1,10 +1,8 @@
 <?php
 
-namespace Models;
+namespace KnobModels;
 
-use Libs\Utils;
-use Controllers\HomeController;
-use I18n\I18n;
+use KnobLibs\Utils;
 
 /**
  * User Model
@@ -660,10 +658,12 @@ class User extends Image {
 	 * Return the current lang full and translated from the user
 	 *
 	 * @return string
+	 * @deprecated I18n can not use here! this is the model!
 	 */
 	public function getLangTransFull() {
 		$langToTrans = ($currentLang = $this->getLang()) ? $currentLang : Utils::getLangBrowser();
-		return I18n::transu('lang_' . $langToTrans);
+		return $langToTrans;
+		// return I18n::transu('lang_' . $langToTrans);
 	}
 
 	/**

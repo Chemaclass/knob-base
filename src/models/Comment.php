@@ -1,9 +1,7 @@
 <?php
 
-namespace Models;
+namespace KnobModels;
 
-use Models\Post;
-use Models\User;
 
 /**
  *

@@ -1,6 +1,6 @@
 <?php
 
-namespace Models;
+namespace KnobModels;
 
 /**
  * For who can have images.

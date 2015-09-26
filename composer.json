@@ -17,7 +17,11 @@
     },
      "autoload": {
         "psr-0": {
-	        "Knob": "src/"
+			"KnobControllers": "src/",
+			"KnobI18n": "src/",
+			"KnobLibs": "src/",
+			"KnobModels": "src/",
+			"KnobWidgets": "src/"
 	    },
 	     "classmap": [
 	     	"src/"
