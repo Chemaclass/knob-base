@@ -136,7 +136,7 @@ class I18n {
 		 */
 		if (is_null($key)) {
 			$key = $file;
-			$file = "global";
+			$file = 'global';
 		}
 		// List with all keys/values with current lang
 		$langArray = self::getLangFile($file, $dir);
@@ -163,7 +163,7 @@ class I18n {
 				$lang = Utils::getLangBrowser();
 			}
 		}
-		return require (dirname(__FILE__) . "/$lang/$file.php");
+		return require ('/' . APP_DIR . "/i18n/$lang/$file.php");
 	}
 
 	/**
