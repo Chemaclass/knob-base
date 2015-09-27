@@ -2,10 +2,10 @@
 
 namespace Knob\Config;
 
-// use I18n\I18n;
-// use Models\Post;
-// use Libs\Env;
-// use Models\User;
+use Knob\I18n\I18n;
+use Knob\Models\Post;
+use Knob\Libs\Env;
+use Knob\Models\User;
 
 /**
  * Singleton Params class
@@ -18,12 +18,12 @@ class Params {
 	/*
 	 * Singleton.
 	 */
-	private static $instance;
+	protected static $instance;
 
 	/*
 	 * Members.
 	 */
-	private $allParams;
+	protected $allParams;
 
 	/**
 	 * Constructor.
@@ -58,22 +58,8 @@ class Params {
 	 *
 	 * @return array
 	 */
-	private function mountAll() {
+	protected function mountAll() {
 		return [
-
-			/*
-			 * ====================================
-			 * Params to pages
-			 * ====================================
-			 */
-			'pages' => [
-				'excludeSlugs' => [
-					'ajax',
-					'lang',
-					'random'
-				]
-			],
-
 			/*
 			 * ====================================
 			 * Params to all templates
