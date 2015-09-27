@@ -2,10 +2,10 @@
 
 namespace Knob\Models;
 
-use I18n\I18n;
-use Libs\Utils;
-use Libs\Ajax;
-use Libs\IteratorPresenter;
+use Knob\I18n\I18n;
+use Knob\Libs\Utils;
+use Knob\Libs\Ajax;
+use Knob\Libs\IteratorPresenter;
 
 /**
  * Post Model
