@@ -1,8 +1,8 @@
 <?php
 
-namespace Libs;
+namespace Knob\Libs;
 
-use Models\User;
+use Knob\Models\User;
 
 /**
  * Filters from Wordpress

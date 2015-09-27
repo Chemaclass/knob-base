@@ -1,6 +1,6 @@
 <?php
 
-namespace Libs;
+namespace Knob\Libs;
 
 use Mustache_Engine;
 use Mustache_Loader_FilesystemLoader;

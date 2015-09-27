@@ -1,5 +1,5 @@
 <?php
-namespace Libs;
+namespace Knob\Libs;
 
 /**
  *

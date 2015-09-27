@@ -1,6 +1,6 @@
 <?php
 
-namespace Libs;
+namespace Knob\Libs;
 
 /**
  * Resources for HTML things
