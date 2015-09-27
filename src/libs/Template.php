@@ -2,11 +2,11 @@
 
 namespace Knob\Libs;
 
+use Knob\I18n\I18n;
+use Knob\Config\Params;
 use Mustache_Engine;
 use Mustache_Loader_FilesystemLoader;
 use Mustache_Logger_StreamLogger;
-use I18n\I18n;
-use Config\Params;
 
 /**
  * Template singleton
@@ -14,6 +14,7 @@ use Config\Params;
  * @author José María Valera Reales
  */
 class Template {
+	const TEMPLATES_DIR = 'templates';
 
 	/*
 	 * Const
@@ -94,7 +95,7 @@ class Template {
 	 * @return string
 	 */
 	private static function getTemplatesFolderLocation() {
-		return str_replace('//', '/', dirname(__FILE__) . '/') . '../templates';
+		return str_replace('//', '/', APP_DIR . '/') . static::TEMPLATES_DIR;
 	}
 
 	/**
