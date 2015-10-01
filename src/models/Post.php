@@ -53,7 +53,7 @@ class Post extends Image {
 	 *
 	 * @return array<Post>
 	 */
-	public static function getAllPages($args = []) {
+	public static function getPages($withoutEmpty = true) {
 		foreach ( get_all_page_ids() as $id ) {
 			$p = Post::find($id);
 			if ($p->ID) {
@@ -61,15 +61,9 @@ class Post extends Image {
 			}
 		}
 
-		if (count($args) && isset($args['excludeSlugs'])) {
-			$excludeSlugs = $args['excludeSlugs'];
-			$pages = array_filter($pages, function ($page) use($excludeSlugs) {
-				foreach ( $excludeSlugs as $excludeSlug ) {
-					if ($page->getSlug() == $excludeSlug) {
-						return false;
-					}
-				}
-				return true;
+		if ($withoutEmpty) {
+			$pages = array_filter($pages, function ($page) {
+				return strlen($page->getContent());
 			});
 		}
 
