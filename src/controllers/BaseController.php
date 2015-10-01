@@ -2,7 +2,6 @@
 
 namespace Knob\Controllers;
 
-use Knob\Config\Params;
 use Knob\Libs\Template;
 use Knob\Models\Archive;
 use Knob\Models\Post;
@@ -27,11 +26,6 @@ abstract class BaseController {
 	 */
 	public function __construct() {
 		/*
-		 * Params.
-		 */
-		$this->configParams = Params::getInstance()->getAll();
-
-		/*
 		 * Current User.
 		 */
 		$this->currentUser = User::getCurrent();
@@ -47,7 +41,7 @@ abstract class BaseController {
 	 *
 	 * @param array $templateVars
 	 */
-	public abstract function getGlobalVariables() ;
+	public abstract function getGlobalVariables();
 
 	/**
 	 * Render a partial
