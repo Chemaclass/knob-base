@@ -14,6 +14,7 @@ use Mustache_Logger_StreamLogger;
  * @author José María Valera Reales
  */
 class Template {
+	const MUSTACHE_HELPERS_FILE = 'MustacheHelpers';
 	const TEMPLATES_DIR = 'templates';
 
 	/*
@@ -54,20 +55,21 @@ class Template {
 		 * Render Engine.
 		 */
 		$templatesFolder = static::getTemplatesFolderLocation();
-		$this->renderEngine = new Mustache_Engine([
-			'charset' => static::CHARSET,
-			'strict_callables' => static::STRICT_CALLABLES,
-			'cache_file_mode' => static::CACHE_FILE_MODE,
-			'cache_lambda_templates' => static::CACHE_LAMBDA_TEMPLATES,
-			'loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
-			'partials_loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
-			'logger' => new Mustache_Logger_StreamLogger('php://stderr'),
-			'helpers' => self::getHelpers(),
-			'pragmas' => self::getPragmas(),
-			'escape' => function ($value) {
-				return htmlspecialchars($value, ENT_COMPAT, static::CHARSET);
-			}
-		]);
+		$this->renderEngine = new Mustache_Engine(
+				[
+					'charset' => static::CHARSET,
+					'strict_callables' => static::STRICT_CALLABLES,
+					'cache_file_mode' => static::CACHE_FILE_MODE,
+					'cache_lambda_templates' => static::CACHE_LAMBDA_TEMPLATES,
+					'loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
+					'partials_loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
+					'logger' => new Mustache_Logger_StreamLogger('php://stderr'),
+					'helpers' => self::getHelpers(),
+					'pragmas' => self::getPragmas(),
+					'escape' => function ($value) {
+						return htmlspecialchars($value, ENT_COMPAT, static::CHARSET);
+					}
+				]);
 	}
 
 	/**
@@ -137,44 +139,45 @@ class Template {
 	 * @return array<function>
 	 */
 	private function getHelpers() {
-		return [
-			'trans' => function ($value) {
-				return I18n::trans($value);
-			},
-			'transu' => function ($value) {
-				return I18n::transu($value);
-			},
-			'case' => [
-				'lower' => function ($value) {
-					return strtolower((string) $value);
-				},
-				'upper' => function ($value) {
-					return strtoupper((string) $value);
-				}
-			],
-			'count' => function ($value) {
-				return count($value);
-			},
-			'moreThan1' => function ($value) {
-				return count($value) > 1;
-			},
-			'date' => [
-				'xmlschema' => function ($value) {
-					return date('c', strtotime($value));
-				},
-				'string' => function ($value) {
-					return date('l, d F Y', strtotime($value));
-				},
-				'format' => function ($value) {
-					return date(get_option('date_format'), strtotime($value));
-				}
-			],
-			'toArray' => function ($value) {
-				return explode(',', $value);
-			},
-			'ucfirst' => function ($value) {
-				return ucfirst($value);
-			}
-		];
+		return array_merge(
+				[
+					'trans' => function ($value) {
+						return I18n::trans($value);
+					},
+					'transu' => function ($value) {
+						return I18n::transu($value);
+					},
+					'case' => [
+						'lower' => function ($value) {
+							return strtolower((string) $value);
+						},
+						'upper' => function ($value) {
+							return strtoupper((string) $value);
+						}
+					],
+					'count' => function ($value) {
+						return count($value);
+					},
+					'moreThan1' => function ($value) {
+						return count($value) > 1;
+					},
+					'date' => [
+						'xmlschema' => function ($value) {
+							return date('c', strtotime($value));
+						},
+						'string' => function ($value) {
+							return date('l, d F Y', strtotime($value));
+						},
+						'format' => function ($value) {
+							return date(get_option('date_format'), strtotime($value));
+						}
+					],
+					'toArray' => function ($value) {
+						return explode(',', $value);
+					},
+					'ucfirst' => function ($value) {
+						return ucfirst($value);
+					}
+				], @include APP_DIR . '/config/' . self::MUSTACHE_HELPERS_FILE . '.php');
 	}
 }
