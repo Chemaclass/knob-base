@@ -10,10 +10,24 @@ use Models\User;
  * @author José María Valera Reales
  */
 class Utils {
+
+	/*
+	 * Some const.
+	 */
 	const TYPE_TAG = 'tag';
 	const TYPE_CATEGORY = 'category';
 	const TYPE_SEARCH = 'search';
 	const TYPE_AUTHOR = 'author';
+
+	/**
+	 * Return all params
+	 *
+	 * @return array<string,object>
+	 */
+	public static function getParams() {
+		return array_merge(require (VENDOR_KNOB_BASE_DIR . '/src/config/Params.php'),
+				@include (APP_DIR . '/config/Params.php'));
+	}
 
 	/**
 	 * Check the value: not only spaces, with value and more than 0.
@@ -50,7 +64,9 @@ class Utils {
 			// Remove the upload path base directory from the attachment URL
 			$attachmentUrl = str_replace($upload_dir_paths['baseurl'] . '/', '', $attachmentUrl);
 			// Finally, run a custom database query to get the attachment ID from the modified attachment URL
-			$attachmentId = $wpdb->get_var($wpdb->prepare("SELECT wposts.ID
+			$attachmentId = $wpdb->get_var(
+					$wpdb->prepare(
+							"SELECT wposts.ID
 					FROM {$wpdb->posts} wposts, {$wpdb->postmeta} wpostmeta
 					WHERE wposts.ID = wpostmeta.post_id
 					AND wpostmeta.meta_key = '_wp_attached_file'
