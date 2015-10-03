@@ -7,6 +7,7 @@ use Knob\Models\Archive;
 use Knob\Models\Post;
 use Knob\Models\Term;
 use Knob\Models\User;
+use Knob\Libs\Utils;
 
 /**
  *
@@ -25,6 +26,11 @@ abstract class BaseController {
 	 * Constructor
 	 */
 	public function __construct() {
+		/*
+		 * Params.
+		 */
+		$this->configParams = Utils::getParams();
+
 		/*
 		 * Current User.
 		 */
