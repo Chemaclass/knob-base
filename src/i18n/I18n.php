@@ -12,19 +12,28 @@ use Knob\Libs\Utils;
  */
 class I18n {
 
-	// English
-	const LANG_EN = 'en';
-	const LANG_EN_NAME = 'english';
-	// Spanish
-	const LANG_ES = 'es';
-	const LANG_ES_NAME = 'español';
-	// German
-	const LANG_DE = 'de';
-	const LANG_DE_NAME = 'deutsch';
-	// Default
-	const LANG_DEFAULT = self::LANG_EN;
 	// Current language
 	const CURRENT_LANG = 'current-lang';
+	static $config = null;
+
+	/**
+	 */
+	protected static function getConfigFile() {
+		if (null == static::$config) {
+			static::$config = require ('/' . APP_DIR . "/config/Config.php");
+		}
+		return static::$config;
+	}
+
+	/**
+	 * Return the lang default
+	 *
+	 * @return string Language default
+	 */
+	public static function getLangDefault() {
+		$config = static::getConfigFile();
+		return $config['langDefault'];
+	}
 
 	/**
 	 * Return a list with all languages availables
@@ -32,37 +41,8 @@ class I18n {
 	 * @return array<string> names of directories availables
 	 */
 	public static function getAllLangAvailable() {
-		return [
-			self::LANG_ES,
-			self::LANG_DE,
-			self::LANG_EN
-		];
-	}
-
-	/**
-	 * Return the lang by current user if it was established
-	 *
-	 * @return string|boolean Lang from the current user
-	 */
-	public static function getLangBrowserByCurrentUser($forceLang = false) {
-		$langAvailables = self::getAllLangAvailable();
-
-		$isLangAvailable = function ($langToCheck) use($langAvailables) {
-			return in_array($langToCheck, $langAvailables);
-		};
-
-		// we can fonce the lang
-		if ($forceLang && $isLangAvailable($forceLang)) {
-			return $forceLang;
-		}
-
-		// or set by session
-		if (session_start() && $_SESSION[self::CURRENT_LANG] && $isLangAvailable($_SESSION[self::CURRENT_LANG])) {
-			return $_SESSION[self::CURRENT_LANG];
-		}
-
-		$langBrowser = Utils::getLangBrowser();
-		return $isLangAvailable($langBrowser) ? $langBrowser : self::LANG_DEFAULT;
+		$config = static::getConfigFile();
+		return array_keys($config['langAvailable']);
 	}
 
 	/**
@@ -73,15 +53,31 @@ class I18n {
 	 * @return string Lang from the current user
 	 */
 	public static function getLangFullnameBrowser($lang) {
-		switch ($lang) {
-			case self::LANG_ES :
-				return self::LANG_ES_NAME;
-			case self::LANG_DE :
-				return self::LANG_DE_NAME;
-			case self::LANG_EN :
-			default :
-				return self::LANG_EN_NAME;
+		$config = static::getConfigFile();
+		return $config['langAvailable'][$lang];
+	}
+
+	/**
+	 * Return the lang by current user if it was established
+	 *
+	 * @return string|boolean Lang from the current user
+	 */
+	public static function getLangBrowserByCurrentUser($forceLang = false) {
+		$langAvailables = self::getAllLangAvailable();
+		$isLangAvailable = function ($langToCheck) use($langAvailables) {
+			return in_array($langToCheck, $langAvailables);
+		};
+		// we can fonce the lang
+		if ($forceLang && $isLangAvailable($forceLang)) {
+			return $forceLang;
 		}
+		// or set by session
+		if (session_start() && $_SESSION[self::CURRENT_LANG] && $isLangAvailable(
+				$_SESSION[self::CURRENT_LANG])) {
+			return $_SESSION[self::CURRENT_LANG];
+		}
+		$langBrowser = Utils::getLangBrowser();
+		return $isLangAvailable($langBrowser) ? $langBrowser : static::getLangDefault();
 	}
 
 	/**
@@ -181,16 +177,17 @@ class I18n {
 			if ($strFinal[$i] == ':') { // 1º
 				$_a = $i + 1;
 				for($j = $_a; $j < strlen($strFinal); $j++) {
-					$esUltimo = ($j == strlen($strFinal) - 1);
-					if (in_array($strFinal[$j], [
-						' ',
-						',',
-						'\\',
-						'\'',
-						'"'
-					]) || $esUltimo) { // 2º
+					$isLastOne = ($j == strlen($strFinal) - 1);
+					if (in_array($strFinal[$j],
+							[
+								' ',
+								',',
+								'\\',
+								'\'',
+								'"'
+							]) || $isLastOne) { // 2º
 						$_b = $j;
-						$_b = ($esUltimo) ? $_b + 1 : $_b;
+						$_b = ($isLastOne) ? $_b + 1 : $_b;
 						$key = substr($strFinal, $_a, $_b - $_a);
 						$i = $_b;
 						break;
