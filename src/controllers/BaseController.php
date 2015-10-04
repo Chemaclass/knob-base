@@ -29,7 +29,7 @@ abstract class BaseController {
 		/*
 		 * Params.
 		 */
-		$this->configParams = Utils::getParams();
+		$this->configParams = Utils::getMustacheParams();
 
 		/*
 		 * Current User.
@@ -47,7 +47,9 @@ abstract class BaseController {
 	 *
 	 * @param array $templateVars
 	 */
-	public abstract function getGlobalVariables();
+	public function getGlobalVariables() {
+		return $this->configParams;
+	}
 
 	/**
 	 * Render a partial

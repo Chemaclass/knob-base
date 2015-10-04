@@ -11,6 +11,9 @@ use Models\User;
  */
 class Utils {
 
+	// Params to Mustache
+	const PARAMS_TO_MUSTACHE_FILE = 'MustacheParams';
+
 	/*
 	 * Some const.
 	 */
@@ -24,9 +27,9 @@ class Utils {
 	 *
 	 * @return array<string,object>
 	 */
-	public static function getParams() {
-		return array_merge(require (VENDOR_KNOB_BASE_DIR . '/src/config/Params.php'),
-				@include (APP_DIR . '/config/Params.php'));
+	public static function getMustacheParams() {
+		return array_merge(require (VENDOR_KNOB_BASE_DIR . '/src/config/' . PARAMS_TO_MUSTACHE_FILE . '.php'),
+				@include (APP_DIR . '/config/' . PARAMS_TO_MUSTACHE_FILE . '.php'));
 	}
 
 	/**
