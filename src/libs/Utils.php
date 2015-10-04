@@ -28,8 +28,8 @@ class Utils {
 	 * @return array<string,object>
 	 */
 	public static function getMustacheParams() {
-		return array_merge(require (VENDOR_KNOB_BASE_DIR . '/src/config/' . PARAMS_TO_MUSTACHE_FILE . '.php'),
-				@include (APP_DIR . '/config/' . PARAMS_TO_MUSTACHE_FILE . '.php'));
+		return array_merge(require (VENDOR_KNOB_BASE_DIR . '/src/config/' . self::PARAMS_TO_MUSTACHE_FILE . '.php'),
+				@include (APP_DIR . '/config/' . self::PARAMS_TO_MUSTACHE_FILE . '.php'));
 	}
 
 	/**
