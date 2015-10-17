@@ -1,5 +1,4 @@
 <?php
-
 namespace Knob\Libs;
 
 /**
@@ -7,84 +6,95 @@ namespace Knob\Libs;
  *
  * @author José María Valera Reales
  */
-class Ajax {
+class Ajax
+{
 
-	/*
-	 * Some constant
-	 */
-	const ARCHIVE = 'archive';
-	const HOME = 'home';
-	const CATEGORY = 'category';
-	const TAG = 'tag';
-	const AUTHOR = 'author';
-	const SEARCH = 'search';
+    /*
+     * Some constant
+     */
+    const ARCHIVE = 'archive';
 
-	/**
-	 *
-	 * Check the nonce from the request from ajax
-	 *
-	 * @param string $nonce
-	 *        	Key to compare
-	 * @param string $typeOfNonce
-	 *        	Tzpe of nonce created
-	 * @param string $id
-	 *        	Identifier
-	 */
-	public static function verifyNonce($nonce, $typeOfNonce, $id) {
-		return wp_verify_nonce($nonce, $typeOfNonce . $id);
-	}
+    const HOME = 'home';
 
-	/**
-	 * Envelop the array for the response to ajax
-	 *
-	 * @param integer $code
-	 *        	Code error
-	 * @param string $message
-	 *        	Message explaining the error
-	 * @param string $content
-	 *        	Content result
-	 * @return array
-	 */
-	public static function envelope($code = 0, $message = 'OK', $content = "") {
-		return array (
-			'code' => $code,
-			'message' => (string) $message,
-			'content' => $content
-		);
-	}
+    const CATEGORY = 'category';
 
-	/**
-	 * Response OK
-	 *
-	 * @param array|string $content
-	 *        	Content to send
-	 */
-	public static function responseOK($content = "") {
-		return self::envelope(KeysRequest::OK, 'OK', $content);
-	}
+    const TAG = 'tag';
 
-	/**
-	 * Response with a generic Error
-	 *
-	 * @param string $message
-	 *        	Message error
-	 */
-	public static function responseError($message = "") {
-		return self::envelope(KeysRequest::NOT_CORRECT, $message, "");
-	}
+    const AUTHOR = 'author';
 
-	/**
-	 *
-	 * Generic response from the server. We send a json.
-	 *
-	 * @param int $code
-	 *        	Response code
-	 * @param str $message
-	 *        	Response message
-	 * @param array $content
-	 *        	Content to send
-	 */
-	public static function response($code, $message, $content = "") {
-		return json_encode(self::envelope($code, $message, $content));
-	}
+    const SEARCH = 'search';
+
+    /**
+     *
+     * Check the nonce from the request from ajax
+     *
+     * @param string $nonce
+     *            Key to compare
+     * @param string $typeOfNonce
+     *            Tzpe of nonce created
+     * @param string $id
+     *            Identifier
+     */
+    public static function verifyNonce($nonce, $typeOfNonce, $id)
+    {
+        return wp_verify_nonce($nonce, $typeOfNonce . $id);
+    }
+
+    /**
+     * Envelop the array for the response to ajax
+     *
+     * @param integer $code
+     *            Code error
+     * @param string $message
+     *            Message explaining the error
+     * @param string $content
+     *            Content result
+     * @return array
+     */
+    public static function envelope($code = 0, $message = 'OK', $content = "")
+    {
+        return array(
+            'code' => $code,
+            'message' => (string) $message,
+            'content' => $content
+        );
+    }
+
+    /**
+     * Response OK
+     *
+     * @param array|string $content
+     *            Content to send
+     */
+    public static function responseOK($content = "")
+    {
+        return self::envelope(KeysRequest::OK, 'OK', $content);
+    }
+
+    /**
+     * Response with a generic Error
+     *
+     * @param string $message
+     *            Message error
+     */
+    public static function responseError($message = "")
+    {
+        return self::envelope(KeysRequest::NOT_CORRECT, $message, "");
+    }
+
+    /**
+     *
+     * Generic response from the server. We send a json.
+     *
+     * @param int $code
+     *            Response code
+     * @param str $message
+     *            Response message
+     * @param array $content
+     *            Content to send
+     */
+    public static function response($code, $message, $content = "")
+    {
+        return json_encode(self::envelope($code, $message, $content));
+    }
 }

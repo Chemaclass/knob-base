@@ -5,10 +5,11 @@
  * @param string|array $expression
  * @param string $tag
  */
-function dd($expression, $tag = "Tag") {
-	echo '' . $tag . '<br>';
-	var_dump($expression);
-	exit();
+function dd($expression, $tag = "Tag")
+{
+    echo '' . $tag . '<br>';
+    var_dump($expression);
+    exit();
 }
 
 /**
@@ -16,8 +17,9 @@ function dd($expression, $tag = "Tag") {
  *
  * @param string $str
  */
-function debug($str) {
-	error_log(" DEBUG - " . $str);
+function debug($str)
+{
+    error_log(" DEBUG - " . $str);
 }
 
 /**
@@ -25,6 +27,7 @@ function debug($str) {
  *
  * @param string $str
  */
-function info($str) {
-	error_log(" INFO - " . $str);
+function info($str)
+{
+    error_log(" INFO - " . $str);
 }

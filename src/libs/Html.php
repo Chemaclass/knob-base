@@ -1,5 +1,4 @@
 <?php
-
 namespace Knob\Libs;
 
 /**
@@ -7,15 +6,17 @@ namespace Knob\Libs;
  *
  * @author José María Valera Reales
  */
-class Html {
+class Html
+{
 
-	/**
-	 * Remove "more" tag
-	 *
-	 * @param string $str
-	 * @return string
-	 */
-	public static function removeReadMoreTag($str) {
-		return str_replace('<!--more-->', '', $str);
-	}
+    /**
+     * Remove "more" tag
+     *
+     * @param string $str
+     * @return string
+     */
+    public static function removeReadMoreTag($str)
+    {
+        return str_replace('<!--more-->', '', $str);
+    }
 }
