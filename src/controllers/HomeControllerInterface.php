@@ -1,5 +1,4 @@
 <?php
-
 namespace Knob\Controllers;
 
 /**
@@ -7,50 +6,51 @@ namespace Knob\Controllers;
  *
  * @author José María Valera Reales
  */
-interface HomeControllerInterface {
+interface HomeControllerInterface
+{
 
-	/**
-	 * author.php
-	 */
-	public function getAuthor();
+    /**
+     * author.php
+     */
+    public function getAuthor();
 
-	/**
-	 * archive.php
-	 */
-	public function getArchive();
+    /**
+     * archive.php
+     */
+    public function getArchive();
 
-	/**
-	 * category.php
-	 */
-	public function getCategory();
+    /**
+     * category.php
+     */
+    public function getCategory();
 
-	/**
-	 * home.php
-	 */
-	public function getHome();
+    /**
+     * home.php
+     */
+    public function getHome();
 
-	/**
-	 * index.php
-	 */
-	public function getIndex();
+    /**
+     * index.php
+     */
+    public function getIndex();
 
-	/**
-	 * 404.php
-	 */
-	public function get404();
+    /**
+     * 404.php
+     */
+    public function get404();
 
-	/**
-	 * search.php
-	 */
-	public function getSearch();
+    /**
+     * search.php
+     */
+    public function getSearch();
 
-	/**
-	 * single.php
-	 */
-	public function getSingle($type = 'post');
+    /**
+     * single.php
+     */
+    public function getSingle($type = 'post');
 
-	/**
-	 * tag.php
-	 */
-	public function getTag();
+    /**
+     * tag.php
+     */
+    public function getTag();
 }
