@@ -32,27 +32,30 @@ class Utils
      */
     public static function getMustacheParams()
     {
-        return array_merge(require (VENDOR_KNOB_BASE_DIR . '/src/config/' . self::PARAMS_TO_MUSTACHE_FILE . '.php'),
-            @include (APP_DIR . '/config/' . self::PARAMS_TO_MUSTACHE_FILE . '.php'));
+        $baseParamsFile = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::PARAMS_FILE . '.php';
+        $appParamsFile = APP_DIR . '/config/' . self::PARAMS_FILE . '.php';
+
+        $baseParams = (file_exists($baseParamsFile)) ? require $baseParamsFile : [];
+        $appParams = (file_exists($appParamsFile)) ? require $appParamsFile : [];
+
+        return array_merge($baseParams, $appParams);
     }
 
     /**
      * Check the value: not only spaces, with value and more than 0.
      *
-     * @param string $value
-     *            String to check.
+     * @param string $value String to check.
      * @return boolean true: valid, false: not valid.
      */
     public static function isValidStr($value)
     {
-        return (isset($value) && ! ctype_space($value) && strlen($value) > 0);
+        return (isset($value) && !ctype_space($value) && strlen($value) > 0);
     }
 
     /**
-     * Devuelve el ID del attachment apartir de su url
+     * Return the attachment ID from his URL
      *
-     * @param string $attachmentUrl
-     *            URL del attachment
+     * @param string $attachmentUrl URL del attachment
      * @return integer ID del attachment
      */
     function getAttachmentIdFromUrl($attachmentUrl = '')
@@ -72,7 +75,8 @@ class Utils
             $attachmentUrl = preg_replace('/-\d+x\d+(?=\.(jpg|jpeg|png|gif)$)/i', '', $attachmentUrl);
             // Remove the upload path base directory from the attachment URL
             $attachmentUrl = str_replace($upload_dir_paths['baseurl'] . '/', '', $attachmentUrl);
-            // Finally, run a custom database query to get the attachment ID from the modified attachment URL
+            // Finally, run a custom database query to get the attachment ID from the modified
+            // attachment URL
             $attachmentId = $wpdb->get_var(
                 $wpdb->prepare(
                     "SELECT wposts.ID
@@ -118,8 +122,7 @@ class Utils
     /**
      * Return the ID from the tag name
      *
-     * @param string $tagName
-     *            Tag name
+     * @param string $tagName Tag name
      * @return number ID from the tag name
      */
     public static function getTagIdbyName($tagName)
