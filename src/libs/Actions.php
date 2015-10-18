@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Libs;
 
 use Knob\Models\User;
@@ -17,12 +25,13 @@ class Actions
      */
     public static function adminPrintScripts()
     {
-        add_action('admin_print_scripts', function ()
-        {
-            wp_enqueue_script('jquery-plugin', COMPONENTS_DIR . '/jquery/jquery.min.js');
-            wp_enqueue_script('bootstrap-plugin', COMPONENTS_DIR . '/bootstrap/js/bootstrap.min.js');
-            wp_enqueue_script('main', PUBLIC_DIR . '/js/main.js');
-        });
+        add_action('admin_print_scripts',
+            function ()
+            {
+                wp_enqueue_script('jquery-plugin', COMPONENTS_DIR . '/jquery/jquery.min.js');
+                wp_enqueue_script('bootstrap-plugin', COMPONENTS_DIR . '/bootstrap/js/bootstrap.min.js');
+                wp_enqueue_script('main', PUBLIC_DIR . '/js/main.js');
+            });
     }
 
     /**
@@ -30,13 +39,14 @@ class Actions
      */
     public static function adminPrintStyles()
     {
-        add_action('admin_print_styles', function ()
-        {
-            // wp_enqueue_style('knob-bootstrap', COMPONENTS_DIR .
-            // '/bootstrap/css/bootstrap.css'); // conflicts with WP
-            wp_enqueue_style('knob-font-awesome', COMPONENTS_DIR . '/font-awesome/css/font-awesome.min.css');
-            wp_enqueue_style('knob-main', PUBLIC_DIR . '/css/main.css');
-        });
+        add_action('admin_print_styles',
+            function ()
+            {
+                // wp_enqueue_style('knob-bootstrap', COMPONENTS_DIR .
+                // '/bootstrap/css/bootstrap.css'); // conflicts with WP
+                wp_enqueue_style('knob-font-awesome', COMPONENTS_DIR . '/font-awesome/css/font-awesome.min.css');
+                wp_enqueue_style('knob-main', PUBLIC_DIR . '/css/main.css');
+            });
     }
 
     /**
@@ -44,10 +54,11 @@ class Actions
      */
     public static function loginView()
     {
-        add_action('login_enqueue_scripts', function ()
-        {
-            wp_enqueue_style('main', PUBLIC_DIR . '/css/main.css');
-        });
+        add_action('login_enqueue_scripts',
+            function ()
+            {
+                wp_enqueue_style('main', PUBLIC_DIR . '/css/main.css');
+            });
 
         add_filter('login_headerurl', function ()
         {
@@ -66,13 +77,14 @@ class Actions
      */
     public static function registerNavMenus()
     {
-        add_action('init', function ()
-        {
-            foreach (Template::getMenusActive() as $menu) {
-                $menus[$menu] = I18n::transu($menu);
-            }
-            register_nav_menus($menus);
-        });
+        add_action('init',
+            function ()
+            {
+                foreach (Template::getMenusActive() as $menu) {
+                    $menus[$menu] = I18n::transu($menu);
+                }
+                register_nav_menus($menus);
+            });
     }
 
     /**
@@ -80,11 +92,12 @@ class Actions
      */
     public static function wpBeforeAdminBarRender()
     {
-        add_action('wp_before_admin_bar_render', function ()
-        {
-            global $wp_admin_bar;
-            $wp_admin_bar->remove_menu('wp-logo');
-        });
+        add_action('wp_before_admin_bar_render',
+            function ()
+            {
+                global $wp_admin_bar;
+                $wp_admin_bar->remove_menu('wp-logo');
+            });
     }
 
     /**
@@ -122,30 +135,32 @@ class Actions
         ];
 
         foreach ($activeWidgets as $w) {
-            add_action('widgets_init', function () use($w)
-            {
-                if (isset($w['id'])) {
-                    $name = isset($w['name']) ? $w['name'] : ucfirst(str_replace('_', ' ', $w['id']));
-                    if (isset($w['beforeWidget'])) {
-                        $beforeWidget = $w['beforeWidget'];
-                    } else {
-                        $classBeforeWidget = isset($w['classBeforeWidget']) ? $w['classBeforeWidget'] : str_replace('_', '-', $w['id']);
-                        $beforeWidget = '<div class="widget ' . $classBeforeWidget . '">';
-                    }
-                    $afterWidget = isset($w['afterWidget']) ? $w['afterWidget'] : '</div>';
-                    $beforeTitle = isset($w['beforeTitle']) ? $w['beforeTitle'] : '<span class="title">';
-                    $afterTitle = isset($w['afterTitle']) ? $w['afterTitle'] : '</span>';
+            add_action('widgets_init',
+                function () use($w)
+                {
+                    if (isset($w['id'])) {
+                        $name = isset($w['name']) ? $w['name'] : ucfirst(str_replace('_', ' ', $w['id']));
+                        if (isset($w['beforeWidget'])) {
+                            $beforeWidget = $w['beforeWidget'];
+                        } else {
+                            $classBeforeWidget = isset($w['classBeforeWidget']) ? $w['classBeforeWidget'] : str_replace('_', '-', $w['id']);
+                            $beforeWidget = '<div class="widget ' . $classBeforeWidget . '">';
+                        }
+                        $afterWidget = isset($w['afterWidget']) ? $w['afterWidget'] : '</div>';
+                        $beforeTitle = isset($w['beforeTitle']) ? $w['beforeTitle'] : '<span class="title">';
+                        $afterTitle = isset($w['afterTitle']) ? $w['afterTitle'] : '</span>';
 
-                    register_sidebar([
-                        'id' => $w['id'],
-                        'name' => $name,
-                        'before_widget' => $beforeWidget,
-                        'after_widget' => $afterWidget,
-                        'before_title' => $beforeTitle,
-                        'after_title' => $afterTitle
-                    ]);
-                }
-            });
+                        register_sidebar(
+                            [
+                                'id' => $w['id'],
+                                'name' => $name,
+                                'before_widget' => $beforeWidget,
+                                'after_widget' => $afterWidget,
+                                'before_title' => $beforeTitle,
+                                'after_title' => $afterTitle
+                            ]);
+                    }
+                });
         }
     }
 }

@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Libs;
 
 /**
@@ -28,12 +36,9 @@ class Ajax
      *
      * Check the nonce from the request from ajax
      *
-     * @param string $nonce
-     *            Key to compare
-     * @param string $typeOfNonce
-     *            Tzpe of nonce created
-     * @param string $id
-     *            Identifier
+     * @param string $nonce Key to compare
+     * @param string $typeOfNonce Tzpe of nonce created
+     * @param string $id Identifier
      */
     public static function verifyNonce($nonce, $typeOfNonce, $id)
     {
@@ -43,12 +48,9 @@ class Ajax
     /**
      * Envelop the array for the response to ajax
      *
-     * @param integer $code
-     *            Code error
-     * @param string $message
-     *            Message explaining the error
-     * @param string $content
-     *            Content result
+     * @param integer $code Code error
+     * @param string $message Message explaining the error
+     * @param string $content Content result
      * @return array
      */
     public static function envelope($code = 0, $message = 'OK', $content = "")
@@ -63,8 +65,7 @@ class Ajax
     /**
      * Response OK
      *
-     * @param array|string $content
-     *            Content to send
+     * @param array|string $content Content to send
      */
     public static function responseOK($content = "")
     {
@@ -74,8 +75,7 @@ class Ajax
     /**
      * Response with a generic Error
      *
-     * @param string $message
-     *            Message error
+     * @param string $message Message error
      */
     public static function responseError($message = "")
     {
@@ -86,12 +86,9 @@ class Ajax
      *
      * Generic response from the server. We send a json.
      *
-     * @param int $code
-     *            Response code
-     * @param str $message
-     *            Response message
-     * @param array $content
-     *            Content to send
+     * @param int $code Response code
+     * @param str $message Response message
+     * @param array $content Content to send
      */
     public static function response($code, $message, $content = "")
     {

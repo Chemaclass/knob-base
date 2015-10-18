@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Libs;
 
 /**
@@ -19,7 +27,7 @@ class IteratorPresenter implements \IteratorAggregate
      */
     public function __construct($values)
     {
-        if (! is_array($values) && ! $values instanceof Traversable) {
+        if (!is_array($values) && !$values instanceof Traversable) {
             throw new InvalidArgumentException('IteratorPresenter requires an array or Traversable object');
         }
         $this->values = $values;
@@ -42,7 +50,7 @@ class IteratorPresenter implements \IteratorAggregate
             );
         }
         $keys = array_keys($values);
-        if (! empty($keys)) {
+        if (!empty($keys)) {
             $values[reset($keys)]['first'] = true;
             $values[end($keys)]['last'] = true;
         }
