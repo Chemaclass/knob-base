@@ -77,7 +77,7 @@ abstract class WidgetBase extends \WP_Widget
     public function register()
     {
         $id = static::getId();
-        if (!is_active_widget($id)) {
+        if (! is_active_widget($id)) {
             register_widget($id);
         }
     }
@@ -119,7 +119,7 @@ abstract class WidgetBase extends \WP_Widget
     public function update($newInstance, $oldInstance)
     {
         $instance = array();
-        $instance['title'] = (!empty($newInstance['title'])) ? strip_tags($newInstance['title']) : '';
+        $instance['title'] = (! empty($newInstance['title'])) ? strip_tags($newInstance['title']) : '';
         return $instance;
     }
 
@@ -153,10 +153,9 @@ abstract class WidgetBase extends \WP_Widget
          */
         $instance = array_merge($instance, $this->configParams);
 
-        return $this->template->getRenderEngine()->render($this->getTemplateName(self::DIR_BACK),
-            [
-                'instance' => $instance
-            ]);
+        return $this->template->getRenderEngine()->render($this->getTemplateName(self::DIR_BACK), [
+            'instance' => $instance
+        ]);
     }
 
     /**
@@ -177,11 +176,10 @@ abstract class WidgetBase extends \WP_Widget
          */
         $instance = array_merge($instance, $this->configParams);
 
-        return $this->template->getRenderEngine()->render($this->getTemplateName(self::DIR_FRONT),
-            [
-                'args' => $args,
-                'instance' => $instance
-            ]);
+        return $this->template->getRenderEngine()->render($this->getTemplateName(self::DIR_FRONT), [
+            'args' => $args,
+            'instance' => $instance
+        ]);
     }
 
     /**
@@ -206,13 +204,13 @@ abstract class WidgetBase extends \WP_Widget
         $pathToCheck = $pathToCheckFn($path);
 
         // If doesn't exists just take it by default from current APP
-        if (!file_exists($pathToCheck)) {
+        if (! file_exists($pathToCheck)) {
 
             $path = $pathFn(self::DIR_WIDGET_TEMPLATE_DEFAULT);
             $pathToCheck = $pathToCheckFn($path);
 
             // If doesn't exists take it by default from Knob-base
-            if (!file_exists($pathToCheck)) {
+            if (! file_exists($pathToCheck)) {
                 $path = '../../vendor/chemaclass/knob-base/src/templates/' . $path;
             }
         }
