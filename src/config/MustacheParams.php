@@ -1,11 +1,24 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Config;
 
 use Knob\I18n\I18n;
 use Knob\Models\Post;
 use Knob\Libs\Env;
 use Knob\Models\User;
+
+/**
+ * Params to Mustache templates.
+ */
 return [
+
     'adminEmail' => ADMIN_EMAIL,
     'atomUrl' => get_bloginfo('atom_url'),
 

@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\I18n;
 
 use Knob\Libs\Utils;
@@ -124,8 +132,7 @@ class I18n
     /**
      * Return the translate word by key
      *
-     * @param string $key
-     *            Key from the file
+     * @param string $key Key from the file
      * @return string Value translated from the key
      */
     public static function trans($toTranslate, $params = [], $forceLang = false)
@@ -147,7 +154,7 @@ class I18n
         $langArray = self::getLangFile($file, $dir);
         $key = trim($key);
         $value = isset($langArray[$key]) ? $langArray[$key] : $key;
-        if (is_numeric(strpos($value, ':')) && ! empty($params) && is_array($params)) {
+        if (is_numeric(strpos($value, ':')) && !empty($params) && is_array($params)) {
             $value = static::_setParams($value, $params);
         }
         return $value;
@@ -156,16 +163,14 @@ class I18n
     /**
      * Return the associative array (the file language)
      *
-     * @param string $lang
-     *            The 2 first chars of the language
-     * @param string $file
-     *            Filename language
+     * @param string $lang The 2 first chars of the language
+     * @param string $file Filename language
      */
     public static function getLangFile($file, $lang = false)
     {
-        if (! $lang) {
+        if (!$lang) {
             $lang = static::getLangBrowserByCurrentUser();
-            if (! $lang) {
+            if (!$lang) {
                 $lang = Utils::getLangBrowser();
             }
         }
@@ -175,10 +180,8 @@ class I18n
     /**
      * Set the params into the string
      *
-     * @param string $value
-     *            Input
-     * @param arrsy $params
-     *            List of params
+     * @param string $value Input
+     * @param arrsy $params List of params
      */
     private static function _setParams($value, $params)
     {
@@ -189,13 +192,14 @@ class I18n
                 $_a = $i + 1;
                 for ($j = $_a; $j < strlen($strFinal); $j ++) {
                     $isLastOne = ($j == strlen($strFinal) - 1);
-                    if (in_array($strFinal[$j], [
-                        ' ',
-                        ',',
-                        '\\',
-                        '\'',
-                        '"'
-                    ]) || $isLastOne) { // 2º
+                    if (in_array($strFinal[$j],
+                        [
+                            ' ',
+                            ',',
+                            '\\',
+                            '\'',
+                            '"'
+                        ]) || $isLastOne) { // 2º
                         $_b = $j;
                         $_b = ($isLastOne) ? $_b + 1 : $_b;
                         $key = substr($strFinal, $_a, $_b - $_a);
@@ -220,10 +224,9 @@ class I18n
      * Format, if necessary, and translate the text with his parameters.
      * Put into &$params (2nd parameter) all possible parameters from the text $toTranslate.
      *
-     * @param string $toTranslate
-     *            Text to translate their parameters as "JSON".
-     *            That array are identified as being in square brackets '[]'
-     *            and each key / value pairs are separated by ':' and each element of a ','
+     * @param string $toTranslate Text to translate their parameters as "JSON".
+     *        That array are identified as being in square brackets '[]'
+     *        and each key / value pairs are separated by ':' and each element of a ','
      * @param array $params
      */
     private static function _getParams(&$toTranslate, &$params)
@@ -251,12 +254,9 @@ class I18n
      *
      * Return the translated word with the first letter in uppercase.
      *
-     * @param string $key
-     *            Language key file.
-     * @param array $params
-     *            optional parameters.
-     * @param string $forceLang
-     *            optional lang to force.
+     * @param string $key Language key file.
+     * @param array $params optional parameters.
+     * @param string $forceLang optional lang to force.
      * @return string Value translated.
      *
      */

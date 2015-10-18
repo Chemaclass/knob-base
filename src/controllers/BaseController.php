@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Controllers;
 
 use Knob\Models\Archive;
@@ -10,6 +18,7 @@ use Knob\Libs\WalkerNavMenu;
 use Knob\Libs\Utils;
 
 /**
+ * Base Controller.
  *
  * @author José María Valera Reales
  */
@@ -44,12 +53,13 @@ abstract class BaseController
 
         // Menus
         foreach (Template::getMenusActive() as $s) {
-            $this->menus[$s] = wp_nav_menu([
-                'echo' => false,
-                'theme_location' => $s,
-                'menu_class' => 'nav navbar-nav menu ' . str_replace('_', '-', $s),
-                'walker' => new WalkerNavMenu()
-            ]);
+            $this->menus[$s] = wp_nav_menu(
+                [
+                    'echo' => false,
+                    'theme_location' => $s,
+                    'menu_class' => 'nav navbar-nav menu ' . str_replace('_', '-', $s),
+                    'walker' => new WalkerNavMenu()
+                ]);
         }
     }
 
@@ -107,10 +117,8 @@ abstract class BaseController
     /**
      * Print head + template + footer
      *
-     * @param string $templateName
-     *            Template name to print
-     * @param array $templateVars
-     *            Parameters to template
+     * @param string $templateName Template name to print
+     * @param array $templateVars Parameters to template
      */
     public function renderPage($templateName, $templateVars = [])
     {
@@ -124,9 +132,10 @@ abstract class BaseController
         wp_footer();
         $wpFooter = ob_get_clean();
 
-        echo $this->render($templateName, array_merge($templateVars, [
-            'wp_head' => $wpHead,
-            'wp_footer' => $wpFooter
-        ]));
+        echo $this->render($templateName,
+            array_merge($templateVars, [
+                'wp_head' => $wpHead,
+                'wp_footer' => $wpFooter
+            ]));
     }
 }
