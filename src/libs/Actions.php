@@ -32,7 +32,8 @@ class Actions
     {
         add_action('admin_print_styles', function ()
         {
-            // wp_enqueue_style('knob-bootstrap', COMPONENTS_DIR . '/bootstrap/css/bootstrap.css'); // conflicts with WP
+            // wp_enqueue_style('knob-bootstrap', COMPONENTS_DIR .
+            // '/bootstrap/css/bootstrap.css'); // conflicts with WP
             wp_enqueue_style('knob-font-awesome', COMPONENTS_DIR . '/font-awesome/css/font-awesome.min.css');
             wp_enqueue_style('knob-main', PUBLIC_DIR . '/css/main.css');
         });
@@ -97,7 +98,6 @@ class Actions
     {
         /*
          * List with your active widgets.
-         *
          * 'id': His id. We'll use it later for get it and put in his correct place.
          * 'name': Sidebar name. Optional
          * 'classBeforeWidget': Class for 'beforeWidget'. Optional

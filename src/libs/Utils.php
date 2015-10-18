@@ -12,7 +12,7 @@ class Utils
 {
 
     // Params to Mustache
-    const PARAMS_TO_MUSTACHE_FILE = 'MustacheParams';
+    const PARAMS_FILE = 'MustacheParams';
 
     /*
      * Some const.
@@ -53,7 +53,7 @@ class Utils
     }
 
     /**
-     * Return the attachment ID from his URL
+     * Devuelve el ID del attachment apartir de su url
      *
      * @param string $attachmentUrl URL del attachment
      * @return integer ID del attachment
