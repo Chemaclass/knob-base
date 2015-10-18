@@ -1,9 +1,17 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Models;
 
 /**
  *
- * @author chema
+ * @author José María Valera Reales.
  */
 class Archive
 {
@@ -64,7 +72,8 @@ class Archive
     /**
      * Return monthly
      *
-     * @link https://core.trac.wordpress.org/browser/tags/4.2.2/src/wp-includes/general-template.php#L1335
+     * @link
+     *       https://core.trac.wordpress.org/browser/tags/4.2.2/src/wp-includes/general-template.php#L1335
      * @return string
      */
     public static function getMonthly($limit = self::LIMIT)
@@ -72,7 +81,7 @@ class Archive
         global $wpdb, $wp_locale;
 
         $last_changed = wp_cache_get('last_changed', 'posts');
-        if (! $last_changed) {
+        if (!$last_changed) {
             $last_changed = microtime();
             wp_cache_set('last_changed', $last_changed, 'posts');
         }
@@ -89,7 +98,7 @@ class Archive
 
         $key = md5($query);
         $key = "wp_get_archives:$key:$last_changed";
-        if (! $results = wp_cache_get($key, 'posts')) {
+        if (!$results = wp_cache_get($key, 'posts')) {
             $results = $wpdb->get_results($query);
             wp_cache_set($key, $results, 'posts');
         }

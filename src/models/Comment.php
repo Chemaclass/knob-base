@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Models;
 
 /**
@@ -47,7 +55,7 @@ class Comment extends ModelBase
     public function getUser()
     {
         // For to have all default values from an User
-        if (! $this->user_id) {
+        if (!$this->user_id) {
             return new User();
         }
         return User::find($this->user_id);
@@ -124,8 +132,7 @@ class Comment extends ModelBase
 						{$c}karma = %s, {$c}approved = %s,
 						{$c}agent = %s, {$c}type = %s,
 						{$c}parent = %s, user_id = %s
-					WHERE comment_ID = %d",
-                    $this->comment_post_ID, $this->comment_author, $this->comment_author_email, $this->comment_author_url,
+					WHERE comment_ID = %d", $this->comment_post_ID, $this->comment_author, $this->comment_author_email, $this->comment_author_url,
                     $this->comment_author_IP, $this->comment_date, $this->comment_date_gmt, $this->comment_content, $this->comment_karma,
                     $this->comment_approved, $this->comment_agent, $this->comment_type, $this->comment_parent, $this->user_id,
                     $this->comment_ID));

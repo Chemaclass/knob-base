@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Models;
 
 use Knob\I18n\I18n;
@@ -124,7 +132,7 @@ class Post extends Image
     public function getCategories()
     {
         $categories = get_the_category($this->ID);
-        if (! $categories) {
+        if (!$categories) {
             return [];
         }
         foreach ($categories as $category) {
@@ -231,7 +239,7 @@ class Post extends Image
     public function getExcerpt()
     {
         $excerpt = $this->post_excerpt;
-        if (! Utils::isValidStr($excerpt)) {
+        if (!Utils::isValidStr($excerpt)) {
             $excerpt = strip_tags(strip_shortcodes($this->post_content));
             $excerpt = trim(preg_replace('/\s\s+/', ' ', $excerpt));
             $excerpt = preg_replace("/[\xc2|\xa0]/", ' ', $excerpt);
@@ -299,7 +307,7 @@ class Post extends Image
     public function getTitle($short = false, $countShort = self::COUNT_SHORT_TITLE)
     {
         $title = get_the_title($this->ID);
-        if (! $short || (strlen($title) > $countShort)) {
+        if (!$short || (strlen($title) > $countShort)) {
             return $title;
         }
 
@@ -325,8 +333,7 @@ class Post extends Image
     /**
      * Devuelve el src del thumbnail del post
      *
-     * @param string $size
-     *            size
+     * @param string $size size
      */
     public function getThumbnail($size = self::IMG_SIZE_THUMBNAIL)
     {
@@ -417,7 +424,7 @@ class Post extends Image
         // if it's the same doesn't matter. If it's different we have to rest the different.
         $limit = (count($posts) == $countSticky) ? $limit - $countSticky : $limit;
 
-        if (! isset($moreQuerySettings['post_type'])) {
+        if (!isset($moreQuerySettings['post_type'])) {
             $moreQuerySettings['post_type'] = Post::TYPE_POST;
         }
 
@@ -448,10 +455,10 @@ class Post extends Image
     private static function getStickyPosts($limit = -1, $offset = false, $moreQuerySettings = [])
     {
         $sticky_posts = get_option('sticky_posts');
-        if (! $sticky_posts) {
+        if (!$sticky_posts) {
             return [];
         }
-        if (! isset($moreQuerySettings['post_type'])) {
+        if (!isset($moreQuerySettings['post_type'])) {
             $moreQuerySettings['post_type'] = Post::TYPE_POST;
         }
         $querySettings = [
@@ -561,7 +568,7 @@ class Post extends Image
      */
     private static function getBy($type, $by, $limit = false, $offset = false, $moreQuerySettings = [])
     {
-        if (! $limit) {
+        if (!$limit) {
             $limit = get_option('posts_per_page');
         }
         if ($type == Ajax::TAG) {
@@ -576,7 +583,7 @@ class Post extends Image
             $moreQuerySettings['author'] = $by;
         } elseif ($type == Ajax::ARCHIVE) {
             list ($year, $monthnum) = explode(Archive::DELIMITER, $by);
-            if (! isset($moreQuerySettings['year'])) {
+            if (!isset($moreQuerySettings['year'])) {
                 $moreQuerySettings['year'] = $year;
                 $moreQuerySettings['monthnum'] = $monthnum;
             }

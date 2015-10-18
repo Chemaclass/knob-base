@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Models;
 
 /**
@@ -65,7 +73,7 @@ abstract class ModelBase
      */
     public static function find($ID = false)
     {
-        if ($ID == null || ! is_numeric($ID)) {
+        if ($ID == null || !is_numeric($ID)) {
             return null;
         }
         global $wpdb;
@@ -74,7 +82,7 @@ abstract class ModelBase
 				FROM wp_' . static::$table . '
 				WHERE ' . static::$PK . '= %d';
         $object = $wpdb->get_row($wpdb->prepare($whatry, $ID));
-        if (! $object) {
+        if (!$object) {
             return null;
         }
         $a = new $model();
@@ -91,8 +99,7 @@ abstract class ModelBase
      *
      * @param string $column
      * @param string $value
-     * @param boolean $single
-     *            Por defecto false. True si es sólo 1.
+     * @param boolean $single Por defecto false. True si es sólo 1.
      * @return array<object>
      */
     public static function findAllBy($column, $value, $single = false)
@@ -238,8 +245,7 @@ abstract class ModelBase
     /**
      * Create one key for the nonce request from ajax
      *
-     * @param string $kindOfNonce
-     *            Type of nonce
+     * @param string $kindOfNonce Type of nonce
      * @return string Nonce
      */
     protected function createNonce($kindOfNonce)

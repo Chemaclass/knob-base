@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Models;
 
 use Knob\Libs\Utils;
@@ -402,13 +410,12 @@ class User extends Image
     /**
      * Get all posts
      *
-     * @param integer $max
-     *            total posts to show
+     * @param integer $max total posts to show
      * @return array<Post>
      */
     public function getPosts($limit = false, $offset = false)
     {
-        if (! $limit) {
+        if (!$limit) {
             $limit = get_option('posts_per_page');
         }
         return Post::getByAuthor($this->ID, $limit, $offset);
@@ -531,8 +538,7 @@ class User extends Image
     /**
      * Set new Twitter
      *
-     * @param string $value
-     *            Can be the nickname or the absolute url
+     * @param string $value Can be the nickname or the absolute url
      */
     public function setTwitter($value)
     {
@@ -578,8 +584,7 @@ class User extends Image
     /**
      * Set new Facebook
      *
-     * @param string $value
-     *            Can be the nickname or the absolute url
+     * @param string $value Can be the nickname or the absolute url
      */
     public function setFacebook($value)
     {
@@ -620,8 +625,7 @@ class User extends Image
     /**
      * Set new Twitter
      *
-     * @param string $value
-     *            Can be the nickname or the absolute url
+     * @param string $value Can be the nickname or the absolute url
      */
     public function setGooglePlus($value)
     {

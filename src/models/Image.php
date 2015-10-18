@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Models;
 
 /**
@@ -17,17 +25,15 @@ abstract class Image extends ModelBase
     /**
      * Set image
      *
-     * @param string $keyImg
-     *            Key from the image
-     * @param file $imgFile
-     *            The image
+     * @param string $keyImg Key from the image
+     * @param file $imgFile The image
      * @throws Exception
      * @return void|string
      */
     protected function setImage($keyImg, $imgFile)
     {
         // If it's false or null we have to remove it from the server
-        if (! $imgFile || is_null($imgFile)) {
+        if (!$imgFile || is_null($imgFile)) {
             return $this->removeImage($keyImg);
         }
         if (strpos($imgFile['name'], '.php') !== false) {
@@ -70,12 +76,9 @@ abstract class Image extends ModelBase
     /**
      * Get the image
      *
-     * @param string $keyImg
-     *            Key image
-     * @param int $sizeW
-     *            weight
-     * @param int $sizeH
-     *            height
+     * @param string $keyImg Key image
+     * @param int $sizeW weight
+     * @param int $sizeH height
      * @return string URL to the image
      */
     protected function getImage($keyImg, $sizeW, $sizeH = false)
@@ -87,21 +90,22 @@ abstract class Image extends ModelBase
             return '';
         }
         // generate a new size
-        if (! array_key_exists($sizeW, $local_avatars)) {
+        if (!array_key_exists($sizeW, $local_avatars)) {
             $local_avatars[$sizeW] = $local_avatars['full']; // just in case of failure elsewhere
             $upload_path = wp_upload_dir();
-            // get path for image by converting URL, unless its already been set, thanks to using media library approach
-            if (! isset($avatar_full_path)) {
+            // get path for image by converting URL, unless its already been set, thanks to using
+            // media library approach
+            if (!isset($avatar_full_path)) {
                 $avatar_full_path = str_replace($upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full']);
             }
             // generate the new size
             $editor = wp_get_image_editor($avatar_full_path);
-            if (! is_wp_error($editor)) {
+            if (!is_wp_error($editor)) {
                 $resized = $editor->resize($sizeW, $sizeH, true);
-                if (! is_wp_error($resized)) {
+                if (!is_wp_error($resized)) {
                     $dest_file = $editor->generate_filename();
                     $saved = $editor->save($dest_file);
-                    if (! is_wp_error($saved)) {
+                    if (!is_wp_error($saved)) {
                         $local_avatars[$sizeW] = str_replace($upload_path['basedir'], $upload_path['baseurl'], $dest_file);
                     }
                 }

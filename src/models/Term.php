@@ -1,4 +1,12 @@
 <?php
+/*
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Knob\Models;
 
 /**
@@ -35,7 +43,7 @@ class Term extends ModelBase
      */
     public static function getCategories($args = [])
     {
-        if (! count($args)) {
+        if (!count($args)) {
             $args = [
                 'orderby' => 'name,count',
                 'hide_empty' => true
@@ -58,7 +66,7 @@ class Term extends ModelBase
      */
     public static function getTags($args = [])
     {
-        if (! count($args)) {
+        if (!count($args)) {
             $args = [
                 'orderby' => 'name,count',
                 'hide_empty' => true
