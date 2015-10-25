@@ -37,6 +37,8 @@ class Utils
 
     static $config;
 
+    static $mustacheParams;
+
     /**
      * Return all params
      *
@@ -44,13 +46,17 @@ class Utils
      */
     public static function getMustacheParams()
     {
-        $baseParamsFile = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::PARAMS_FILE . '.php';
-        $appParamsFile = APP_DIR . '/config/' . self::PARAMS_FILE . '.php';
+        if (null == static::$mustacheParams) {
 
-        $baseParams = (file_exists($baseParamsFile)) ? require $baseParamsFile : [];
-        $appParams = (file_exists($appParamsFile)) ? require $appParamsFile : [];
+            $baseParamsFile = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::PARAMS_FILE . '.php';
+            $appParamsFile = APP_DIR . '/config/' . self::PARAMS_FILE . '.php';
 
-        return array_merge($baseParams, $appParams);
+            $baseParams = (file_exists($baseParamsFile)) ? require $baseParamsFile : [];
+            $appParams = (file_exists($appParamsFile)) ? require $appParamsFile : [];
+
+            static::$mustacheParams = array_merge($baseParams, $appParams);
+        }
+        return static::$mustacheParams;
     }
 
     /**
