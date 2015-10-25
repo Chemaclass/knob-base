@@ -21,6 +21,19 @@ class Actions
 {
 
     /**
+     * Setup the actions
+     */
+    public static function setup()
+    {
+        Actions::adminPrintScripts();
+        Actions::adminPrintStyles();
+        Actions::loginView();
+        Actions::registerNavMenus();
+        Actions::wpBeforeAdminBarRender();
+        Actions::widgetsInit();
+    }
+
+    /**
      * Put scripts into the admin view
      */
     public static function adminPrintScripts()
@@ -54,11 +67,10 @@ class Actions
      */
     public static function loginView()
     {
-        add_action('login_enqueue_scripts',
-            function ()
-            {
-                wp_enqueue_style('main', PUBLIC_DIR . '/css/main.css');
-            });
+        add_action('login_enqueue_scripts', function ()
+        {
+            wp_enqueue_style('main', PUBLIC_DIR . '/css/main.css');
+        });
 
         add_filter('login_headerurl', function ()
         {

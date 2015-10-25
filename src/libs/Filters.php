@@ -20,6 +20,16 @@ class Filters
 {
 
     /**
+     * Setup the filters
+     */
+    public static function setup()
+    {
+        Filters::authorRewriteRules();
+        Filters::getAvatar();
+        Filters::navMenuCssClass();
+    }
+
+    /**
      * Change the 'author' slug from the URL base (for each author) to the type of User.
      *
      * Remeber: Manually flush your permalink structure to reflect these changes:
