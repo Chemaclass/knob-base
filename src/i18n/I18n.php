@@ -25,23 +25,13 @@ class I18n
     static $config = null;
 
     /**
-     */
-    protected static function getConfigFile()
-    {
-        if (null == static::$config) {
-            static::$config = require ('/' . APP_DIR . "/config/Config.php");
-        }
-        return static::$config;
-    }
-
-    /**
      * Return the lang default
      *
      * @return string Language default
      */
     public static function getLangDefault()
     {
-        $config = static::getConfigFile();
+        $config = Utils::getConfigFile();
         return $config['langDefault'];
     }
 
@@ -52,7 +42,7 @@ class I18n
      */
     public static function getAllLangAvailable()
     {
-        $config = static::getConfigFile();
+        $config = Utils::getConfigFile();
         return array_keys($config['langAvailable']);
     }
 
@@ -65,7 +55,7 @@ class I18n
      */
     public static function getLangFullnameBrowser($lang)
     {
-        $config = static::getConfigFile();
+        $config = Utils::getConfigFile();
         return $config['langAvailable'][$lang];
     }
 

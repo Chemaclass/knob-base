@@ -22,6 +22,8 @@ class Utils
     // Params to Mustache
     const PARAMS_FILE = 'MustacheParams';
 
+    const CONFIG_FILE = 'Config';
+
     /*
      * Some const.
      */
@@ -32,6 +34,8 @@ class Utils
     const TYPE_SEARCH = 'search';
 
     const TYPE_AUTHOR = 'author';
+
+    static $config;
 
     /**
      * Return all params
@@ -47,6 +51,17 @@ class Utils
         $appParams = (file_exists($appParamsFile)) ? require $appParamsFile : [];
 
         return array_merge($baseParams, $appParams);
+    }
+
+    /**
+     * Return all global config values
+     */
+    public static function getConfigFile()
+    {
+        if (null == static::$config) {
+            static::$config = require ('/' . APP_DIR . '/config/' . self::CONFIG_FILE . '.php');
+        }
+        return static::$config;
     }
 
     /**
