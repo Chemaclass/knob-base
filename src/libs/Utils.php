@@ -20,9 +20,9 @@ class Utils
 {
 
     // Params to Mustache
-    const PARAMS_FILE = 'MustacheParams';
+    const PARAMS_FILE = 'mustache_params';
 
-    const CONFIG_FILE = 'Config';
+    const CONFIG_FILE = 'config';
 
     /*
      * Some const.
