@@ -9,7 +9,7 @@
  */
 namespace Knob\Libs;
 
-use Models\User;
+use Knob\Models\User;
 
 /**
  * Class with Utilities
@@ -18,7 +18,6 @@ use Models\User;
  */
 class Utils
 {
-
     // Params to Mustache
     const PARAMS_FILE = 'mustache_params';
 
