@@ -22,7 +22,7 @@ class Filters
     /**
      * Setup the filters
      */
-    public static function setup()
+    protected static function setup()
     {
         static::showAdminBar(false);
         static::authorRewriteRules();
@@ -36,7 +36,7 @@ class Filters
      *
      * @link https://codex.wordpress.org/Function_Reference/show_admin_bar
      */
-    public static function showAdminBar($flag = false)
+    protected static function showAdminBar($flag = false)
     {
         show_admin_bar($flag);
     }
@@ -48,7 +48,7 @@ class Filters
      * 1) Settings -> Permalinks -> choose default -> Save
      * 2) Revert the settings to original.
      */
-    public static function authorRewriteRules()
+    protected static function authorRewriteRules()
     {
         $AUTHOR_TYPE = '%author_type%';
 
@@ -87,7 +87,7 @@ class Filters
     /**
      * Override the get_avatar by default from WP
      */
-    public static function getAvatar()
+    protected static function getAvatar()
     {
         /*
          * We will get the avatar from our models
@@ -120,7 +120,7 @@ class Filters
      *
      * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/nav_menu_css_class
      */
-    public static function navMenuCssClass()
+    protected static function navMenuCssClass()
     {
         add_filter('nav_menu_css_class',
             function ($classes, $item)

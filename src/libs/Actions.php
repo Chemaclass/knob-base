@@ -23,20 +23,20 @@ class Actions
     /**
      * Setup the actions
      */
-    public static function setup()
+    protected static function setup()
     {
-        Actions::adminPrintScripts();
-        Actions::adminPrintStyles();
-        Actions::loginView();
-        Actions::registerNavMenus();
-        Actions::wpBeforeAdminBarRender();
-        Actions::widgetsInit();
+        static::adminPrintScripts();
+        static::adminPrintStyles();
+        static::loginView();
+        static::registerNavMenus();
+        static::wpBeforeAdminBarRender();
+        static::widgetsInit();
     }
 
     /**
      * Put scripts into the admin view
      */
-    public static function adminPrintScripts()
+    protected static function adminPrintScripts()
     {
         add_action('admin_print_scripts',
             function ()
@@ -50,7 +50,7 @@ class Actions
     /**
      * Put styles into the admin view.
      */
-    public static function adminPrintStyles()
+    protected static function adminPrintStyles()
     {
         add_action('admin_print_styles',
             function ()
@@ -65,7 +65,7 @@ class Actions
     /**
      * Load the styles, headerurl and headertitle in the login section.
      */
-    public static function loginView()
+    protected static function loginView()
     {
         add_action('login_enqueue_scripts', function ()
         {
@@ -87,7 +87,7 @@ class Actions
      *
      * @see http://codex.wordpress.org/Navigation_Menus
      */
-    public static function registerNavMenus()
+    protected static function registerNavMenus()
     {
         add_action('init',
             function ()
@@ -102,7 +102,7 @@ class Actions
     /**
      * Delete the WP logo from the admin bar
      */
-    public static function wpBeforeAdminBarRender()
+    protected static function wpBeforeAdminBarRender()
     {
         add_action('wp_before_admin_bar_render',
             function ()
@@ -119,7 +119,7 @@ class Actions
      * @see https://codex.wordpress.org/Function_Reference/register_sidebar
      * @see https://developer.wordpress.org/reference/hooks/widgets_init/
      */
-    public static function widgetsInit()
+    protected static function widgetsInit()
     {
         /*
          * List with your active widgets.
