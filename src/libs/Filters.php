@@ -24,9 +24,21 @@ class Filters
      */
     public static function setup()
     {
-        Filters::authorRewriteRules();
-        Filters::getAvatar();
-        Filters::navMenuCssClass();
+        static::showAdminBar(false);
+        static::authorRewriteRules();
+        static::getAvatar();
+        static::navMenuCssClass();
+    }
+
+    /**
+     * Set the display status of the Toolbar for the front side of your website (you cannot turn off
+     * the toolbar on the WordPress dashboard).
+     *
+     * @link https://codex.wordpress.org/Function_Reference/show_admin_bar
+     */
+    public static function showAdminBar($flag = false)
+    {
+        show_admin_bar($flag);
     }
 
     /**
