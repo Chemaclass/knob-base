@@ -13,7 +13,19 @@
 
 
 ### Models to get all values from your DB
+
 * You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory).
+```php // vendor/chemaclass/knob-base/src/models/Post.php
+namespace Knob\Models;
+
+class Post extends ModelBase
+{
+    public static $table = "posts";
+
+    // more sentences...
+}
+```
+
 * You will be provided with libraries to prepare your Actions and Filters (from Wordpress) 
 * Also you will be able to get or create your own Widgets as new models. You have the basics in 'Knob\Widgets' (src/widgets/ directory)
 * All of these on the best&easy way ever in 'Knob\libs' (src/libs/ directory)
@@ -27,12 +39,23 @@
 * You will be provided a ```Knob\Controllers\BaseController``` to extends your own controllers. 
 Then from your controller just need to do something like:
 
-```php
+
+```php // app/controllers/BaseController.php
+namespace Controllers;
 
 use Knob\Controllers\BaseController as KnobBaseController;
+
+class BaseController extends KnobBaseController
+{
+	// more sentences...
+}
+```
+
+```php // app/controllers/HomeController.php
+
 use Knob\Controllers\HomeControllerInterface;
 
-class HomeController extends KnobBaseController implements HomeControllerInterface {
+class HomeController extends BaseController implements HomeControllerInterface {
 	
 	/**
      * home.php
@@ -45,6 +68,7 @@ class HomeController extends KnobBaseController implements HomeControllerInterfa
         return $this->renderPage('base/home', $args);
     }
 
+	// more sentences...
 }    
 
 ```
