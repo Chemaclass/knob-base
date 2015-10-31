@@ -8,7 +8,7 @@
 * Author: José María Valera Reales
 
 ## Knob-base is the kernel from [Knob-mvc](https://github.com/Chemaclass/knob-mvc/)
-* This is a Framework base on MVC pattern. 
+* This is a Framework based on MVC pattern. 
 * Inspired by latest frameworks we have nowadays to web development like Symfony or Laravel.
 
 
@@ -24,14 +24,15 @@
 
 ### Controllers to pull everything together
 * From 'Knob\Controllers' (src/controllers/ directory) 
-* You will be provided a ´´´Knob\Controllers\BaseController´´´ to extends your own controllers. 
+* You will be provided a ```Knob\Controllers\BaseController``` to extends your own controllers. 
 Then from your controller just need to do something like:
-´´´php
+
+```php
 
 use Knob\Controllers\BaseController as KnobBaseController;
 use Knob\Controllers\HomeControllerInterface;
 
-class HomeController extends KnobBaseController implements HomeControllerInterface
+class HomeController extends KnobBaseController implements HomeControllerInterface {
 	
 	/**
      * home.php
@@ -43,8 +44,10 @@ class HomeController extends KnobBaseController implements HomeControllerInterfa
         ];
         return $this->renderPage('base/home', $args);
     }
-    
-´´´
+
+}    
+
+```
 
 # Before the start... you'll need! #
 
