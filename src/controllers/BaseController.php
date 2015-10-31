@@ -14,8 +14,8 @@ use Knob\Models\Post;
 use Knob\Models\Term;
 use Knob\Models\User;
 use Knob\Libs\Template;
-use Knob\Libs\WalkerNavMenu;
 use Knob\Libs\Utils;
+use Knob\Libs\MustacheRender;
 
 /**
  * Base Controller.
@@ -25,7 +25,9 @@ use Knob\Libs\Utils;
 abstract class BaseController
 {
 
-    private $mustacheParams = [];
+    protected $mustacheParams = [];
+
+    protected $mustacheRender = null;
 
     protected $currentUser = null;
 
@@ -34,14 +36,10 @@ abstract class BaseController
      */
     public function __construct()
     {
-        $this->mustacheParams = Utils::getMustacheParams();
+        $this->mustacheRender = MustacheRender::getInstance();
+        $this->mustacheParams = MustacheRender::getMustacheParams();
         $this->currentUser = User::getCurrent();
     }
-
-    /**
-     * Return the template
-     */
-    public abstract function getTemplate();
 
     /**
      * Add the global variables for all controllers
@@ -65,7 +63,7 @@ abstract class BaseController
         if ($addGlobalVariables) {
             $templateVars = array_merge($templateVars, $this->getGlobalVariables());
         }
-        return $this->getTemplate()->render($templateName, $templateVars);
+        return $this->mustacheRender->render($templateName, $templateVars);
     }
 
     /**
