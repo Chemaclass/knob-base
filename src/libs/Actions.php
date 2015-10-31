@@ -9,7 +9,6 @@
  */
 namespace Knob\Libs;
 
-use Knob\Models\User;
 use Knob\I18n\I18n;
 
 /**
@@ -23,20 +22,19 @@ class Actions
     /**
      * Setup the actions
      */
-    protected static function setup()
+    public static function setup()
     {
         static::adminPrintScripts();
         static::adminPrintStyles();
         static::loginView();
         static::registerNavMenus();
         static::wpBeforeAdminBarRender();
-        static::widgetsInit();
     }
 
     /**
      * Put scripts into the admin view
      */
-    protected static function adminPrintScripts()
+    public static function adminPrintScripts()
     {
         add_action('admin_print_scripts',
             function ()
@@ -50,7 +48,7 @@ class Actions
     /**
      * Put styles into the admin view.
      */
-    protected static function adminPrintStyles()
+    public static function adminPrintStyles()
     {
         add_action('admin_print_styles',
             function ()
@@ -65,7 +63,7 @@ class Actions
     /**
      * Load the styles, headerurl and headertitle in the login section.
      */
-    protected static function loginView()
+    public static function loginView()
     {
         add_action('login_enqueue_scripts', function ()
         {
@@ -83,26 +81,9 @@ class Actions
     }
 
     /**
-     * Register Nav Menus.
-     *
-     * @see http://codex.wordpress.org/Navigation_Menus
-     */
-    protected static function registerNavMenus()
-    {
-        add_action('init',
-            function ()
-            {
-                foreach (Template::getMenusActive() as $menu) {
-                    $menus[$menu] = I18n::transu($menu);
-                }
-                register_nav_menus($menus);
-            });
-    }
-
-    /**
      * Delete the WP logo from the admin bar
      */
-    protected static function wpBeforeAdminBarRender()
+    public static function wpBeforeAdminBarRender()
     {
         add_action('wp_before_admin_bar_render',
             function ()
@@ -118,33 +99,22 @@ class Actions
      *
      * @see https://codex.wordpress.org/Function_Reference/register_sidebar
      * @see https://developer.wordpress.org/reference/hooks/widgets_init/
+     *
+     * @param array $activeWidgets /*
+     *        List with your active widgets. Each item has to have:
+     *        'id': His id. We'll use it later for get it and put in his correct place.
+     *        'name': Sidebar name. Optional
+     *        'classBeforeWidget': Class for 'beforeWidget'. Optional
+     *        'beforeWidget': HTML to place before every widge. Optional
+     *        'afterWidget': HTML to place after every widget. Optional
+     *        'beforeTitle': HTML to place before every title. Optional
+     *        'afterTitle': HTML to place after every title. Optional
      */
-    protected static function widgetsInit()
+    public static function widgetsInit($activeWidgets = [])
     {
-        /*
-         * List with your active widgets.
-         * 'id': His id. We'll use it later for get it and put in his correct place.
-         * 'name': Sidebar name. Optional
-         * 'classBeforeWidget': Class for 'beforeWidget'. Optional
-         * 'beforeWidget': HTML to place before every widge. Optional
-         * 'afterWidget': HTML to place after every widget. Optional
-         * 'beforeTitle': HTML to place before every title. Optional
-         * 'afterTitle': HTML to place after every title. Optional
-         */
-        $activeWidgets = [
-            [
-                'id' => Template::WIDGETS_RIGHT,
-                'name' => 'Widgets right',
-                'classBeforeWidget' => 'sidebar-right',
-                'beforeWidget' => '<div class="widget sidebar">',
-                'afterWidget' => '</div>',
-                'beforeTitle' => '<span class="title">',
-                'afterTitle' => '</span>'
-            ],
-            [
-                'id' => Template::WIDGETS_FOOTER
-            ]
-        ];
+        if (!count($activeWidgets)) {
+            return;
+        }
 
         foreach ($activeWidgets as $w) {
             add_action('widgets_init',
