@@ -9,8 +9,8 @@
  */
 namespace Knob\Widgets;
 
-use Knob\Libs\Template;
 use Knob\Libs\Utils;
+use Knob\Libs\MustacheRender;
 
 /**
  *
@@ -20,18 +20,35 @@ use Knob\Libs\Utils;
 abstract class WidgetBase extends \WP_Widget
 {
 
-    /*
-     * Some const.
+    /**
+     *
+     * @var string Title prefix from the Widget
      */
-    const PREFIX_TITLE = 'Knob ';
+    static $titlePrefix = 'Knob ';
 
-    const DIR_WIDGET_TEMPLATE = 'widget';
+    /**
+     *
+     * @var string base directory-name from the templates
+     */
+    static $widgetTemplateDir = 'widget';
 
-    const DIR_WIDGET_TEMPLATE_DEFAULT = 'default';
+    /**
+     *
+     * @var string directory-name from the default templates inside the base template directory
+     */
+    static $widgetTemplateDirDefault = 'default';
 
-    const DIR_BACK = 'back';
+    /**
+     *
+     * @var string Name file from the 'backend' template
+     */
+    static $backFileName = 'back';
 
-    const DIR_FRONT = 'front';
+    /**
+     *
+     * @var string Name file from the 'frontend' template
+     */
+    static $frontFileName = 'front';
 
     /*
      * Members.
@@ -49,9 +66,11 @@ abstract class WidgetBase extends \WP_Widget
      * @param array $widgetOps
      * @param array $controlOps
      *
-     * @see https://developer.wordpress.org/reference/classes/wp_widget/__construct/
+     * @see https://developer.wordpress.org/reference/classes/wp_widget/__staticruct/
      */
-    public function __construct($id = '', $title = '', array $widgetOps = [], array $controlOps = [])
+    public
+
+    function __construct($id = '', $title = '', array $widgetOps = [], array $controlOps = [])
     {
         $className = static::getId();
         $className = substr($className, strrpos($className, '\\') + 1);
@@ -59,16 +78,16 @@ abstract class WidgetBase extends \WP_Widget
         $this->classNameLower = strtolower($this->className);
 
         $id = ($id && strlen($id)) ? $id : $this->className . '_Widget';
-        $title = ($title && strlen($title)) ? $title : self::PREFIX_TITLE . $this->className;
+        $title = ($title && strlen($title)) ? $title : static::$titlePrefix . $this->className;
         $widgetOps = (count($widgetOps)) ? $widgetOps : [
             'classname' => strtolower($this->className) . '-widget',
             'description' => $this->className . ' widget'
         ];
         parent::__construct($id, $title, $widgetOps, $controlOps);
 
-        $this->template = Template::getInstance();
+        $this->mustacheRender = MustacheRender::getInstance();
 
-        $this->configParams = Utils::getMustacheParams();
+        $this->configParams = MustacheRender::getMustacheParams();
     }
 
     /**
@@ -161,10 +180,9 @@ abstract class WidgetBase extends \WP_Widget
          */
         $instance = array_merge($instance, $this->configParams);
 
-        return $this->template->getRenderEngine()->render($this->getTemplateName(self::DIR_BACK),
-            [
-                'instance' => $instance
-            ]);
+        return $this->mustacheRender->render($this->getTemplateName(static::$backFileName), [
+            'instance' => $instance
+        ]);
     }
 
     /**
@@ -185,7 +203,7 @@ abstract class WidgetBase extends \WP_Widget
          */
         $instance = array_merge($instance, $this->configParams);
 
-        return $this->template->getRenderEngine()->render($this->getTemplateName(self::DIR_FRONT),
+        return $this->mustacheRender->render($this->getTemplateName(static::$frontFileName),
             [
                 'args' => $args,
                 'instance' => $instance
@@ -202,7 +220,7 @@ abstract class WidgetBase extends \WP_Widget
     {
         $pathFn = function ($dir) use($fileName)
         {
-            return self::DIR_WIDGET_TEMPLATE . '/' . $dir . '/' . $fileName;
+            return static::$widgetTemplateDir . '/' . $dir . '/' . $fileName;
         };
 
         $pathToCheckFn = function ($path)
@@ -216,7 +234,7 @@ abstract class WidgetBase extends \WP_Widget
         // If doesn't exists just take it by default from current APP
         if (!file_exists($pathToCheck)) {
 
-            $path = $pathFn(self::DIR_WIDGET_TEMPLATE_DEFAULT);
+            $path = $pathFn(static::$widgetTemplateDirDefault);
             $pathToCheck = $pathToCheckFn($path);
 
             // If doesn't exists take it by default from Knob-base
