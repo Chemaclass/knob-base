@@ -18,8 +18,6 @@ use Knob\Models\User;
  */
 class Utils
 {
-    // Params to Mustache
-    const PARAMS_FILE = 'mustache_params';
 
     const CONFIG_FILE = 'config';
 
@@ -34,29 +32,7 @@ class Utils
 
     const TYPE_AUTHOR = 'author';
 
-    static $config;
-
-    static $mustacheParams;
-
-    /**
-     * Return all params
-     *
-     * @return array<string,object>
-     */
-    public static function getMustacheParams()
-    {
-        if (null == static::$mustacheParams) {
-
-            $baseParamsFile = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::PARAMS_FILE . '.php';
-            $appParamsFile = APP_DIR . '/config/' . self::PARAMS_FILE . '.php';
-
-            $baseParams = (file_exists($baseParamsFile)) ? require $baseParamsFile : [];
-            $appParams = (file_exists($appParamsFile)) ? require $appParamsFile : [];
-
-            static::$mustacheParams = array_merge($baseParams, $appParams);
-        }
-        return static::$mustacheParams;
-    }
+    static $config = null;
 
     /**
      * Return all global config values
