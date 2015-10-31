@@ -15,7 +15,9 @@
 ### Models to get all values from your DB
 
 * You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory).
-```php // vendor/chemaclass/knob-base/src/models/Post.php
+
+```php 
+// vendor/chemaclass/knob-base/src/models/Post.php
 namespace Knob\Models;
 
 class Post extends ModelBase
@@ -39,19 +41,48 @@ class Post extends ModelBase
 * You will be provided a ```Knob\Controllers\BaseController``` to extends your own controllers. 
 Then from your controller just need to do something like:
 
-
-```php // app/controllers/BaseController.php
+```php 
+// app/controllers/BaseController.php
 namespace Controllers;
 
 use Knob\Controllers\BaseController as KnobBaseController;
 
 class BaseController extends KnobBaseController
 {
+	
+	/**
+     * Print head + template + footer
+     *
+     * @param string $templateName Template name to print
+     * @param array $templateVars Parameters to template
+     */
+    public function renderPage($templateName, $templateVars = [])
+    {
+        // HEAD
+        ob_start();
+        wp_head();
+        $wpHead = ob_get_clean();
+
+        // FOOTER
+        ob_start();
+        wp_footer();
+        $wpFooter = ob_get_clean();
+
+        echo $this->render($templateName,
+            array_merge($templateVars, [
+                'wp_head' => $wpHead,
+                'wp_footer' => $wpFooter
+            ]));
+    }    
+    
 	// more sentences...
+    
 }
 ```
 
-```php // app/controllers/HomeController.php
+```php 
+// app/controllers/HomeController.php
+namespace Controllers;
 
 use Knob\Controllers\HomeControllerInterface;
 
