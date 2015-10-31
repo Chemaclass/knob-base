@@ -14,7 +14,7 @@
 
 ### Models to get all values from your DB
 
-* You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory).
+* You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory). For example Post:
 
 ```php 
 // vendor/chemaclass/knob-base/src/models/Post.php
@@ -24,12 +24,58 @@ class Post extends ModelBase
 {
     public static $table = "posts";
 
+    public function getSlug()
+    {
+        return $this->post_name;
+    }
+
+    public function getAuthor()
+    {
+        return User::find($this->post_author);
+    }
+
     // more sentences...
 }
 ```
 
-* You will be provided with libraries to prepare your Actions and Filters (from Wordpress) 
-* Also you will be able to get or create your own Widgets as new models. You have the basics in 'Knob\Widgets' (src/widgets/ directory)
+* You will be provided with libraries to prepare your Actions and Filters (from Wordpress). For example Actions:
+```php 
+// vendor/chemaclass/knob-base/src/libs/Actions.php
+namespace Knob\Libs;
+
+class Actions
+{
+    public static function setup()
+    {
+        static::adminPrintScripts();
+        static::adminPrintStyles();
+        static::loginView();
+        static::wpBeforeAdminBarRender();
+    }
+    
+    // more sentences...
+}
+```
+
+* Also you will be able to get or create your own Widgets as new models. You have the basics in 'Knob\Widgets' (src/widgets/ directory).
+For example PagesWidget:
+```php 
+// vendor/chemaclass/knob-base/src/widgets/PagesWidget.php
+namespace Knob\Widgets;
+
+use Knob\Models\Post;
+use Knob\Widgets\WidgetBase;
+
+class PagesWidget extends WidgetBase
+{
+    public function widget($args, $instance)
+    {
+        $instance['pages'] = Post::getPages();
+        parent::widget($args, $instance);
+    }
+}
+```
+
 * All of these on the best&easy way ever in 'Knob\libs' (src/libs/ directory)
 
 ### Views based on [Mustache](http://mustache.github.com/) templates
@@ -49,34 +95,6 @@ use Knob\Controllers\BaseController as KnobBaseController;
 
 class BaseController extends KnobBaseController
 {
-	
-	/**
-     * Print head + template + footer
-     *
-     * @param string $templateName Template name to print
-     * @param array $templateVars Parameters to template
-     */
-    public function renderPage($templateName, $templateVars = [])
-    {
-        // HEAD
-        ob_start();
-        wp_head();
-        $wpHead = ob_get_clean();
-
-        // FOOTER
-        ob_start();
-        wp_footer();
-        $wpFooter = ob_get_clean();
-
-        echo $this->render($templateName,
-            array_merge($templateVars, [
-                'wp_head' => $wpHead,
-                'wp_footer' => $wpFooter
-            ]));
-    }    
-    
-	// more sentences...
-    
 }
 ```
 
@@ -100,8 +118,7 @@ class HomeController extends BaseController implements HomeControllerInterface {
     }
 
 	// more sentences...
-}    
-
+}
 ```
 
 # Before the start... you'll need! #
