@@ -7,226 +7,44 @@
 * This is a PHP MVC Framework for creating Wordpress templates easier and with more fun than ever before.
 * Author: José María Valera Reales
 
-### Views based on Mustache templates
+## Knob-base is the kernel from [Knob-mvc](https://github.com/Chemaclass/knob-mvc/)
+* This is a Framework base on MVC pattern. 
+* Inspired by latest frameworks we have nowadays to web development like Symfony or Laravel.
 
-You create views using [Mustache](http://mustache.github.com/).
 
-Here is an example of a header template that displays the above data.
+### Models to get all values from your DB
+* You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory).
+* You will be provided with libraries to prepare your Actions and Filters (from Wordpress) 
+* Also you will be able to get or create your own Widgets as new models. You have the basics in 'Knob\Widgets' (src/widgets/ directory)
+* All of these on the best&easy way ever in 'Knob\libs' (src/libs/ directory)
 
-```html
-<!DOCTYPE html>
-  <html lang="{{currentLang}}">
-  <head>
-    <title>{{{blogTitle}}}</title>
-    <meta charset="{{charset}}">
-    <link rel="icon" type="image/x-icon" href="{{publicDir}}/img/favicon.ico">    
-    <link media="all" rel="stylesheet" href="{{publicDir}}/css/main.css">
-    <script src="{{publicDir}}/js/main.js"></script>
-```
+### Views based on [Mustache](http://mustache.github.com/) templates
+* All you have to care basically are your templates. Thats why we choose Mustache. Is simple, flexible and funny.
+* This will be your main part; that's becuase your "Wordpress Template", dont forget it ;-)
 
 ### Controllers to pull everything together
+* From 'Knob\Controllers' (src/controllers/ directory) 
+* You will be provided a ´´´Knob\Controllers\BaseController´´´ to extends your own controllers. 
+Then from your controller just need to do something like:
+´´´php
 
-A controller talks to the data helpers, loads the mustache template and can then be called from your WordPress template files.
+use Knob\Controllers\BaseController as KnobBaseController;
+use Knob\Controllers\HomeControllerInterface;
 
-Here's a sample function from a controller that loads all posts, limited by 'posts per page', into the home template.
-
-```php
-/**
- * home.php
- */
-public function getHome() {
-	$args = [
-		'posts' => Post::getAll(get_option('posts_per_page'))
-	];
-	return $this->renderPage('home', $args);
-}
-```
-
-## Creating basic controllers and views
-
-All controllers are inside app/controllers.
-
-* AjaxController
-* BaseController
-* BackendController
-* HomeController
-
-### Calling a controller from a WordPress template page
-
-[Create a template for WordPress](http://codex.wordpress.org/Template_Hierarchy), for example single.php which is used when a Post is loaded.
-
-```php
-use Controllers\HomeController;
-
-$controller = new HomeController();
-$controller->getSingle('post');
-```    
-
-### Creating a controller
-
-Controllers should extend BaseController. This then provides access to the templating functions.
-
-```php
-namespace Controllers;
-
-use Knob\Models\Post;
-
-class HomeController extends BaseController {
-
-	/**
-	 * single.php
-	 */
-	public function getSingle($type = 'post') {
-		if (have_posts()) {
-			the_post();
-			$post = Post::find(get_the_ID());
-		}
-		if (!isset($post)) {
-			return $this->get404();
-		}
-		return $this->renderPage($type, [ 
-			$type => $post 
-		]);
-	}
-}
-```
-
-### renderPage function
-
-We'll use this function for to render our Mustache templates:
-
-```php
-BaseController->renderPage(templateName, varsToTemplate)
-```
-
-Implementation:
-
-```php
-class BaseController {
-	// ...
-
-	/**
-	 * Print head + template + footer
-	 */
-	public function renderPage($templateName, $templateVars = []) {
-
-		// Add the global variables for all templates.	
-		$this->addGlobalVariables($templateVars);
-
-		echo $this->render('head', $templateVars);
-		wp_head();
-		echo '</head>';
-		echo $this->render($templateName, $templateVars);
-		wp_footer();
-		echo $this->render('footer', $templateVars);
-	}
-}
-```
-
-### Creating mustache templates
-
-Create your mustache template within mvc/templates.
-
-[The Mustache manual](http://mustache.github.com/mustache.5.html) will be your guide.
-
-Here is an example template showing a post:
-
-```html
-{{< base }}
-
-	{{$ content }}	
-
-		<div id="post" class="col-xs-12">
-			
-			<h1 class="title">{{ post.getTitle }}</h1>
-			
-			{{{ post.getContent }}}
-			
-		</div>
-
-	{{/ content }}
-
-{{/ base }}
-```
-
-### Loading templates with automatically included Header and footer feature
-
-The 3 first most important templates are:
-
-* head.mustache
-* base.mustache
-* footer.mustache 
-
-`head` should include `<!DOCTYPE html>` until the first `<body class="...">` tag.
-
-`footer` should include just the footer content and `</body></html>`
-
-* We use the `base.mustache` as Decorator pattern:
-
-```html
-<header id="top" class="container">	
-
-	<div id="blog-title" class="row">
-		<a class="col-xs-12" href="{{homeUrl}}">{{blogTitle}}</a>
-		<span class="col-xs-12">{{blogDescription}}</span>
-	</div>
+class HomeController extends KnobBaseController implements HomeControllerInterface
 	
-</header>
-
-<section id="page" class="container">	
-
-    <article id="content" class="row">
-    	{{$ content }} 
-    		You don't have to see this text, cause you can override this 
-    		tag's "content" in your child template.
-    	{{/content }}
-	</article>
-	
-</section>
-
-{{$ js }} {{/ js }}
-```
-And then we have `home.mustache`:
-
-```html
-{{< base }}	
-
-	{{$ content }}
-
-		<div id="home" class="col-xs-12">
-
-			<section class="all-posts">
-				{{# posts }}
-					{{> home/_post}}
-				{{/ posts }}		
-			</section>
-
-		</div>
-
-	{{/ content }}
-
-{{/ base }}
-```
-
-And we have the partial `home/_post.mustache`:
-
-```html
-<article class="col-xs-12 post">
-
-	<span class="col-xs-12">
-		<span class="post-time">{{getDate | date.string}}</span>
-	</span>
-
-	<span class="col-xs-12">
-		<a href="{{getPermalink}}">{{getTitle}}</a>
-	</span>
-
-	<span class="col-xs-12">
-		{{{ getExcerpt }}}
-	</span>
-
-</article>
-```
+	/**
+     * home.php
+     */
+    public function getHome()
+    {
+        $args = [
+            'posts' => Post::getAll(get_option('posts_per_page'))
+        ];
+        return $this->renderPage('base/home', $args);
+    }
+    
+´´´
 
 # Before the start... you'll need! #
 
