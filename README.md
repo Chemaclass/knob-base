@@ -95,6 +95,7 @@ use Knob\Controllers\BaseController as KnobBaseController;
 
 class BaseController extends KnobBaseController
 {
+	// more sentences...
 }
 ```
 

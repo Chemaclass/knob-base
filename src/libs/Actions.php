@@ -27,7 +27,6 @@ class Actions
         static::adminPrintScripts();
         static::adminPrintStyles();
         static::loginView();
-        static::registerNavMenus();
         static::wpBeforeAdminBarRender();
     }
 
