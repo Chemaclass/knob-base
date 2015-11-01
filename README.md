@@ -79,7 +79,7 @@ class PagesWidget extends WidgetBase
 
 ### Views based on [Mustache](http://mustache.github.com/) templates
 * All you have to care basically are your templates. Thats why we choose Mustache. Is simple, flexible and funny.
-* This will be your main part; that's becuase your "Wordpress Template", dont forget it ;-)
+* This will be your main part; that's because your "Wordpress Template", dont forget it ;-)
 
 ### Controllers to pull everything together
 * From 'Knob\Controllers' (src/controllers/ directory) 
