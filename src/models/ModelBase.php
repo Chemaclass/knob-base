@@ -53,7 +53,7 @@ abstract class ModelBase
         global $wpdb;
         // Son class
         $model = get_called_class();
-        $whatryResults = $wpdb->get_results('SELECT * FROM wp_' . $model::$table);
+        $whatryResults = $wpdb->get_results('SELECT * FROM ' . $wpdb->prefix . $model::$table);
         $result = [];
         foreach ($whatryResults as $qr) {
             $a = new $model();
@@ -79,19 +79,19 @@ abstract class ModelBase
         global $wpdb;
         $model = get_called_class();
         $whatry = 'SELECT *
-				FROM wp_' . static::$table . '
+				FROM ' . $wpdb->prefix . static::$table . '
 				WHERE ' . static::$PK . '= %d';
-        $object = $wpdb->get_row($wpdb->prepare($whatry, $ID));
-        if (!$object) {
+        $row = $wpdb->get_row($wpdb->prepare($whatry, $ID));
+        if (!$row) {
             return null;
         }
-        $a = new $model();
-        if ($object) {
-            foreach ($object as $c => $val) {
-                $a->$c = $val;
-            }
+
+        $new = new $model();
+        foreach ($row as $column => $val) {
+            $new->$column = $val;
         }
-        return $a;
+
+        return $new;
     }
 
     /**
@@ -107,7 +107,7 @@ abstract class ModelBase
         global $wpdb;
         $objects = [];
         $model = get_called_class();
-        $query = 'SELECT * FROM wp_' . static::$table . ' WHERE ' . $column . '= %s';
+        $query = 'SELECT * FROM ' . $wpdb->prefix . static::$table . ' WHERE ' . $column . '= %s';
         $resultsQuery = $wpdb->get_results($wpdb->prepare($query, $value));
 
         /*
@@ -146,7 +146,7 @@ abstract class ModelBase
             global $wpdb;
             try {
                 return $wpdb->query($wpdb->prepare('
-						DELETE FROM wp_' . static::$table . ' WHERE ID = %d', $this->ID));
+						DELETE FROM ' . $wpdb->prefix . static::$table . ' WHERE ID = %d', $this->ID));
             } catch (Exception $e) {
                 return $e;
             }
