@@ -10,7 +10,6 @@
 namespace Knob\Widgets;
 
 use Knob\Models\Archive;
-use Knob\Widgets\WidgetBase;
 
 /**
  *

@@ -9,8 +9,6 @@
  */
 namespace Knob\Widgets;
 
-use Knob\Widgets\WidgetBase;
-
 /**
  *
  * @author José María Valera Reales

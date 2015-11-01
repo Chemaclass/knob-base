@@ -10,7 +10,6 @@
 namespace Knob\Widgets;
 
 use Knob\Models\Term;
-use Knob\Widgets\WidgetBase;
 
 /**
  *

@@ -10,7 +10,6 @@
 namespace Knob\Widgets;
 
 use Knob\I18n\I18n;
-use Knob\Widgets\WidgetBase;
 
 /**
  *
