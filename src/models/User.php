@@ -655,7 +655,7 @@ class User extends Image
      */
     public function getRoles()
     {
-        $qRolesArr = get_user_meta($this->ID, 'wp_capabilities', true);
+        $qRolesArr = get_user_meta($this->ID, $wpdb->prefix . 'capabilities', true);
         return is_array($qRolesArr) ? array_keys($qRolesArr) : array(
             'non-user'
         );
@@ -757,7 +757,7 @@ class User extends Image
         global $wpdb;
         return $wpdb->get_var(
             $wpdb->prepare('SELECT COUNT(*)
-				FROM wp_posts
+				FROM ' . $wpdb->prefix . 'posts
 				WHERE post_author = %d
 				AND post_type = %s
 				AND post_status = %s', $this->ID, Post::TYPE_POST, Post::STATUS_PUBLISH));

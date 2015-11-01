@@ -120,9 +120,9 @@ class Term extends ModelBase
             $results = $wpdb->get_results(
                 '
 				SELECT ta.term_taxonomy_id as taxonomy_id, name, slug, count(*) total
-				FROM wp_term_taxonomy ta
-				JOIN wp_terms te ON (te.term_id = ta.term_id)
-				JOIN wp_term_relationships re ON (re.term_taxonomy_id = ta.term_taxonomy_id)
+				FROM ' . $wpdb->prefix . 'term_taxonomy ta
+				JOIN ' . $wpdb->prefix . 'terms te ON (te.term_id = ta.term_id)
+				JOIN ' . $wpdb->prefix . 'term_relationships re ON (re.term_taxonomy_id = ta.term_taxonomy_id)
 				WHERE taxonomy = "post_tag"
 				GROUP BY name, slug, taxonomy_id
 				ORDER BY total DESC, name, slug');

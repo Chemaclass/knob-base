@@ -181,7 +181,7 @@ class Post extends Image
     public function getDate()
     {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare('SELECT post_date FROM wp_posts WHERE ID = %d', $this->ID));
+        return $wpdb->get_var($wpdb->prepare('SELECT post_date FROM ' . $wpdb->prefix . 'posts WHERE ID = %d', $this->ID));
     }
 
     /**
@@ -228,7 +228,7 @@ class Post extends Image
     public function getDateModified()
     {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare('SELECT post_modified FROM wp_posts WHERE ID = %d', $this->ID));
+        return $wpdb->get_var($wpdb->prepare('SELECT post_modified FROM ' . $wpdb->prefix . 'posts WHERE ID = %d', $this->ID));
     }
 
     /**

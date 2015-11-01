@@ -118,13 +118,13 @@ class Comment extends ModelBase
     {
         global $wpdb;
         $isExists = $wpdb->get_var($wpdb->prepare('SELECT COUNT(*)
-				FROM wp_comments
+				FROM ' . $wpdb->prefix . 'comments
 				WHERE comment_ID = %d', $this->comment_ID));
         $c = 'comment_';
         if ($isExists) { // update
             return $wpdb->query(
                 $wpdb->prepare(
-                    "UPDATE wp_comments
+                    "UPDATE ' . $wpdb->prefix . 'comments
 					SET {$c}post_ID = %d, {$c}author = %s,
 						{$c}author_email = %s, {$c}author_url = %s,
 						{$c}author_IP = %s, {$c}date = %s,
