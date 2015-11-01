@@ -53,7 +53,7 @@ class Actions
         static::wpBeforeAdminBarRender();
     }
     
-    // more sentences...
+    // rest of the implementation...
 }
 ```
 
@@ -64,7 +64,6 @@ For example PagesWidget:
 namespace Knob\Widgets;
 
 use Knob\Models\Post;
-use Knob\Widgets\WidgetBase;
 
 class PagesWidget extends WidgetBase
 {
@@ -99,6 +98,8 @@ class BaseController extends KnobBaseController
 }
 ```
 
+* How should looks your HomeController?
+
 ```php 
 // app/controllers/HomeController.php
 namespace Controllers;
@@ -118,7 +119,7 @@ class HomeController extends BaseController implements HomeControllerInterface {
         return $this->renderPage('base/home', $args);
     }
 
-	// more sentences...
+	// rest of the implementation...
 }
 ```
 
