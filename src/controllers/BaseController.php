@@ -25,8 +25,6 @@ use Knob\Libs\MustacheRender;
 abstract class BaseController
 {
 
-    protected $mustacheParams = [];
-
     protected $mustacheRender = null;
 
     protected $currentUser = null;
@@ -37,7 +35,6 @@ abstract class BaseController
     public function __construct()
     {
         $this->mustacheRender = MustacheRender::getInstance();
-        $this->mustacheParams = MustacheRender::getMustacheParams();
         $this->currentUser = User::getCurrent();
     }
 
@@ -48,8 +45,7 @@ abstract class BaseController
      */
     public function getGlobalVariables()
     {
-        $globalVars = [];
-        return array_merge($this->mustacheParams, $globalVars);
+        return [];
     }
 
     /**

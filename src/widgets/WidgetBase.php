@@ -50,14 +50,17 @@ abstract class WidgetBase extends \WP_Widget
      */
     static $frontFileName = 'front';
 
-    /*
-     * Members.
+    /**
+     *
+     * @var string
      */
     protected $className, $classNameLower;
 
-    protected $configParams;
-
-    protected $template;
+    /**
+     *
+     * @var MustacheRender
+     */
+    protected $mustacheRender;
 
     /**
      *
@@ -87,7 +90,7 @@ abstract class WidgetBase extends \WP_Widget
 
         $this->mustacheRender = MustacheRender::getInstance();
 
-        $this->configParams = MustacheRender::getMustacheParams();
+        // $this->configParams = MustacheRender::getMustacheParams();
     }
 
     /**
@@ -175,11 +178,6 @@ abstract class WidgetBase extends \WP_Widget
             'fieldName' => $fieldNames
         ]);
 
-        /*
-         * Merge with glovalVars
-         */
-        $instance = array_merge($instance, $this->configParams);
-
         return $this->mustacheRender->render($this->getTemplateName(static::$backFileName), [
             'instance' => $instance
         ]);
@@ -197,11 +195,6 @@ abstract class WidgetBase extends \WP_Widget
          * Add the widget name.
          */
         $instance['widgetName'] = $this->className;
-
-        /*
-         * Merge with glovalVars.
-         */
-        $instance = array_merge($instance, $this->configParams);
 
         return $this->mustacheRender->render($this->getTemplateName(static::$frontFileName),
             [
