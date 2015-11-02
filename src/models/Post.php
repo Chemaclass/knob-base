@@ -414,7 +414,7 @@ class Post extends Image
         $isCat = isset($moreQuerySettings['cat']);
         $postsStickyIds = [];
         // Check all fixed posts with the category we're searching.
-        foreach (get_option('sticky_posts') as $postId) {
+        foreach (Option::get('sticky_posts') as $postId) {
             if ($isCat && ($post = Post::find($postId)) && $post->getCategory()->term_id == $moreQuerySettings['cat']) {
                 $postsStickyIds[] = $postId;
             }
@@ -454,7 +454,7 @@ class Post extends Image
      */
     private static function getStickyPosts($limit = -1, $offset = false, $moreQuerySettings = [])
     {
-        $sticky_posts = get_option('sticky_posts');
+        $sticky_posts = Option::get('sticky_posts');
         if (!$sticky_posts) {
             return [];
         }
@@ -569,7 +569,7 @@ class Post extends Image
     private static function getBy($type, $by, $limit = false, $offset = false, $moreQuerySettings = [])
     {
         if (!$limit) {
-            $limit = get_option('posts_per_page');
+            $limit = Option::get('posts_per_page');
         }
         if ($type == Ajax::TAG) {
             $tagId = is_numeric($by) ? $by : get_term_by('name', $by, 'post_tag')->term_id;

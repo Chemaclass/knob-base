@@ -416,7 +416,7 @@ class User extends Image
     public function getPosts($limit = false, $offset = false)
     {
         if (!$limit) {
-            $limit = get_option('posts_per_page');
+            $limit = Option::get('posts_per_page');
         }
         return Post::getByAuthor($this->ID, $limit, $offset);
     }

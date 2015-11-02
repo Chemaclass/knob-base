@@ -10,6 +10,7 @@
 namespace Knob\Libs;
 
 use Knob\I18n\I18n;
+use Knob\Models\Option;
 use Mustache_Engine;
 use Mustache_Loader_FilesystemLoader;
 use Mustache_Logger_StreamLogger;
@@ -208,7 +209,7 @@ class MustacheRender
                     },
                     'format' => function ($value)
                     {
-                        return date(get_option('date_format'), strtotime($value));
+                        return date(Option::get('date_format'), strtotime($value));
                     }
                 ],
                 'toArray' => function ($value)

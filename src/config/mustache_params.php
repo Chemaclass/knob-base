@@ -1,21 +1,21 @@
 <?php
 /*
-* This file is part of the Knob-base package.
-*
-* (c) José María Valera Reales <chemaclass@outlook.es>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
-
+ * This file is part of the Knob-base package.
+ *
+ * (c) José María Valera Reales <chemaclass@outlook.es>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 use Knob\I18n\I18n;
 use Knob\Models\Post;
 use Knob\Libs\Env;
 use Knob\Models\User;
+use Knob\Models\Option;
 
 /**
-* Params to Mustache templates.
-*/
+ * Params to Mustache templates.
+ */
 return [
 
     'adminEmail' => ADMIN_EMAIL,
@@ -56,9 +56,9 @@ return [
     'isEnvLoc' => Env::isLoc(),
     'isUserLoggedIn' => is_user_logged_in(),
 
-    'optionPostsPerPage' => get_option('posts_per_page'),
-    'optionCategoryBase' => ($c = get_option('category_base')) ? $c : Post::CATEGORY_BASE_DEFAULT,
-    'optionTagBase' => ($t = get_option('tag_base')) ? $t : Post::TAG_BASE_DEFAULT,
+    'optionPostsPerPage' => Option::get('posts_per_page'),
+    'optionCategoryBase' => ($c = Option::get('category_base')) ? $c : Post::CATEGORY_BASE_DEFAULT,
+    'optionTagBase' => ($t = Option::get('tag_base')) ? $t : Post::TAG_BASE_DEFAULT,
 
     'publicDir' => PUBLIC_DIR
 ];
