@@ -41,12 +41,9 @@ abstract class BaseController
     /**
      * Add the global variables for all controllers
      *
-     * @return array $templateVars
+     * @return array
      */
-    public function getGlobalVariables()
-    {
-        return [];
-    }
+    public abstract function getGlobalVariables();
 
     /**
      * Render a partial
