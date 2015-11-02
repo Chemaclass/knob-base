@@ -105,6 +105,7 @@ class BaseController extends KnobBaseController
 namespace Controllers;
 
 use Knob\Controllers\HomeControllerInterface;
+use Models\Option;
 
 class HomeController extends BaseController implements HomeControllerInterface {
 	
@@ -114,7 +115,7 @@ class HomeController extends BaseController implements HomeControllerInterface {
     public function getHome()
     {
         $args = [
-            'posts' => Post::getAll(get_option('posts_per_page'))
+            'posts' => Post::getAll(Option::get('posts_per_page'))
         ];
         return $this->renderPage('base/home', $args);
     }
