@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Knob\Libs;
+namespace Knob\Models;
 
 /**
  * Options from Wordpress
@@ -16,12 +16,6 @@ namespace Knob\Libs;
  */
 class Option
 {
-
-    /**
-     *
-     * @var array<string,string> All options <name,value> from the DB
-     */
-    private static $allOptions;
 
     /**
      * Protected constructor to prevent creating a new instance of the
@@ -36,17 +30,14 @@ class Option
      *
      * @param string option name to search
      *
-     * @see https://codex.wordpress.org/Function_Reference/wp_load_alloptions
+     * @see https://codex.wordpress.org/Function_Reference/get_option
+     * @see https://core.trac.wordpress.org/browser/tags/4.3.1/src/wp-includes/option.php#L27
      *
      * @return string Option value
      */
-    public static function get($optionName)
+    public static function get($optionName, $defaultValue = false)
     {
-        if (null === static::$allOptions) {
-            static::$allOptions = wp_load_alloptions();
-        }
-
-        return isset(static::$allOptions[$optionName]) ? static::$allOptions[$optionName] : null;
+        return get_option($optionName, $defaultValue);
     }
 
     /**
@@ -70,7 +61,6 @@ class Option
         } else {
             $return = add_option($name, $value, $deprecated, $autoload);
         }
-        static::$allOptions[$name] = $value;
 
         return $return;
     }
@@ -87,10 +77,6 @@ class Option
      */
     public static function delete($name)
     {
-        if ($return = delete_option($option)) {
-            unset(static::$allOptions[$name]);
-        }
-
-        return $return;
+        return delete_option($option);
     }
 }
