@@ -9,12 +9,7 @@
  */
 namespace Knob\Controllers;
 
-use Knob\Models\Archive;
-use Knob\Models\Post;
-use Knob\Models\Term;
 use Knob\Models\User;
-use Knob\Libs\Template;
-use Knob\Libs\Utils;
 use Knob\Libs\MustacheRender;
 
 /**

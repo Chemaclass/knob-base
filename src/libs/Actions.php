@@ -9,8 +9,6 @@
  */
 namespace Knob\Libs;
 
-use Knob\I18n\I18n;
-
 /**
  * Actions for Wordpress
  *
