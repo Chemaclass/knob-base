@@ -295,6 +295,16 @@ class User extends Image
     }
 
     /**
+     *
+     * @param integer $size
+     * @return string URL with the img by default for users
+     */
+    public static function getUrlAvatarDefault($size = User::AVATAR_SIZE_DEFAULT)
+    {
+        return PUBLIC_DIR . '/img/avatar/avatar_' . $size . '.png';
+    }
+
+    /**
      * Return the URL with the avatar from the User
      *
      * @param integer $size
@@ -304,7 +314,7 @@ class User extends Image
     {
         $avatar = $this->getImage(self::KEY_AVATAR, $size, $size);
         if (empty($avatar)) {
-            return Utils::getUrlAvatarDefault($size);
+            return static::getUrlAvatarDefault($size);
         }
         return $avatar;
     }
