@@ -72,7 +72,7 @@ abstract class BaseController
         wp_footer();
         $wpFooter = ob_get_clean();
 
-        echo $this->render($templateName,
+        return $this->render($templateName,
             array_merge($templateVars, [
                 'wp_head' => $wpHead,
                 'wp_footer' => $wpFooter

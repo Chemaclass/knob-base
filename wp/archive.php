@@ -16,4 +16,4 @@ use Controllers\HomeController;
  * @link https://codex.wordpress.org/Theme_Development
  */
 $controller = new HomeController();
-$controller->getArchive();
+echo $controller->getArchive();

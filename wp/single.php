@@ -15,4 +15,4 @@ use Controllers\HomeController;
  * @link https://codex.wordpress.org/Theme_Development
  */
 $controller = new HomeController();
-$controller->getSingle('post');
+echo $controller->getSingle('post');

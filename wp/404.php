@@ -16,4 +16,4 @@ use Controllers\HomeController;
  * @link https://codex.wordpress.org/Theme_Development
  */
 $controller = new HomeController();
-$controller->get404();
+echo $controller->get404();
