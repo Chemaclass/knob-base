@@ -240,8 +240,9 @@ class User extends Image
      */
     public function getFirstRol()
     {
-        $Roles = self::getRoles();
-        return $Roles[0];
+        $roles = $this->getRoles();
+
+        return $roles[0];
     }
 
     /**
@@ -251,7 +252,7 @@ class User extends Image
      */
     public function isAdmin()
     {
-        return in_array(self::ROL_ADMIN, self::getRoles());
+        return in_array(self::ROL_ADMIN, $this->getRoles());
     }
 
     /**
@@ -261,7 +262,7 @@ class User extends Image
      */
     public function isEditor()
     {
-        return in_array(self::ROL_EDITOR, self::getRoles());
+        return in_array(self::ROL_EDITOR, $this->getRoles());
     }
 
     /**
@@ -271,7 +272,7 @@ class User extends Image
      */
     public function isAutor()
     {
-        return in_array(self::ROL_AUTHOR, self::getRoles());
+        return in_array(self::ROL_AUTHOR, $this->getRoles());
     }
 
     /**
@@ -281,7 +282,7 @@ class User extends Image
      */
     public function isColaborador()
     {
-        return in_array(self::ROL_CONTRIBUTOR, self::getRoles());
+        return in_array(self::ROL_CONTRIBUTOR, $this->getRoles());
     }
 
     /**
@@ -291,7 +292,7 @@ class User extends Image
      */
     public function isSuscriptor()
     {
-        return in_array(self::ROL_SUBSCRIBER, self::getRoles());
+        return in_array(self::ROL_SUBSCRIBER, $this->getRoles());
     }
 
     /**
@@ -665,8 +666,10 @@ class User extends Image
      */
     public function getRoles()
     {
-        $qRolesArr = get_user_meta($this->ID, $wpdb->prefix . 'capabilities', true);
-        return is_array($qRolesArr) ? array_keys($qRolesArr) : array(
+        global $wpdb;
+        $capabilities = get_user_meta($this->ID, $wpdb->prefix . 'capabilities', true);
+
+        return is_array($capabilities) ? array_keys($capabilities) : array(
             'non-user'
         );
     }
