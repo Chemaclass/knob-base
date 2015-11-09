@@ -10,7 +10,7 @@
 ## Knob-base is the kernel from [Knob-mvc](https://github.com/Chemaclass/knob-mvc/)
 * This is a Framework based on MVC pattern. 
 * Inspired by latest frameworks we have nowadays to web development like Symfony or Laravel.
-
+* Use the [WP kernel](https://codex.wordpress.org/). So don't forget you allways have the [reference](https://developer.wordpress.org/reference/).
 
 ### Models to get all values from your DB
 
@@ -139,4 +139,5 @@ class HomeController extends BaseController implements HomeControllerInterface {
 ### You'll need a PHP graphics library to be able to use the image editor: ###
 * apt-get install php5-imagick php5-gd
 * service apache2 reload 
+
 
