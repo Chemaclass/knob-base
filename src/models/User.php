@@ -94,6 +94,30 @@ class User extends Image
     const WITH_SIDEBAR_DEFAULT = true;
 
     /**
+     *
+     * @var \WP_User
+     *
+     * @see https://codex.wordpress.org/Class_Reference/WP_User
+     */
+    protected $wpUser = null;
+
+    /**
+     * Constructor
+     *
+     * @param integer $ID
+     * @param bool $withWPUser load into the User object all members from \WP_User
+     *
+     * @see https://developer.wordpress.org/reference/classes/wp_user/
+     */
+    public function __construct($ID = 0, $withWPUser = true)
+    {
+        parent::__construct($ID);
+        if ($withWPUser) {
+            $this->wpUser = new \WP_User($this->ID);
+        }
+    }
+
+    /**
      * Return all valid user types
      *
      * @return arraz<string>
@@ -104,6 +128,19 @@ class User extends Image
             self::TYPE_AUTHOR,
             self::TYPE_USER
         ];
+    }
+
+    /**
+     * Return the WP_User.
+     * Object from WP.
+     *
+     * @see https://developer.wordpress.org/reference/classes/wp_user/
+     *
+     * @return \WP_User
+     */
+    public function getWPUser()
+    {
+        return $this->wpUser;
     }
 
     /**
