@@ -64,6 +64,39 @@ class Post extends Image
     const TYPE_POST = 'post';
 
     /**
+     *
+     * @var \WP_Post
+     *
+     * @see https://codex.wordpress.org/Class_Reference/WP_Post
+     */
+    protected $wpPost = null;
+
+    /**
+     * Constructor
+     *
+     * @param integer $ID
+     * @param bool $withWPUser load into the User object all members from \WP_Post
+     *
+     * @see https://developer.wordpress.org/reference/classes/wp_post/
+     */
+    public function __construct($ID = 0, $withWPPost = true)
+    {
+        parent::__construct($ID);
+        if ($withWPPost) {
+            $this->wpPost = new \WP_Post($this->ID);
+        }
+    }
+
+    /**
+     *
+     * @return WP_Post
+     */
+    public function getWPPost()
+    {
+        return $this->wpPost;
+    }
+
+    /**
      * Return all pages.
      * (Post type page)
      *
