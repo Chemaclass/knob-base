@@ -75,7 +75,7 @@ class Post extends Image
      * Constructor
      *
      * @param integer $ID
-     * @param bool $withWPUser load into the User object all members from \WP_Post
+     * @param bool $withWPPost load into the Post object all members from \WP_Post
      *
      * @see https://developer.wordpress.org/reference/classes/wp_post/
      */
@@ -83,7 +83,7 @@ class Post extends Image
     {
         parent::__construct($ID);
         if ($withWPPost) {
-            $this->wpPost = new \WP_Post($this->ID);
+            $this->wpPost = \WP_Post::get_instance($this->ID);
         }
     }
 
