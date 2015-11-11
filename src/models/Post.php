@@ -89,7 +89,7 @@ class Post extends Image
 
     /**
      *
-     * @return WP_Post
+     * @return \WP_Post
      */
     public function getWPPost()
     {
