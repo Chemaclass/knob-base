@@ -118,19 +118,6 @@ class User extends Image
     }
 
     /**
-     * Return all valid user types
-     *
-     * @return arraz<string>
-     */
-    public static function getValidTypes()
-    {
-        return [
-            self::TYPE_AUTHOR,
-            self::TYPE_USER
-        ];
-    }
-
-    /**
      * Return the WP_User.
      * Object from WP.
      *
@@ -141,6 +128,19 @@ class User extends Image
     public function getWPUser()
     {
         return $this->wpUser;
+    }
+
+    /**
+     * Return all valid user types
+     *
+     * @return arraz<string>
+     */
+    public static function getValidTypes()
+    {
+        return [
+            self::TYPE_AUTHOR,
+            self::TYPE_USER
+        ];
     }
 
     /**
@@ -337,7 +337,7 @@ class User extends Image
      * @param integer $size
      * @return string URL with the img by default for users
      */
-    public static function getUrlAvatarDefault($size = User::AVATAR_SIZE_DEFAULT)
+    public static function getUrlAvatar($size = User::AVATAR_SIZE_DEFAULT)
     {
         return PUBLIC_DIR . '/img/avatar/avatar_' . $size . '.png';
     }
@@ -352,7 +352,7 @@ class User extends Image
     {
         $avatar = $this->getImage(self::KEY_AVATAR, $size, $size);
         if (empty($avatar)) {
-            return static::getUrlAvatarDefault($size);
+            return static::getUrlAvatar($size);
         }
         return $avatar;
     }
