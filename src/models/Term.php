@@ -38,7 +38,9 @@ class Term extends ModelBase
      * Return all categories
      *
      * @param array $args
+     *
      * @return array<Term>
+     *
      * @link https://codex.wordpress.org/Function_Reference/get_terms
      */
     public static function getCategories($args = [])
@@ -61,7 +63,9 @@ class Term extends ModelBase
      * Return all tags
      *
      * @param array $args
+     *
      * @return array<Term>
+     *
      * @link https://codex.wordpress.org/Function_Reference/get_terms
      */
     public static function getTags($args = [])
@@ -78,6 +82,20 @@ class Term extends ModelBase
             $tags[] = $tag;
         }
         return $tags;
+    }
+
+    /**
+     * Return the ID from the tag name
+     *
+     * @param string $name Term name
+     * @param string $type Term type
+     *
+     * @return int ID from the term name
+     */
+    public static function getTermIdbyName($name, $type = 'post_tag')
+    {
+        $tag = get_term_by('name', $name, $type);
+        return ($tag) ? $tag->term_id : 0;
     }
 
     /**
