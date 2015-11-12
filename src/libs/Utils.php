@@ -112,18 +112,6 @@ class Utils
     }
 
     /**
-     * Return the ID from the tag name
-     *
-     * @param string $tagName Tag name
-     * @return number ID from the tag name
-     */
-    public static function getTagIdbyName($tagName)
-    {
-        $tag = get_term_by('name', $tagName, 'post_tag');
-        return ($tag) ? $tag->term_id : 0;
-    }
-
-    /**
      *
      * @param unknown $str
      * @param number $cant
