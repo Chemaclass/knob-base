@@ -147,52 +147,60 @@ abstract class ModelBase
     }
 
     /**
+     * Get all elements from DB who's contain the same criteria.
      *
      * @param array $criteria
      * @param string $single
      *
      * @return unknown|multitype:NULL
      */
-    public static function findBy($criteria, $single = false)
+    public static function findBy($criteria = [], $single = false)
     {
+        if (!count($criteria)) {
+            return null;
+        }
         global $wpdb;
         $objects = [];
-        $model = get_called_class();
         $query = 'SELECT * FROM ' . $wpdb->prefix . static::$table;
 
         reset($criteria);
         $firstKey = key($criteria);
-
+        // Add the first key to sql sentence
         $query .= ' WHERE ' . $firstKey . ' = "' . $criteria[$firstKey] . '"';
         unset($criteria[$firstKey]);
-
+        // Add the rest of the criteria
         foreach ($criteria as $column => $value) {
             $query .= ' AND ' . $column . ' = "' . $value . '"';
         }
 
         $resultsQuery = $wpdb->get_results($query);
 
-        /*
-         * Mount the object
-         */
-        $mountTheObject = function ($_object) use($model)
-        {
-            $object = new $model();
-            foreach ($_object as $column => $val) {
-                $object->$column = $val;
-            }
-            return $object;
-        };
-
         if ($single && isset($resultsQuery[0])) {
-            return $mountTheObject($resultsQuery[0]);
+            return $this->mountModelFromDBObject($resultsQuery[0]);
         }
 
-        foreach ($resultsQuery as $_object) {
-            $objects[] = $mountTheObject($_object);
+        foreach ($resultsQuery as $object) {
+            $objects[] = $this->mountModelFromDBObject($object);
         }
 
         return $objects;
+    }
+
+    /**
+     * Mount the ModelBase using the data from the DB.
+     *
+     * @param object $dbObject
+     *
+     * @return ModelBase
+     */
+    private function mountModelFromDBObject($dbObject)
+    {
+        $modelName = get_called_class();
+        $object = new $modelName();
+        foreach ($dbObject as $column => $val) {
+            $object->$column = $val;
+        }
+        return $object;
     }
 
     /**
