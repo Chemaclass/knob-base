@@ -17,9 +17,16 @@ namespace Knob\Models;
 abstract class ModelBase
 {
 
-    // columns from the table of our Model
+    /**
+     *
+     * @var array Columns from the table of our Model
+     */
     protected static $columns = array();
-    // Primary Key
+
+    /**
+     *
+     * @var string Primary Key
+     */
     protected static $PK = 'ID';
 
     /*
@@ -62,6 +69,7 @@ abstract class ModelBase
             }
             $result[] = $a;
         }
+
         return $result;
     }
 
@@ -100,9 +108,12 @@ abstract class ModelBase
      * @param string $column
      * @param string $value
      * @param boolean $single Por defecto false. True si es sólo 1.
+     *
+     * @deprecated see: ModelBase::findBy(criteria)
+     *
      * @return array<object>
      */
-    public static function findAllBy($column, $value, $single = false)
+    public static function findByColumn($column, $value, $single = false)
     {
         global $wpdb;
         $objects = [];
@@ -136,22 +147,72 @@ abstract class ModelBase
     }
 
     /**
+     *
+     * @param array $criteria
+     * @param string $single
+     *
+     * @return unknown|multitype:NULL
+     */
+    public static function findBy($criteria, $single = false)
+    {
+        global $wpdb;
+        $objects = [];
+        $model = get_called_class();
+        $query = 'SELECT * FROM ' . $wpdb->prefix . static::$table;
+
+        reset($criteria);
+        $firstKey = key($criteria);
+
+        $query .= ' WHERE ' . $firstKey . ' = "' . $criteria[$firstKey] . '"';
+        unset($criteria[$firstKey]);
+
+        foreach ($criteria as $column => $value) {
+            $query .= ' AND ' . $column . ' = "' . $value . '"';
+        }
+
+        $resultsQuery = $wpdb->get_results($query);
+
+        /*
+         * Mount the object
+         */
+        $mountTheObject = function ($_object) use($model)
+        {
+            $object = new $model();
+            foreach ($_object as $column => $val) {
+                $object->$column = $val;
+            }
+            return $object;
+        };
+
+        if ($single && isset($resultsQuery[0])) {
+            return $mountTheObject($resultsQuery[0]);
+        }
+
+        foreach ($resultsQuery as $_object) {
+            $objects[] = $mountTheObject($_object);
+        }
+
+        return $objects;
+    }
+
+    /**
      * Todo one DELETE
      *
      * @return Exception|boolean
      */
     public function delete()
     {
-        if ($this->ID !== false) {
-            global $wpdb;
-            try {
-                return $wpdb->query($wpdb->prepare('
-						DELETE FROM ' . $wpdb->prefix . static::$table . ' WHERE ID = %d', $this->ID));
-            } catch (Exception $e) {
-                return $e;
-            }
+        if (!$this->ID) {
+            return false;
         }
-        return false;
+        global $wpdb;
+        try {
+            $sql = 'DELETE FROM ' . $wpdb->prefix . static::$table . ' WHERE ID = %d';
+
+            return $wpdb->query($wpdb->prepare($sql, $this->ID));
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 
     /**
@@ -167,6 +228,7 @@ abstract class ModelBase
         if ($w && is_array($w)) {
             return $w[0];
         }
+
         return null;
     }
 
@@ -180,7 +242,8 @@ abstract class ModelBase
     public static function where($column, $what, $value)
     {
         global $wpdb;
-        // TODO: Improve it
+        // TODO: Improve it. Generate the correct select instead of get all elements and
+        // filter by php...
         $all = self::all();
         $result = [];
         foreach ($all as $item) {
@@ -190,14 +253,16 @@ abstract class ModelBase
                 }
             }
         }
+
         return $result;
     }
 
     /**
      *
-     * @param unknown $column
-     * @param unknown $what
-     * @param unknown $value
+     * @param string $column
+     * @param string $what
+     * @param string $value
+     *
      * @return boolean
      */
     private static function isCompareColumn($column, $what, $value)
@@ -207,27 +272,27 @@ abstract class ModelBase
                 if ($column == $value) {
                     return true;
                 }
-                return false;
+                break;
             case "<":
                 if ($column < $value) {
                     return true;
                 }
-                return false;
+                break;
             case ">":
                 if ($column > $value) {
                     return true;
                 }
-                return false;
+                break;
             case ">=":
                 if ($column >= $value) {
                     return true;
                 }
-                return false;
+                break;
             case "<=":
                 if ($column <= $value) {
                     return true;
                 }
-                return false;
+                break;
         }
         return false;
     }
