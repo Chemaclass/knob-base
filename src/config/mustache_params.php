@@ -19,6 +19,7 @@ use Knob\Models\Option;
 return [
 
     'adminEmail' => ADMIN_EMAIL,
+    'ajaxUrl' => '/ajax',
     'atomUrl' => get_bloginfo('atom_url'),
 
     'blogAuthor' => '',
