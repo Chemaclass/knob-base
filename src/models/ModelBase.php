@@ -156,34 +156,45 @@ abstract class ModelBase
      */
     public static function findBy($criteria = [], $single = false)
     {
-        if (!count($criteria)) {
-            return null;
-        }
         global $wpdb;
         $objects = [];
-        $query = 'SELECT * FROM ' . $wpdb->prefix . static::$table;
-
-        reset($criteria);
-        $firstKey = key($criteria);
-        // Add the first key to sql sentence
-        $query .= ' WHERE ' . $firstKey . ' = "' . $criteria[$firstKey] . '"';
-        unset($criteria[$firstKey]);
-        // Add the rest of the criteria
-        foreach ($criteria as $column => $value) {
-            $query .= ' AND ' . $column . ' = "' . $value . '"';
-        }
-
+        $query = static::getQueryByCriteria($criteria);
         $resultsQuery = $wpdb->get_results($query);
 
         if ($single && isset($resultsQuery[0])) {
-            return $this->mountModelFromDBObject($resultsQuery[0]);
+            return static::getModelFromDBObject($resultsQuery[0]);
         }
 
         foreach ($resultsQuery as $object) {
-            $objects[] = $this->mountModelFromDBObject($object);
+            $objects[] = static::getModelFromDBObject($object);
         }
 
         return $objects;
+    }
+
+    /**
+     *
+     * @param array $criteria
+     *
+     * @return string
+     */
+    private static function getQueryByCriteria($criteria = [])
+    {
+        $sqlQuery = 'SELECT * FROM ' . $wpdb->prefix . static::$table;
+        if (!count($criteria)) {
+            return $sqlQuery;
+        }
+        $criteriaKeys = array_keys($criteria);
+        $firstKey = $criteriaKeys[0];
+        // Add the first key to sql sentence
+        $sqlQuery .= ' WHERE ' . $firstKey . ' = "' . $criteria[$firstKey] . '"';
+        unset($criteriaKeys[$firstKey]);
+        // Add the rest of the criteria
+        foreach ($criteriaKeys as $key) {
+            $sqlQuery .= ' AND ' . $key . ' = "' . $criteria[$key] . '"';
+        }
+
+        return $sqlQuery;
     }
 
     /**
@@ -193,13 +204,14 @@ abstract class ModelBase
      *
      * @return ModelBase
      */
-    private function mountModelFromDBObject($dbObject)
+    private static function getModelFromDBObject($dbObject)
     {
         $modelName = get_called_class();
         $object = new $modelName();
         foreach ($dbObject as $column => $val) {
             $object->$column = $val;
         }
+
         return $object;
     }
 
@@ -302,6 +314,7 @@ abstract class ModelBase
                 }
                 break;
         }
+
         return false;
     }
 
