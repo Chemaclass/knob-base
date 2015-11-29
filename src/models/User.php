@@ -220,7 +220,7 @@ class User extends Image
      * @param array $args
      * @return boolean
      */
-    public function canAutor($args = [])
+    public function canAuthor($args = [])
     {
         $args[] = self::ROL_AUTHOR;
         return $this->canEditor($args);
@@ -232,10 +232,10 @@ class User extends Image
      * @param array $args
      * @return boolean
      */
-    public function canColaborador($args = [])
+    public function canContributor($args = [])
     {
         $args[] = self::ROL_CONTRIBUTOR;
-        return $this->canAutor($args);
+        return $this->canAuthor($args);
     }
 
     /**
@@ -244,10 +244,10 @@ class User extends Image
      * @param array $args
      * @return boolean
      */
-    public function canSuscriptor($args = [])
+    public function canSubscriber($args = [])
     {
         $args[] = self::ROL_SUBSCRIBER;
-        return $this->canColaborador($args);
+        return $this->canContributor($args);
     }
 
     /**
@@ -303,31 +303,31 @@ class User extends Image
     }
 
     /**
-     * Devuelve verdadero en caso de tener el rol de Autor
+     * Devuelve verdadero en caso de tener el rol de Author
      *
      * @return boolean
      */
-    public function isAutor()
+    public function isAuthor()
     {
         return in_array(self::ROL_AUTHOR, $this->getRoles());
     }
 
     /**
-     * Devuelve verdadero en caso de tener el rol de colaborador
+     * Devuelve verdadero en caso de tener el rol de Contributor
      *
      * @return boolean
      */
-    public function isColaborador()
+    public function isContributor()
     {
         return in_array(self::ROL_CONTRIBUTOR, $this->getRoles());
     }
 
     /**
-     * Devuelve verdadero en caso de tener el rol de suscriptor
+     * Devuelve verdadero en caso de tener el rol de Subscriber
      *
      * @return boolean
      */
-    public function isSuscriptor()
+    public function isSubscriber()
     {
         return in_array(self::ROL_SUBSCRIBER, $this->getRoles());
     }
