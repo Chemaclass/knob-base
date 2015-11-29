@@ -30,7 +30,6 @@ return [
     'blogHtmlType' => get_bloginfo('html_type'),
     'blogKeywords' => '',
     'blogLanguage' => get_bloginfo('language'),
-    'blogLoginUrl' => wp_login_url($_SERVER['REQUEST_URI']),
     'blogPingbackUrl' => get_bloginfo('pingback_url'),
     'blogName' => get_bloginfo('name'),
     'blogRdfUrl' => get_bloginfo('rdf_url'),
@@ -56,6 +55,8 @@ return [
     'isEnvDev' => Env::isDev(),
     'isEnvLoc' => Env::isLoc(),
     'isUserLoggedIn' => is_user_logged_in(),
+
+    'loginUrl' => wp_login_url($_SERVER['REQUEST_URI']),
 
     'optionPostsPerPage' => Option::get('posts_per_page'),
     'optionCategoryBase' => ($c = Option::get('category_base')) ? $c : Post::CATEGORY_BASE_DEFAULT,
