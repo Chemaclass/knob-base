@@ -67,13 +67,15 @@ class Utils
     }
 
     /**
-     * Replace all possible parameters from parameters file to config file
+     * Replace all possible parameters from config/parameters to config/config files
      *
-     * @param array $configOptions
+     * @param array $configOptions Reference of config options
      */
     private static function replaceParameters(&$configOptions)
     {
-        $params = static::getParametersFile();
+        if (!$params = static::getParametersFile()) {
+            return null;
+        }
 
         foreach ($configOptions as $configKey => &$configItem) {
             // Check if it's an array
