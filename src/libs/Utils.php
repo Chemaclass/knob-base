@@ -19,6 +19,8 @@ class Utils
 
     const CONFIG_FILE = 'config';
 
+    const PARAMETERS_FILE = 'parameters';
+
     /*
      * Some const.
      */
@@ -30,7 +32,27 @@ class Utils
 
     const TYPE_AUTHOR = 'author';
 
-    static $config = null;
+    private static $config = null;
+
+    private static $parameters = null;
+
+    /**
+     * Return all parameters values
+     */
+    protected static function getParametersFile()
+    {
+        $file_name = '/' . APP_DIR . '/config/' . self::PARAMETERS_FILE . '.php';
+        if (!file_exists($file_name)) {
+            return null;
+        }
+
+        if (null == static::$parameters) {
+            foreach (require ($file_name) as $k => $v) {
+                static::$parameters["%{$k}%"] = $v;
+            }
+        }
+        return static::$parameters;
+    }
 
     /**
      * Return all global config values
@@ -39,8 +61,31 @@ class Utils
     {
         if (null == static::$config) {
             static::$config = require ('/' . APP_DIR . '/config/' . self::CONFIG_FILE . '.php');
+            static::replaceParameters(static::$config);
         }
         return static::$config;
+    }
+
+    /**
+     * Replace all possible parameters from parameters file to config file
+     *
+     * @param array $configOptions
+     */
+    private static function replaceParameters(&$configOptions)
+    {
+        $params = static::getParametersFile();
+
+        foreach ($configOptions as $configKey => &$configItem) {
+            // Check if it's an array
+            if (is_array($configItem)) {
+                static::replaceParameters($configItem);
+            } elseif (is_string($configItem)) {
+                // check if the str contain %...%
+                if (substr_count($configItem, '%') >= 2) {
+                    $configItem = $params[$configItem];
+                }
+            }
+        }
     }
 
     /**
