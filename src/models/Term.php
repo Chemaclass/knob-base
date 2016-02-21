@@ -11,8 +11,8 @@ namespace Knob\Models;
 
 /**
  * Tag
- * terms.term_id					->	term_taxonomy.term_id
- * term_taxonomy.term_taxonomy_id	->	term_relationships.term_taxonomy_id.
+ * terms.term_id -> term_taxonomy.term_id
+ * term_taxonomy.term_taxonomy_id -> term_relationships.term_taxonomy_id.
  * This model help us for to do querys and some operation about the tags of the diferents entries
  *
  * @author José María Valera Reales <@Chemaclass>
@@ -29,6 +29,10 @@ class Term extends ModelBase
      */
     const TRANSIENT_ALL_TAGS = 'ALL_TAGS';
 
+    const TYPE_CATEGORY = 'category';
+
+    const TYPE_TAG = 'post_tag';
+
     /*
      * Members
      */
@@ -37,7 +41,7 @@ class Term extends ModelBase
     /**
      * Return all categories
      *
-     * @param array $args
+     * @param array $args            
      *
      * @return array<Term>
      *
@@ -45,13 +49,13 @@ class Term extends ModelBase
      */
     public static function getCategories($args = [])
     {
-        if (!count($args)) {
+        if (! count($args)) {
             $args = [
                 'orderby' => 'name,count',
                 'hide_empty' => true
             ];
         }
-        foreach (get_terms('category', $args) as $_c) {
+        foreach (get_terms(self::TYPE_CATEGORY, $args) as $_c) {
             $cat = Term::find($_c->term_id);
             $cat->total = $_c->count;
             $categories[] = $cat;
@@ -62,7 +66,7 @@ class Term extends ModelBase
     /**
      * Return all tags
      *
-     * @param array $args
+     * @param array $args            
      *
      * @return array<Term>
      *
@@ -70,13 +74,13 @@ class Term extends ModelBase
      */
     public static function getTags($args = [])
     {
-        if (!count($args)) {
+        if (! count($args)) {
             $args = [
                 'orderby' => 'name,count',
                 'hide_empty' => true
             ];
         }
-        foreach (get_terms('post_tag', $args) as $_t) {
+        foreach (get_terms(self::TYPE_TAG, $args) as $_t) {
             $tag = Term::find($_t->term_id);
             $tag->total = $_t->count;
             $tags[] = $tag;
@@ -87,15 +91,39 @@ class Term extends ModelBase
     /**
      * Return the ID from the tag name
      *
-     * @param string $name Term name
-     * @param string $type Term type
-     *
+     * @param string $name
+     *            Term name
+     * @param string $type
+     *            Term type
+     *            
      * @return int ID from the term name
      */
     public static function getTermIdbyName($name, $type = 'post_tag')
     {
         $tag = get_term_by('name', $name, $type);
         return ($tag) ? $tag->term_id : 0;
+    }
+
+    /**
+     * Get the total of terms by termName and also the type (optional)
+     *
+     * @param string $name
+     *            The term_slug
+     * @param string $type
+     *            The taxonomy_name
+     *            
+     * @return int
+     */
+    public static function getTotalBy($name, $type = '')
+    {
+        global $wpdb;
+        $sql = "select count(*) from wp_v_generos_posts where term_slug like '%s'";
+        if (empty($type)) {
+            return $wpdb->get_var($wpdb->prepare($sql, $name));
+        }
+        $sql .= "and taxonomy_name = '%s'";
+        
+        return $wpdb->get_var($wpdb->prepare($sql, $name, $type));
     }
 
     /**
@@ -135,8 +163,7 @@ class Term extends ModelBase
     {
         global $wpdb;
         if (false === ($results = get_transient(self::TRANSIENT_ALL_TAGS))) {
-            $results = $wpdb->get_results(
-                '
+            $results = $wpdb->get_results('
 				SELECT ta.term_taxonomy_id as taxonomy_id, name, slug, count(*) total
 				FROM ' . $wpdb->prefix . 'term_taxonomy ta
 				JOIN ' . $wpdb->prefix . 'terms te ON (te.term_id = ta.term_id)
