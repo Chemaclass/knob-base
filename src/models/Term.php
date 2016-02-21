@@ -49,18 +49,7 @@ class Term extends ModelBase
      */
     public static function getCategories($args = [])
     {
-        if (! count($args)) {
-            $args = [
-                'orderby' => 'name,count',
-                'hide_empty' => true
-            ];
-        }
-        foreach (get_terms(self::TYPE_CATEGORY, $args) as $_c) {
-            $cat = Term::find($_c->term_id);
-            $cat->total = $_c->count;
-            $categories[] = $cat;
-        }
-        return $categories;
+        return static::getTermsWithTotalsBy(self::TYPE_CATEGORY, $args);
     }
 
     /**
@@ -74,18 +63,33 @@ class Term extends ModelBase
      */
     public static function getTags($args = [])
     {
+        return static::getTermsWithTotalsBy(self::TYPE_TAG, $args);
+    }
+
+    /**
+     *
+     * @param string $type            
+     * @param array $args            
+     *
+     * @return array
+     */
+    private static function getTermsWithTotalsBy($type, $args = [])
+    {
         if (! count($args)) {
             $args = [
                 'orderby' => 'name,count',
                 'hide_empty' => true
             ];
         }
-        foreach (get_terms(self::TYPE_TAG, $args) as $_t) {
-            $tag = Term::find($_t->term_id);
-            $tag->total = $_t->count;
-            $tags[] = $tag;
+        
+        $terms = [];
+        foreach (get_terms($type, $args) as $_t) {
+            $term = Term::find($_t->term_id);
+            $term->total = $_t->count;
+            $terms[] = $term;
         }
-        return $tags;
+        
+        return $terms;
     }
 
     /**
@@ -98,7 +102,7 @@ class Term extends ModelBase
      *            
      * @return int ID from the term name
      */
-    public static function getTermIdbyName($name, $type = 'post_tag')
+    public static function getTermIdbyName($name, $type = self::TYPE_TAG)
     {
         $tag = get_term_by('name', $name, $type);
         return ($tag) ? $tag->term_id : 0;
