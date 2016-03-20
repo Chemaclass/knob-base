@@ -121,6 +121,8 @@ class Post extends Image
         /*
          * Sort by title
          */
+        /** @var Post $a */
+        /** @var Post $b */
         usort($pages, function ($a, $b)
         {
             strcmp($a->getTitle(), $b->getTitle());
@@ -337,20 +339,9 @@ class Post extends Image
      * @param integer $countShort
      * @return string The Title
      */
-    public function getTitle($short = false, $countShort = self::COUNT_SHORT_TITLE)
+    public function getTitle()
     {
-        $title = get_the_title($this->ID);
-        if (!$short || (strlen($title) > $countShort)) {
-            return $title;
-        }
-
-        $substr = substr($title, 0, $countShort);
-        // strrchr => return all after the last ocurrence from one str
-        $lastSpace = strpos($substr, strrchr($substr, ' '));
-        if ($lastSpace) {
-            $substr = substr($substr, 0, $lastSpace) . '...';
-        }
-        return $substr;
+        return get_the_title($this->ID);
     }
 
     /**
@@ -379,7 +370,6 @@ class Post extends Image
             if (empty($imageObject)) {
                 return false;
             }
-            
             return $imageObject[0];
         };
 
@@ -398,7 +388,7 @@ class Post extends Image
             return $imageObject;
         }
         
-        return $src;        
+        return $src;
     }
 
     /**
