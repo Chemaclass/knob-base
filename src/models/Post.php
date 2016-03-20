@@ -379,25 +379,26 @@ class Post extends Image
             if (empty($imageObject)) {
                 return false;
             }
+            
             return $imageObject[0];
         };
 
         if (($imageObject = $getSrc($this->ID))) {
             return $imageObject;
-        } else {
-            // if they aren't, we get the first img from the post, and let it as thumbnail
-            preg_match('/< *img[^>]*src *= *["\']?([^"\']*)/i', $this->post_content, $matches);
-            $src = $matches[1];
-            $attachmentId = Utils::getAttachmentIdFromUrl($src);
-            // try to set the first img as thumbnail
-            // Intento establecer como thumbnail la primera img encontrada al post
-            set_post_thumbnail($this->ID, $attachmentId);
-            // En caso de encontrarla la devolvemos, en caso contrario devolvemos el src
-            if (($imageObject = $getSrc($this->ID))) {
-                return $imageObject;
-            }
-            return $src;
+        } 
+        // if they aren't, we get the first img from the post, and let it as thumbnail
+        preg_match('/< *img[^>]*src *= *["\']?([^"\']*)/i', $this->post_content, $matches);
+        $src = $matches[1];
+        $attachmentId = Utils::getAttachmentIdFromUrl($src);
+        // try to set the first img as thumbnail
+        // Intento establecer como thumbnail la primera img encontrada al post
+        set_post_thumbnail($this->ID, $attachmentId);
+        // En caso de encontrarla la devolvemos, en caso contrario devolvemos el src
+        if (($imageObject = $getSrc($this->ID))) {
+            return $imageObject;
         }
+        
+        return $src;        
     }
 
     /**
