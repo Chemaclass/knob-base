@@ -74,9 +74,10 @@ class Post extends Image
     /**
      * Constructor
      *
-     * @param integer $ID
-     * @param bool $withWPPost load into the Post object all members from \WP_Post
-     *
+     * @param integer $ID            
+     * @param bool $withWPPost
+     *            load into the Post object all members from \WP_Post
+     *            
      * @see https://developer.wordpress.org/reference/classes/wp_post/
      */
     public function __construct($ID = 0, $withWPPost = true)
@@ -110,24 +111,22 @@ class Post extends Image
                 $pages[] = $p;
             }
         }
-
+        
         if ($withoutEmpty) {
-            $pages = array_filter($pages, function ($page)
-            {
+            $pages = array_filter($pages, function ($page) {
                 return strlen($page->getContent());
             });
         }
-
+        
         /*
          * Sort by title
          */
         /** @var Post $a */
         /** @var Post $b */
-        usort($pages, function ($a, $b)
-        {
+        usort($pages, function ($a, $b) {
             strcmp($a->getTitle(), $b->getTitle());
         });
-
+        
         return $pages;
     }
 
@@ -167,7 +166,7 @@ class Post extends Image
     public function getCategories()
     {
         $categories = get_the_category($this->ID);
-        if (!$categories) {
+        if (! $categories) {
             return [];
         }
         foreach ($categories as $category) {
@@ -227,9 +226,9 @@ class Post extends Image
     public function getFormComments()
     {
         ob_start();
-
+        
         $placeTextarea = I18n::transu('post.share_comment');
-
+        
         $params = [
             'comment_notes_after' => '',
             'author' => '<p class="comment-form-author">' . '<label for="author">' . __('Your Name') . '</label>
@@ -241,11 +240,11 @@ class Post extends Image
 							maxlength="1000" aria-required="true" placeholder="' . $placeTextarea . '"></textarea>
 		        </div>'
         ];
-
+        
         $placeAuthor = I18n::transu('name');
         $placeEmail = I18n::transu('email');
         $placeUrl = I18n::transu('website');
-
+        
         comment_form($params, $this->ID);
         $comment_form = ob_get_clean();
         $comment_form = str_replace('id="author"', 'class="author form-control" placeholder="' . $placeAuthor . '"', $comment_form);
@@ -274,7 +273,7 @@ class Post extends Image
     public function getExcerpt()
     {
         $excerpt = $this->post_excerpt;
-        if (!Utils::isValidStr($excerpt)) {
+        if (! Utils::isValidStr($excerpt)) {
             $excerpt = strip_tags(strip_shortcodes($this->post_content));
             $excerpt = trim(preg_replace('/\s\s+/', ' ', $excerpt));
             $excerpt = preg_replace("/[\xc2|\xa0]/", ' ', $excerpt);
@@ -335,8 +334,8 @@ class Post extends Image
     /**
      * Return the title Post
      *
-     * @param string $short
-     * @param integer $countShort
+     * @param string $short            
+     * @param integer $countShort            
      * @return string The Title
      */
     public function getTitle()
@@ -357,33 +356,35 @@ class Post extends Image
     /**
      * Devuelve el src del thumbnail del post
      *
-     * @param string $size size
+     * @param string $size
+     *            size
      */
     public function getThumbnail($size = self::IMG_SIZE_THUMBNAIL)
     {
         /*
          * Define a func for to get the attachment-src from the post_id
          */
-        $getSrc = function ($_id) use($size)
-        {
+        $getSrc = function ($_id) use($size) {
             $imageObject = wp_get_attachment_image_src(get_post_thumbnail_id($_id), $size);
             if (empty($imageObject)) {
                 return false;
             }
             return $imageObject[0];
         };
-
+        
         if (($imageObject = $getSrc($this->ID))) {
             return $imageObject;
-        } 
+        }
         // if they aren't, we get the first img from the post, and let it as thumbnail
         preg_match('/< *img[^>]*src *= *["\']?([^"\']*)/i', $this->post_content, $matches);
         $src = $matches[1];
         $attachmentId = Utils::getAttachmentIdFromUrl($src);
         // try to set the first img as thumbnail
-        // Intento establecer como thumbnail la primera img encontrada al post
         set_post_thumbnail($this->ID, $attachmentId);
-        // En caso de encontrarla la devolvemos, en caso contrario devolvemos el src
+        /*
+         * In case we found it return the img src from wp_get_attachment_image_src()
+         * Othercase return the raw source
+         */
         if (($imageObject = $getSrc($this->ID))) {
             return $imageObject;
         }
@@ -394,12 +395,11 @@ class Post extends Image
     /**
      * Return a clousure
      *
-     * @param string $by
+     * @param string $by            
      */
     public static function getFuncBy($by)
     {
-        return function ($value = false, $limit = false, $offset = false, $moreQuerySettings = []) use($by)
-        {
+        return function ($value = false, $limit = false, $offset = false, $moreQuerySettings = []) use($by) {
             switch ($by) {
                 case Ajax::ARCHIVE:
                     return static::getByArchive($value, $limit, $offset, $moreQuerySettings);
@@ -421,11 +421,11 @@ class Post extends Image
     /**
      * Get Posts
      *
-     * @param integer $limit
-     * @param string $offset
-     * @param array $moreQuerySettings
-     * @param string $postType
-     * @param string $oddOrEven
+     * @param integer $limit            
+     * @param string $offset            
+     * @param array $moreQuerySettings            
+     * @param string $postType            
+     * @param string $oddOrEven            
      *
      * @return array<Post>
      *
@@ -447,11 +447,11 @@ class Post extends Image
         $countSticky = count($postsStickyIds);
         // if it's the same doesn't matter. If it's different we have to rest the different.
         $limit = (count($posts) == $countSticky) ? $limit - $countSticky : $limit;
-
-        if (!isset($moreQuerySettings['post_type'])) {
+        
+        if (! isset($moreQuerySettings['post_type'])) {
             $moreQuerySettings['post_type'] = Post::TYPE_POST;
         }
-
+        
         $querySettings = [
             'orderby' => [
                 'date' => 'DESC'
@@ -479,10 +479,10 @@ class Post extends Image
     private static function getStickyPosts($limit = -1, $offset = false, $moreQuerySettings = [])
     {
         $sticky_posts = Option::get('sticky_posts');
-        if (!$sticky_posts) {
+        if (! $sticky_posts) {
             return [];
         }
-        if (!isset($moreQuerySettings['post_type'])) {
+        if (! isset($moreQuerySettings['post_type'])) {
             $moreQuerySettings['post_type'] = Post::TYPE_POST;
         }
         $querySettings = [
@@ -497,14 +497,14 @@ class Post extends Image
         }
         $querySettings = array_merge($querySettings, $moreQuerySettings);
         $loop = new \WP_Query($querySettings);
-
+        
         return self::loopQueryPosts($loop);
     }
 
     /**
      * Loop the query and mount the Post objects
      *
-     * @param WP_Query $loop
+     * @param WP_Query $loop            
      * @return array<Post>
      */
     private static function loopQueryPosts($loop)
@@ -520,9 +520,9 @@ class Post extends Image
     /**
      * Get posts from an archive
      *
-     * @param string $value
-     * @param integer $limit
-     * @param array $moreQuerySettings
+     * @param string $value            
+     * @param integer $limit            
+     * @param array $moreQuerySettings            
      * @return array<Post>
      */
     public static function getByArchive($value, $limit = false, $offset = false, $moreQuerySettings = [])
@@ -533,9 +533,9 @@ class Post extends Image
     /**
      * Get posts from an author
      *
-     * @param integer $autorId
-     * @param integer $limit
-     * @param array $moreQuerySettings
+     * @param integer $autorId            
+     * @param integer $limit            
+     * @param array $moreQuerySettings            
      * @return array<Post>
      */
     public static function getByAuthor($autorId, $limit = false, $offset = false, $moreQuerySettings = [])
@@ -546,9 +546,9 @@ class Post extends Image
     /**
      * Get posts from query search
      *
-     * @param string $searchQuery
-     * @param integer $limit
-     * @param array $moreQuerySettings
+     * @param string $searchQuery            
+     * @param integer $limit            
+     * @param array $moreQuerySettings            
      * @return array<Post>
      */
     public static function getBySearch($searchQuery, $limit = false, $offset = false, $moreQuerySettings = [])
@@ -559,9 +559,9 @@ class Post extends Image
     /**
      * Get posts from a category
      *
-     * @param integer $catId
-     * @param integer $limit
-     * @param array $moreQuerySettings
+     * @param integer $catId            
+     * @param integer $limit            
+     * @param array $moreQuerySettings            
      * @return array<Post>
      */
     public static function getByCategory($catId, $limit = false, $offset = false, $moreQuerySettings = [])
@@ -571,9 +571,9 @@ class Post extends Image
 
     /**
      *
-     * @param integer $tagId
-     * @param integer $limit
-     * @param array $moreQuerySettings
+     * @param integer $tagId            
+     * @param integer $limit            
+     * @param array $moreQuerySettings            
      * @return array<Post>
      */
     public static function getByTag($tagId, $limit = false, $offset = false, $moreQuerySettings = [])
@@ -584,15 +584,15 @@ class Post extends Image
     /**
      * Get posts by type
      *
-     * @param string $type
-     * @param integer|string $by
-     * @param integer $limit
-     * @param array $moreQuerySettings
+     * @param string $type            
+     * @param integer|string $by            
+     * @param integer $limit            
+     * @param array $moreQuerySettings            
      * @return array<Post>
      */
     private static function getBy($type, $by, $limit = false, $offset = false, $moreQuerySettings = [])
     {
-        if (!$limit) {
+        if (! $limit) {
             $limit = Option::get('posts_per_page');
         }
         if ($type == Ajax::TAG) {
@@ -607,7 +607,7 @@ class Post extends Image
             $moreQuerySettings['author'] = $by;
         } elseif ($type == Ajax::ARCHIVE) {
             list ($year, $monthnum) = explode(Archive::DELIMITER, $by);
-            if (!isset($moreQuerySettings['year'])) {
+            if (! isset($moreQuerySettings['year'])) {
                 $moreQuerySettings['year'] = $year;
                 $moreQuerySettings['monthnum'] = $monthnum;
             }
