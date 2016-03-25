@@ -81,24 +81,28 @@ abstract class ModelBase
      */
     public static function find($ID = false)
     {
-        if ($ID == null || !is_numeric($ID)) {
+        if (empty($ID) || !is_numeric($ID)) {
             return null;
         }
         global $wpdb;
-        $model = get_called_class();
+        $calledClass = get_called_class();
+        // Remove the Knob as possible prefix from called_class
+        if (0 === strpos($calledClass, 'Knob\\')) {
+            $calledClass = substr($calledClass, strpos($calledClass, '\\') + 1);
+        }
         $whatry = 'SELECT *
-				FROM ' . $wpdb->prefix . static::$table . '
-				WHERE ' . static::$PK . '= %d';
+        FROM ' . $wpdb->prefix . static::$table . '
+        WHERE ' . static::$PK . '= %d';
         $row = $wpdb->get_row($wpdb->prepare($whatry, $ID));
         if (!$row) {
             return null;
         }
-
-        $new = new $model();
+        
+        $new = new $calledClass();
         foreach ($row as $column => $val) {
             $new->$column = $val;
         }
-
+        
         return $new;
     }
 
