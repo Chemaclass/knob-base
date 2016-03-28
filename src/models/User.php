@@ -9,8 +9,6 @@
  */
 namespace Knob\Models;
 
-use Knob\Libs\Utils;
-
 /**
  * User Model
  *
@@ -782,19 +780,6 @@ class User extends Image
     public function setLang($value)
     {
         update_user_meta($this->ID, User::KEY_LANGUAGE, $value);
-    }
-
-    /**
-     * Return the current lang full and translated from the user
-     *
-     * @return string
-     * @deprecated I18n can not use here! this is the model!
-     */
-    public function getLangTransFull()
-    {
-        $langToTrans = ($currentLang = $this->getLang()) ? $currentLang : Utils::getLangBrowser();
-        return $langToTrans;
-        // return I18n::transu('lang_' . $langToTrans);
     }
 
     /**
