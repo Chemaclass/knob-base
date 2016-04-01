@@ -276,7 +276,6 @@ class Post extends Image
         if (! Utils::isValidStr($excerpt)) {
             $excerpt = strip_tags(strip_shortcodes($this->post_content));
             $excerpt = trim(preg_replace('/\s\s+/', ' ', $excerpt));
-            $excerpt = preg_replace("/[\xc2|\xa0]/", ' ', $excerpt);
         }
         return Utils::getWordsByStr($excerpt, self::COUNT_EXCERPT);
     }
