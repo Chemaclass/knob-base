@@ -36,7 +36,7 @@ class Term extends ModelBase
     /*
      * Members
      */
-    private $total;
+    protected $total;
 
     /**
      * Return all categories
@@ -73,7 +73,7 @@ class Term extends ModelBase
      *
      * @return array
      */
-    private static function getTermsWithTotalsBy($type, $args = [])
+    protected static function getTermsWithTotalsBy($type, $args = [])
     {
         if (! count($args)) {
             $args = [
