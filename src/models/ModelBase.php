@@ -50,6 +50,22 @@ abstract class ModelBase
         static::$columns = $wpdb->get_col_info();
     }
 
+
+    /**
+     * Return the ID
+     *
+     * @return string|NULL
+     */
+    public function getId()
+    {
+        $PK = static::$PK;
+        if (isset($this->$PK)) {
+            return $this->$PK;
+        }
+
+        return null;
+    }
+
     /**
      * Return all objects
      *
