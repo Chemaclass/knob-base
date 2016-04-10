@@ -9,8 +9,6 @@
  */
 namespace Knob\Libs;
 
-use Knob\I18n\I18n;
-use Knob\Models\Option;
 use Mustache_Engine;
 use Mustache_Loader_FilesystemLoader;
 use Mustache_Logger_StreamLogger;
@@ -65,22 +63,20 @@ class MustacheRender
     private function __construct()
     {
         $templatesFolder = static::getTemplatesFolderLocation();
-        $this->mustacheEngine = new Mustache_Engine(
-            [
-                'charset' => static::CHARSET,
-                'strict_callables' => static::STRICT_CALLABLES,
-                'cache_file_mode' => static::CACHE_FILE_MODE,
-                'cache_lambda_templates' => static::CACHE_LAMBDA_TEMPLATES,
-                'loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
-                'partials_loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
-                'logger' => new Mustache_Logger_StreamLogger('php://stderr'),
-                'helpers' => static::getHelpers(),
-                'pragmas' => static::getPragmas(),
-                'escape' => function ($value)
-                {
-                    return htmlspecialchars($value, ENT_COMPAT, static::CHARSET);
-                }
-            ]);
+        $this->mustacheEngine = new Mustache_Engine([
+            'charset' => static::CHARSET,
+            'strict_callables' => static::STRICT_CALLABLES,
+            'cache_file_mode' => static::CACHE_FILE_MODE,
+            'cache_lambda_templates' => static::CACHE_LAMBDA_TEMPLATES,
+            'loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
+            'partials_loader' => new Mustache_Loader_FilesystemLoader($templatesFolder),
+            'logger' => new Mustache_Logger_StreamLogger('php://stderr'),
+            'helpers' => static::getHelpers(),
+            'pragmas' => static::getPragmas(),
+            'escape' => function ($value) {
+                return htmlspecialchars($value, ENT_COMPAT, static::CHARSET);
+            }
+        ]);
     }
 
     /**
@@ -101,9 +97,11 @@ class MustacheRender
     /**
      * Render a template
      *
-     * @param string $templatePath path where is the template
-     * @param array $args arguments to pass
-     *
+     * @param string $templatePath
+     *            path where is the template
+     * @param array $args
+     *            arguments to pass
+     *            
      * @see \Mustache_Engine
      *
      * @return string Rendered template
@@ -111,7 +109,7 @@ class MustacheRender
     public function render($templatePath, array $args = [])
     {
         $args = array_merge($args, static::getMustacheParams());
-
+        
         return $this->mustacheEngine->render($templatePath, $args);
     }
 
@@ -123,13 +121,13 @@ class MustacheRender
     protected static function getMustacheParams()
     {
         if (null == static::$mustacheParams) {
-
+            
             $baseParamsFile = VENDOR_KNOB_BASE_DIR . '/src/config/' . static::$mustacheParamsFile . '.php';
             $appParamsFile = APP_DIR . '/config/' . static::$mustacheParamsFile . '.php';
-
+            
             $baseParams = (file_exists($baseParamsFile)) ? require $baseParamsFile : [];
             $appParams = (file_exists($appParamsFile)) ? require $appParamsFile : [];
-
+            
             static::$mustacheParams = array_merge($baseParams, $appParams);
         }
         return static::$mustacheParams;
@@ -164,62 +162,48 @@ class MustacheRender
      */
     protected static function getHelpers()
     {
-        if (file_exists($pathHelpers = APP_DIR . '/config/' . static::$mustacheHelpersFile . '.php')) {
-            $mustacheHelpersFile = include $pathHelpers;
-        } else {
-            $mustacheHelpersFile = [];
+        $mustacheHelpersFile = [];
+        // From base
+        if (file_exists($pathHelpers = VENDOR_KNOB_BASE_DIR . '/src/config/' . static::$mustacheHelpersFile . '.php')) {
+            $mustacheHelpersFile += include $pathHelpers;
         }
-
-        return array_merge(
-            [
-                'trans' => function ($value)
-                {
-                    return I18n::trans($value);
+        // From App
+        if (file_exists($pathHelpers = APP_DIR . '/config/' . static::$mustacheHelpersFile . '.php')) {
+            $mustacheHelpersFile += include $pathHelpers;
+        }
+        
+        return array_merge([
+            'case' => [
+                'lower' => function ($value) {
+                    return strtolower((string) $value);
                 },
-                'transu' => function ($value)
-                {
-                    return I18n::transu($value);
-                },
-                'case' => [
-                    'lower' => function ($value)
-                    {
-                        return strtolower((string) $value);
-                    },
-                    'upper' => function ($value)
-                    {
-                        return strtoupper((string) $value);
-                    }
-                ],
-                'count' => function ($value)
-                {
-                    return count($value);
-                },
-                'moreThan1' => function ($value)
-                {
-                    return count($value) > 1;
-                },
-                'date' => [
-                    'xmlschema' => function ($value)
-                    {
-                        return date('c', strtotime($value));
-                    },
-                    'string' => function ($value)
-                    {
-                        return date('l, d F Y', strtotime($value));
-                    },
-                    'format' => function ($value)
-                    {
-                        return date(Option::get('date_format'), strtotime($value));
-                    }
-                ],
-                'toArray' => function ($value)
-                {
-                    return explode(',', $value);
-                },
-                'ucfirst' => function ($value)
-                {
-                    return ucfirst($value);
+                'upper' => function ($value) {
+                    return strtoupper((string) $value);
                 }
-            ], $mustacheHelpersFile);
+            ],
+            'count' => function ($value) {
+                return count($value);
+            },
+            'moreThan1' => function ($value) {
+                return count($value) > 1;
+            },
+            'date' => [
+                'xmlschema' => function ($value) {
+                    return date('c', strtotime($value));
+                },
+                'string' => function ($value) {
+                    return date('l, d F Y', strtotime($value));
+                },
+                'format' => function ($value) {
+                    return date(get_option('date_format'), strtotime($value));
+                }
+            ],
+            'toArray' => function ($value) {
+                return explode(',', $value);
+            },
+            'ucfirst' => function ($value) {
+                return ucfirst($value);
+            }
+        ], $mustacheHelpersFile);
     }
 }

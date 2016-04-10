@@ -50,7 +50,6 @@ abstract class ModelBase
         static::$columns = $wpdb->get_col_info();
     }
 
-
     /**
      * Return the ID
      *
