@@ -64,6 +64,18 @@ abstract class ModelBase
 
         return null;
     }
+    
+    /**
+     * Get the table name with the WP prefix
+     *
+     * @return string
+     */
+    public static function getTableName()
+    {
+        global $wpdb;
+    
+        return $wpdb->prefix . static::$table;
+    }
 
     /**
      * Return all objects
