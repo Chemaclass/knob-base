@@ -22,15 +22,12 @@ abstract class BaseController
 
     protected $mustacheRender = null;
 
-    protected $currentUser = null;
-
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->mustacheRender = MustacheRender::getInstance();
-        $this->currentUser = User::getCurrent();
     }
 
     /**

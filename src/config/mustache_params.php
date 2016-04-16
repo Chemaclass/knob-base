@@ -10,7 +10,6 @@
 use Knob\I18n\I18n;
 use Knob\Models\Post;
 use Knob\Libs\Env;
-use Knob\Models\User;
 use Knob\Models\Option;
 
 /**
@@ -47,7 +46,6 @@ return [
     'componentsDir' => COMPONENTS_DIR,
     'currentLang' => I18n::getLangBrowserByCurrentUser(),
     'currentLangFullname' => I18n::getLangFullnameBrowserByCurrentUser(),
-    'currentUser' => User::getCurrent(),
 
     'homeUrl' => get_home_url(),
 
