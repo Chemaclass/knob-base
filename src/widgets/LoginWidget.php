@@ -9,8 +9,6 @@
  */
 namespace Knob\Widgets;
 
-use Models\User;
-
 /**
  *
  * @author José María Valera Reales
@@ -28,7 +26,6 @@ class LoginWidget extends WidgetBase
         /*
          * Put all special URLs
          */
-        $instance['currentUser'] = User::getCurrent();
         $instance['logoutUrl'] = wp_logout_url(home_url());
         $instance['loginUrl'] = wp_login_url(home_url());
         $instance['registrationUrl'] = wp_registration_url();
