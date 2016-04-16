@@ -9,6 +9,8 @@
  */
 namespace Knob\Models;
 
+use Models\User as AppUser;
+
 /**
  *
  * @author chema
@@ -54,11 +56,11 @@ class Comment extends ModelBase
      */
     public function getUser()
     {
-        // For to have all default values from an User
+        // In case the user is a non registered User we need the default values from one User object
         if (!$this->user_id) {
-            return new User();
+            return new AppUser();
         }
-        return User::find($this->user_id);
+        return AppUser::find($this->user_id);
     }
 
     /**
