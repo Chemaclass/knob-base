@@ -9,8 +9,8 @@
  */
 namespace Knob\Controllers;
 
-use Knob\Models\User;
 use Knob\Libs\MustacheRender;
+use Models\User;
 
 /**
  * Base Controller.
@@ -19,15 +19,17 @@ use Knob\Libs\MustacheRender;
  */
 abstract class BaseController
 {
-
     protected $mustacheRender = null;
-
+    
+    protected $currentUser = null;
+    
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->mustacheRender = MustacheRender::getInstance();
+        $this->currentUser = User::getCurrent();
     }
 
     /**
