@@ -185,4 +185,17 @@ class Utils
         }
         return implode($separator, $words);
     }
+    
+
+    /**
+     * Slugify
+     *
+     * @param string $str
+     */
+    public static function slugify($str)
+    {
+        $str = preg_replace('/[^a-z0-9 -]+/', '', strtolower($str));
+    
+        return trim(str_replace(' ', '-', $str), '-');
+    }
 }
