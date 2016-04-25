@@ -27,7 +27,9 @@ abstract class Image extends ModelBase
      *
      * @param string $keyImg Key from the image
      * @param file $imgFile The image
-     * @throws Exception
+     * 
+     * @throws \Exception
+     * 
      * @return void|string
      */
     protected function setImage($keyImg, $imgFile)
@@ -37,7 +39,7 @@ abstract class Image extends ModelBase
             return $this->removeImage($keyImg);
         }
         if (strpos($imgFile['name'], '.php') !== false) {
-            throw new Exception('For security reasons, the extension ".php" cannot be in your file name.');
+            throw new \Exception('For security reasons, the extension ".php" cannot be in your file name.');
         }
         $avatar = wp_handle_upload($_FILES[$keyImg],
             array(
