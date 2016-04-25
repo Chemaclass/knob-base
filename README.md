@@ -12,6 +12,30 @@
 * Inspired by latest frameworks we have nowadays to web development like Symfony or Laravel.
 * Use the [WP kernel](https://codex.wordpress.org/). So don't forget you allways have the [reference](https://developer.wordpress.org/reference/).
 
+## Creating basic controllers and views
+
+* HomeController: Controller for all files from WP:
+	- author.php -> getAuthor() -> render the base/author.mustache template
+	- archive.php -> getArchive() -> render the base/search.mustache template
+	- category.php -> getCategory() -> render the base/search.mustache template
+	- home.php -> getHome() -> render the base/home.mustache template
+	- search.php -> getSearch() -> render the base/search.mustache template
+	- single.php -> getSingle($type = 'post') -> render the base/[post|page].mustache template
+	- tag.php -> getTag() -> render the base/search.mustache template
+	- 404.php -> get404() -> render the base/error_404.mustache template
+
+### Calling a controller from a WordPress template page.
+
+[Create a template for WordPress](http://codex.wordpress.org/Template_Hierarchy), 
+for example single.php which is used when a Post is loaded.
+
+```php
+use Controllers\HomeController;
+
+$controller = new HomeController();
+$controller->getSingle('post');
+```
+
 ### Models to get all values from your DB
 
 * You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory). For example Post:
@@ -57,7 +81,7 @@ class Actions
 }
 ```
 
-* Also you will be able to get or create your own Widgets as new models. You have the basics in 'Knob\Widgets' (src/widgets/ directory).
+* Also you will be able to get or create your own widgets as new models. You have the basics in 'Knob\Widgets' (src/widgets/ directory).
 For example PagesWidget:
 ```php 
 // vendor/chemaclass/knob-base/src/widgets/PagesWidget.php
