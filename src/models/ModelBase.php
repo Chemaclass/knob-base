@@ -232,7 +232,7 @@ abstract class ModelBase
      */
     public static function first($criteria)
     {
-        return $this->findBy($criteria, true);
+        return static::findBy($criteria, true);
     }
 
     /**
