@@ -83,12 +83,12 @@ abstract class ModelBase
         $dbResults = $wpdb->get_results('SELECT * FROM ' . static::getTableName());
         $result = [];
         $model = get_called_class();
-        foreach ($dbResults as $qr) {
-            $a = new $model();
-            foreach (self::$columns as $c) {
-                $a->$c = $qr->$c;
+        foreach ($dbResults as $dbResult) {
+            $modelObject = new $model();
+            foreach (self::$columns as $column) {
+                $modelObject->$column = $dbResult->$column;
             }
-            $result[] = $a;
+            $result[] = $modelObject;
         }
         
         return $result;
@@ -111,11 +111,8 @@ abstract class ModelBase
         if (0 === strpos($calledClass, 'Knob\\')) {
             $calledClass = substr($calledClass, strpos($calledClass, '\\') + 1);
         }
-        $whatry = 'SELECT *
-        FROM ' . static::getTableName() . '
-        WHERE ' . static::$PK . '= %d';
-        $row = $wpdb->get_row($wpdb->prepare($whatry, $ID));
-        if (! $row) {
+        $sql = 'SELECT * FROM ' . static::getTableName() . ' WHERE ' . static::$PK . '= %d';
+        if (! $row = $wpdb->get_row($wpdb->prepare($sql, $ID))) {
             return null;
         }
         
@@ -125,50 +122,6 @@ abstract class ModelBase
         }
         
         return $new;
-    }
-
-    /**
-     * Search all values across one column
-     *
-     * @param string $column            
-     * @param string $value            
-     * @param boolean $single
-     *            Por defecto false. True si es sólo 1.
-     *            
-     * @deprecated see: ModelBase::findBy(criteria)
-     *            
-     * @return array<object>
-     */
-    public static function findByColumn($column, $value, $single = false)
-    {
-        global $wpdb;
-        $objects = [];
-        $model = get_called_class();
-        $query = 'SELECT * FROM ' . static::getTableName() . ' WHERE ' . $column . '= %s';
-        $resultsQuery = $wpdb->get_results($wpdb->prepare($query, $value));
-        
-        /*
-         * Mount the object
-         */
-        $mountTheObject = function ($_object) use($model) {
-            $object = new $model();
-            foreach ($_object as $column => $val) {
-                $object->$column = $val;
-            }
-            return $object;
-        };
-        
-        if ($single) {
-            foreach ($resultsQuery as $_object) {
-                return $mountTheObject($_object);
-            }
-        }
-        
-        foreach ($resultsQuery as $_object) {
-            $objects[] = $mountTheObject($_object);
-        }
-        
-        return $objects;
     }
 
     /**
@@ -182,28 +135,30 @@ abstract class ModelBase
     public static function findBy($criteria = [], $single = false)
     {
         global $wpdb;
-        $objects = [];
+        $return = [];
         $query = static::getQueryByCriteria($criteria);
-        $resultsQuery = $wpdb->get_results($query);
+        $dbResults = $wpdb->get_results($query);
         
-        if ($single && isset($resultsQuery[0])) {
-            return static::getModelFromDBObject($resultsQuery[0]);
+        if ($single && isset($dbResults[0])) {
+            return static::getModelFromDBObject($dbResults[0]);
         }
         
-        foreach ($resultsQuery as $object) {
-            $objects[] = static::getModelFromDBObject($object);
+        foreach ($dbResults as $object) {
+            $return[] = static::getModelFromDBObject($object);
         }
         
-        return $objects;
+        return $return;
     }
 
     /**
      *
      * @param array $criteria            
+     * @param int $limit            
+     * @param int $offset            
      *
      * @return string
      */
-    private static function getQueryByCriteria($criteria = [])
+    private static function getQueryByCriteria($criteria = [], $limit = false, $offset = false)
     {
         $sqlQuery = 'SELECT * FROM ' . static::getTableName();
         if (! count($criteria)) {
@@ -217,6 +172,13 @@ abstract class ModelBase
         // Add the rest of the criteria
         foreach ($criteriaKeys as $key) {
             $sqlQuery .= ' AND ' . $key . ' = "' . $criteria[$key] . '"';
+        }
+        
+        if ($limit) {
+            $sqlQuery .= ' LIMIT ' . $limit;
+        }
+        if ($offset) {
+            $sqlQuery .= ' OFFSET ' . $offset;
         }
         
         return $sqlQuery;
@@ -262,86 +224,15 @@ abstract class ModelBase
     }
 
     /**
-     * Get the first element from the where
+     * Get the first elem by criteria
      *
-     * @param unknown $column            
-     * @param unknown $what            
-     * @param unknown $value            
+     * @param array $criteria            
+     *
+     * @return ModelBase
      */
-    public static function first($column, $what, $value)
+    public static function first($criteria)
     {
-        $w = self::where($column, $what, $value);
-        if ($w && is_array($w)) {
-            return $w[0];
-        }
-        
-        return null;
-    }
-
-    /**
-     * Return the filter results
-     *
-     * @param string $column            
-     * @param string $what            
-     * @param string $value            
-     */
-    public static function where($column, $what, $value)
-    {
-        global $wpdb;
-        // TODO: Improve it. Generate the correct select instead of get all elements and
-        // filter by php...
-        $all = self::all();
-        $result = [];
-        foreach ($all as $item) {
-            if (isset($item->$column)) {
-                if (self::isCompareColumn($item->$column, $what, $value)) {
-                    $result[] = $item;
-                }
-            }
-        }
-        
-        return $result;
-    }
-
-    /**
-     *
-     * @param string $column            
-     * @param string $what            
-     * @param string $value            
-     *
-     * @return boolean
-     */
-    private static function isCompareColumn($column, $what, $value)
-    {
-        switch ($what) {
-            case "=":
-                if ($column == $value) {
-                    return true;
-                }
-                break;
-            case "<":
-                if ($column < $value) {
-                    return true;
-                }
-                break;
-            case ">":
-                if ($column > $value) {
-                    return true;
-                }
-                break;
-            case ">=":
-                if ($column >= $value) {
-                    return true;
-                }
-                break;
-            case "<=":
-                if ($column <= $value) {
-                    return true;
-                }
-                break;
-        }
-        
-        return false;
+        return $this->findBy($criteria, true);
     }
 
     /**
