@@ -17,25 +17,19 @@ namespace Knob\Models;
 abstract class ModelBase
 {
 
-    /**
-     *
-     * @var array Columns from the table of our Model
-     */
+    /**  @var array Columns from the table of our Model */
     protected static $columns = array();
 
-    /**
-     *
-     * @var string Primary Key
-     */
+    /**  @var string Primary Key */
     protected static $PK = 'ID';
 
-    /*
-     * Members
-     */
+    /** @var int ID */
     public $ID;
 
+    /** @var \DateTime reated_at */
     public $created_at;
 
+    /** @var \DateTime updated_at */
     public $updated_at;
 
     /**
@@ -247,22 +241,23 @@ abstract class ModelBase
     }
 
     /**
-     * Todo one DELETE
+     * Delete the object
      *
-     * @return Exception|boolean
+     * @return boolean
      */
     public function delete()
     {
         if (! $this->ID) {
             return false;
         }
-        global $wpdb;
+        
         try {
-            $sql = 'DELETE FROM ' . static::getTableName() . ' WHERE ID = %d';
+            global $wpdb;
+            $sql = 'DELETE FROM ' . static::getTableName() . ' WHERE ' . static::$PK . ' = %d';
             
             return $wpdb->query($wpdb->prepare($sql, $this->ID));
         } catch (Exception $e) {
-            return $e;
+            return false;
         }
     }
 
