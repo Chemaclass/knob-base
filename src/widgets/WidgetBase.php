@@ -9,7 +9,6 @@
  */
 namespace Knob\Widgets;
 
-use Knob\Libs\Utils;
 use Knob\Libs\MustacheRender;
 
 /**
@@ -54,7 +53,7 @@ abstract class WidgetBase extends \WP_Widget
      *
      * @var string
      */
-    protected $className, $classNameLower;
+    protected $className;
 
     /**
      *
@@ -78,7 +77,6 @@ abstract class WidgetBase extends \WP_Widget
         $className = static::getId();
         $className = substr($className, strrpos($className, '\\') + 1);
         $this->className = substr($className, 0, strpos($className, 'Widget'));
-        $this->classNameLower = strtolower($this->className);
 
         $id = ($id && strlen($id)) ? $id : $this->className . '_Widget';
         $title = ($title && strlen($title)) ? $title : static::$titlePrefix . $this->className;
@@ -221,7 +219,7 @@ abstract class WidgetBase extends \WP_Widget
             return APP_DIR . '/templates/' . $path . '.mustache';
         };
 
-        $path = $pathFn($this->classNameLower);
+        $path = $pathFn($this->className);
         $pathToCheck = $pathToCheckFn($path);
 
         // If doesn't exists just take it by default from current APP
