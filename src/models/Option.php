@@ -56,13 +56,11 @@ class Option
      */
     public static function save($name, $value, $autoload = true, $deprecated = '')
     {
-        if (static::get($name)) {
-            $return = update_option($name, $value, $autoload);
-        } else {
-            $return = add_option($name, $value, $deprecated, $autoload);
-        }
-
-        return $return;
+        if (false !== static::get($name)) {
+            return update_option($name, $value, $autoload);
+        } 
+        
+        return add_option($name, $value, $deprecated, $autoload);
     }
 
     /**
