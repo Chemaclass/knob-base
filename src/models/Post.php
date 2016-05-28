@@ -13,6 +13,7 @@ use Knob\I18n\I18n;
 use Knob\Libs\Utils;
 use Knob\Libs\Ajax;
 use Knob\Libs\IteratorPresenter;
+use Models\Term;
 
 /**
  * Post Model
@@ -54,8 +55,6 @@ class Post extends Image
     /*
      * Counts
      */
-    const COUNT_SHORT_TITLE = 40;
-
     const COUNT_EXCERPT = 20;
 
     /*
@@ -80,7 +79,7 @@ class Post extends Image
      *            
      * @see https://developer.wordpress.org/reference/classes/wp_post/
      */
-    public function __construct($ID = 0, $withWPPost = true)
+    public function __construct($ID = 0, $withWPPost = false)
     {
         parent::__construct($ID);
         if ($withWPPost) {
@@ -94,6 +93,10 @@ class Post extends Image
      */
     public function getWPPost()
     {
+        if (null === $this->wpPost) {
+            $this->wpPost = \WP_Post::get_instance($this->ID);
+        }
+        
         return $this->wpPost;
     }
 
@@ -165,14 +168,14 @@ class Post extends Image
      */
     public function getCategories()
     {
-        $categories = get_the_category($this->ID);
-        if (! $categories) {
+        if (! $categories = get_the_category($this->ID)) {
             return [];
         }
         foreach ($categories as $category) {
             $category->category_link = get_category_link($category->term_id);
             $array[] = $category;
         }
+        
         return new IteratorPresenter($array);
     }
 
