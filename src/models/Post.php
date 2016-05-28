@@ -161,6 +161,15 @@ class Post extends Image
     {
         return User::find($this->post_author);
     }
+    
+    /**
+     *
+     * @param string $taxonomy
+     */
+    public function getTerms($taxonomy = Term::TYPE_TAG, $args = [])
+    {
+        return wp_get_post_terms($this->getId(), $taxonomy, $args);
+    }
 
     /**
      *
