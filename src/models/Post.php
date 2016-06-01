@@ -132,6 +132,19 @@ class Post extends Image
         
         return $pages;
     }
+    
+    /**
+     *
+     * @return Post|null
+     */
+    public static function getCurrent()
+    {
+        if ($postId = get_the_ID()) {
+            return new Post($postId);
+        }
+    
+        return null;
+    }
 
     /**
      * (non-PHPdoc)
