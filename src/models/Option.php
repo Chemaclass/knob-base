@@ -77,4 +77,20 @@ class Option
     {
         return delete_option($option);
     }
+    
+    /**
+     * Get all params from one widget name (option_name)
+     *
+     * @param string $str
+     * 
+     * @return array 
+     */
+    public static function getParamsFromWidget($str)
+    {
+        $option = static::get($str, []);
+        unset($option['_multiwidget']);
+        $values = array_values($option);
+    
+        return isset($values[0]) ? $values[0] : [];
+    }
 }
