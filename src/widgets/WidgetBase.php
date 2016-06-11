@@ -63,21 +63,19 @@ abstract class WidgetBase extends \WP_Widget
 
     /**
      *
-     * @param string $id
-     * @param string $title
-     * @param array $widgetOps
-     * @param array $controlOps
+     * @param string $id            
+     * @param string $title            
+     * @param array $widgetOps            
+     * @param array $controlOps            
      *
      * @see https://developer.wordpress.org/reference/classes/wp_widget/__staticruct/
      */
-    public
-
-    function __construct($id = '', $title = '', array $widgetOps = [], array $controlOps = [])
+    public function __construct($id = '', $title = '', array $widgetOps = [], array $controlOps = [])
     {
         $className = static::getId();
         $className = substr($className, strrpos($className, '\\') + 1);
         $this->className = substr($className, 0, strpos($className, 'Widget'));
-
+        
         $id = ($id && strlen($id)) ? $id : $this->className . '_Widget';
         $title = ($title && strlen($title)) ? $title : static::$titlePrefix . $this->className;
         $widgetOps = (count($widgetOps)) ? $widgetOps : [
@@ -85,10 +83,8 @@ abstract class WidgetBase extends \WP_Widget
             'description' => $this->className . ' widget'
         ];
         parent::__construct($id, $title, $widgetOps, $controlOps);
-
+        
         $this->mustacheRender = MustacheRender::getInstance();
-
-        // $this->configParams = MustacheRender::getMustacheParams();
     }
 
     /**
@@ -105,9 +101,20 @@ abstract class WidgetBase extends \WP_Widget
     public function register()
     {
         $id = static::getId();
-        if (!is_active_widget($id)) {
+        if (! is_active_widget($id)) {
             register_widget($id);
         }
+    }
+
+    /**
+     * Each widget could implement his own isActive method, for example
+     * in order to be active only for loggued users.
+     *
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return is_active_widget(static::getId());
     }
 
     /**
@@ -123,7 +130,7 @@ abstract class WidgetBase extends \WP_Widget
     /**
      * Widget Backend.
      *
-     * @param unknown $instance
+     * @param unknown $instance            
      *
      * @see https://codex.wordpress.org/Widgets_API
      */
@@ -138,8 +145,8 @@ abstract class WidgetBase extends \WP_Widget
     /**
      * Updating widget replacing old instances with new.
      *
-     * @param unknown $newInstance
-     * @param unknown $oldInstance
+     * @param unknown $newInstance            
+     * @param unknown $oldInstance            
      * @return multitype:string
      *
      * @see https://codex.wordpress.org/Widgets_API
@@ -147,14 +154,14 @@ abstract class WidgetBase extends \WP_Widget
     public function update($newInstance, $oldInstance)
     {
         $instance = array();
-        $instance['title'] = (!empty($newInstance['title'])) ? strip_tags($newInstance['title']) : '';
+        $instance['title'] = (! empty($newInstance['title'])) ? strip_tags($newInstance['title']) : '';
         return $instance;
     }
 
     /**
      * Render backend form.
      *
-     * @param unknown $instance
+     * @param unknown $instance            
      */
     protected function renderBackendForm($instance, array $fields)
     {
@@ -175,7 +182,7 @@ abstract class WidgetBase extends \WP_Widget
             'fieldId' => $fieldIds,
             'fieldName' => $fieldNames
         ]);
-
+        
         return $this->mustacheRender->render($this->getTemplateName(static::$backFileName), [
             'instance' => $instance
         ]);
@@ -184,8 +191,8 @@ abstract class WidgetBase extends \WP_Widget
     /**
      * Render fronted widget.
      *
-     * @param unknown $args
-     * @param unknown $instance
+     * @param unknown $args            
+     * @param unknown $instance            
      */
     protected function renderFrontendWidget($args, $instance)
     {
@@ -193,47 +200,44 @@ abstract class WidgetBase extends \WP_Widget
          * Add the widget name.
          */
         $instance['widgetName'] = $this->className;
-
-        return $this->mustacheRender->render($this->getTemplateName(static::$frontFileName),
-            [
-                'args' => $args,
-                'instance' => $instance
-            ]);
+        
+        return $this->mustacheRender->render($this->getTemplateName(static::$frontFileName), [
+            'args' => $args,
+            'instance' => $instance
+        ]);
     }
 
     /**
      * Create the template name string.
      *
-     * @param string $dir
+     * @param string $dir            
      * @return string
      */
     protected function getTemplateName($fileName)
     {
-        $pathFn = function ($dir) use($fileName)
-        {
+        $pathFn = function ($dir) use($fileName) {
             return static::$widgetTemplateDir . '/' . $dir . '/' . $fileName;
         };
-
-        $pathToCheckFn = function ($path)
-        {
+        
+        $pathToCheckFn = function ($path) {
             return APP_DIR . '/templates/' . $path . '.mustache';
         };
-
+        
         $path = $pathFn($this->className);
         $pathToCheck = $pathToCheckFn($path);
-
+        
         // If doesn't exists just take it by default from current APP
-        if (!file_exists($pathToCheck)) {
-
+        if (! file_exists($pathToCheck)) {
+            
             $path = $pathFn(static::$widgetTemplateDirDefault);
             $pathToCheck = $pathToCheckFn($path);
-
+            
             // If doesn't exists take it by default from Knob-base
-            if (!file_exists($pathToCheck)) {
+            if (! file_exists($pathToCheck)) {
                 $path = '../../vendor/chemaclass/knob-base/src/templates/' . $path;
             }
         }
-
+        
         return $path;
     }
 }

@@ -72,6 +72,8 @@ class Term extends ModelBase
      * @param array $args            
      *
      * @return array
+     * 
+     * @see https://developer.wordpress.org/reference/functions/get_terms/
      */
     protected static function getTermsWithTotalsBy($type, $args = [])
     {
