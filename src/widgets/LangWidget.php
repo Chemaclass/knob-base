@@ -25,15 +25,25 @@ class LangWidget extends WidgetBase
      */
     public function widget($args, $instance)
     {
-
+        
         /*
          * Put all languages available to show into the instance var.
          */
         $instance['languages'] = I18n::getAllLangAvailableKeyValue();
-
+        
         /*
          * And call the widget func from the parent class WidgetBase.
          */
         parent::widget($args, $instance);
+    }
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Widgets\WidgetBase::isActive()
+     */
+    public function isActive()
+    {
+        return true;
     }
 }

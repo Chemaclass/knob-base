@@ -31,10 +31,20 @@ class LoginWidget extends WidgetBase
         $instance['registrationUrl'] = wp_registration_url();
         $instance['lostPasswordUrl'] = wp_lostpassword_url();
         $instance['postsUrl'] = '/wp-admin/edit.php';
-
+        
         /*
          * And call the widget func from the parent class WidgetBase.
          */
         parent::widget($args, $instance);
+    }
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Widgets\WidgetBase::isActive()
+     */
+    public function isActive()
+    {
+        return true;
     }
 }

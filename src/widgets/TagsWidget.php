@@ -25,15 +25,25 @@ class TagsWidget extends WidgetBase
      */
     public function widget($args, $instance)
     {
-
+        
         /*
          * Put the tags to show into the instance var.
          */
         $instance['tags'] = Term::getTags();
-
+        
         /*
          * And call the widget func from the parent class WidgetBase.
          */
         parent::widget($args, $instance);
+    }
+
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \Widgets\WidgetBase::isActive()
+     */
+    public function isActive()
+    {
+        return true;
     }
 }
