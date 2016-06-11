@@ -62,6 +62,14 @@ abstract class WidgetBase extends \WP_Widget
     protected $mustacheRender;
 
     /**
+     * Each widget could implement his own isActive method, for example
+     * in order to be active only for loggued users.
+     *
+     * @return boolean
+     */
+    public abstract function isActive();
+    
+    /**
      *
      * @param string $id            
      * @param string $title            
@@ -104,17 +112,6 @@ abstract class WidgetBase extends \WP_Widget
         if (! is_active_widget($id)) {
             register_widget($id);
         }
-    }
-
-    /**
-     * Each widget could implement his own isActive method, for example
-     * in order to be active only for loggued users.
-     *
-     * @return boolean
-     */
-    public function isActive()
-    {
-        return is_active_widget(static::getId());
     }
 
     /**
