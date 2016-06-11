@@ -168,7 +168,7 @@ abstract class ModelBase
         $firstKey = $criteriaKeys[0];
         // Add the first key to sql sentence
         $sqlQuery .= ' WHERE ' . $firstKey . ' = "' . $criteria[$firstKey] . '"';
-        unset($criteriaKeys[$firstKey]);
+        unset($criteriaKeys[0]);
         // Add the rest of the criteria
         foreach ($criteriaKeys as $key) {
             $sqlQuery .= ' AND ' . $key . ' = "' . $criteria[$key] . '"';
