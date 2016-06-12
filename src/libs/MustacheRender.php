@@ -2,7 +2,7 @@
 /*
  * This file is part of the Knob-base package.
  *
- * (c) José María Valera Reales <chemaclass@outlook.es>
+ * (c) Jose Maria Valera Reales <chemaclass@outlook.es>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,7 +16,7 @@ use Mustache_Logger_StreamLogger;
 /**
  * Template singleton
  *
- * @author José María Valera Reales
+ * @author Jose Maria Valera Reales
  */
 class MustacheRender
 {
@@ -181,10 +181,10 @@ class MustacheRender
                     return strtoupper((string) $value);
                 }
             ],
-            'count' => function ($value) {
+            'count' => function ($value = []) {
                 return count($value);
             },
-            'moreThan1' => function ($value) {
+            'moreThan1' => function ($value = []) {
                 return count($value) > 1;
             },
             'date' => [
