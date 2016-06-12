@@ -121,6 +121,7 @@ abstract class WidgetBase extends \WP_Widget
      */
     public function widget($args, $instance)
     {
+        $instance['active'] = $this->isActive();
         echo $this->renderFrontendWidget($args, $instance);
     }
 
