@@ -111,28 +111,6 @@ class Term extends ModelBase
     }
 
     /**
-     * Get the total of terms by termName and also the type (optional)
-     *
-     * @param string $name
-     *            The term_slug
-     * @param string $type
-     *            The taxonomy_name
-     *            
-     * @return int
-     */
-    public static function getTotalBy($name, $type = '')
-    {
-        global $wpdb;
-        $sql = "select count(*) from wp_v_generos_posts where term_slug like '%s'";
-        if (empty($type)) {
-            return $wpdb->get_var($wpdb->prepare($sql, $name));
-        }
-        $sql .= "and taxonomy_name = '%s'";
-        
-        return $wpdb->get_var($wpdb->prepare($sql, $name, $type));
-    }
-
-    /**
      *
      * @return string the name
      */
