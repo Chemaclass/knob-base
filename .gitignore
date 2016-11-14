@@ -1,1 +1,23 @@
 /vendor/
+
+*~
+
+# Eclipse
+.buildpath
+.project
+.settings
+
+# Chester 
+.sass-cache/
+
+# Pruebas locales
+test.*
+
+# Dependencias
+vendor
+
+# css
+# main.css
+
+# Parameters file in config/parameters
+parameters.php
