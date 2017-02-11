@@ -16,7 +16,6 @@ namespace Knob\Libs;
  */
 class Utils
 {
-
     const CONFIG_FILE = 'config';
 
     const PARAMETERS_FILE = 'parameters';
@@ -47,7 +46,7 @@ class Utils
         }
 
         if (null == static::$parameters) {
-            foreach (require ($file_name) as $k => $v) {
+            foreach (require($file_name) as $k => $v) {
                 static::$parameters["%{$k}%"] = $v;
             }
         }
@@ -59,8 +58,9 @@ class Utils
      */
     public static function getConfigFile()
     {
-        if (null == static::$config) {
-            static::$config = require ('/' . APP_DIR . '/config/' . self::CONFIG_FILE . '.php');
+        $configPath = '/' . APP_DIR . '/config/' . self::CONFIG_FILE . '.php';
+        if (null === static::$config && file_exists($configPath)) {
+            static::$config = require($filePath);
             static::replaceParameters(static::$config);
         }
         return static::$config;
@@ -107,7 +107,7 @@ class Utils
      * @param string $attachmentUrl URL del attachment
      * @return integer ID del attachment
      */
-    function getAttachmentIdFromUrl($attachmentUrl = '')
+    public function getAttachmentIdFromUrl($attachmentUrl = '')
     {
         global $wpdb;
         $attachmentId = false;
@@ -185,7 +185,7 @@ class Utils
         }
         return implode($separator, $words);
     }
-    
+
 
     /**
      * Slugify
@@ -195,7 +195,7 @@ class Utils
     public static function slugify($str)
     {
         $str = preg_replace('/[^a-z0-9 -]+/', '', strtolower($str));
-    
+
         return trim(str_replace(' ', '-', $str), '-');
     }
 }
