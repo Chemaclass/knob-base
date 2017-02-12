@@ -19,10 +19,10 @@ use Knob\Libs\Utils;
  */
 class I18n
 {
-    // Current language
     const CURRENT_LANG = 'current-lang';
     const DEFAULT_LANG_KEY = 'en';
     const DEFAULT_LANG_VALUE = 'english';
+    const GLOBAL_TRANS_FILE = 'global';
 
     private static $config = [];
 
@@ -78,7 +78,7 @@ class I18n
     /**
      * Return the lang by current user if it was established
      *
-     * @return string|boolean Lang from the current user
+     * @return string|bool Lang from the current user
      */
     public static function getLangBrowserByCurrentUser($forceLang = false)
     {
@@ -121,7 +121,7 @@ class I18n
 
     /**
      *
-     * @return array
+     * @return string[]
      */
     public static function getAllLangAvailableKeyValue()
     {
@@ -153,21 +153,26 @@ class I18n
         $toTranslate = strtolower($toTranslate);
         static::_getParams($toTranslate, $params);
 
-        $dir = self::getLangBrowserByCurrentUser($forceLang);
-
-        list($file, $key) = explode('.', $toTranslate);
-        /*
-         * Get the file called 'global' by default. Only if we didn't specify any file
-         */
-        if (is_null($key)) {
-            $key = $file;
-            $file = 'global';
+        // If there isn't a dot we'll append one just to avoid the "undefined offset 1" warning
+        if (false === strpos('.', $toTranslate)) {
+            $toTranslate .= '.';
         }
+        list($file, $key) = explode('.', $toTranslate);
+        // Get the file called 'global' by default. Only if we didn't specify any file
+        if (empty($key)) {
+            $key = $file;
+            $file = self::GLOBAL_TRANS_FILE;
+        }
+
+        $dir = self::getLangBrowserByCurrentUser($forceLang);
         // List with all keys/values with current lang
         $langArray = self::getLangFile($file, $dir);
         $key = trim($key);
         $value = isset($langArray[$key]) ? $langArray[$key] : $key;
-        if (is_numeric(strpos($value, ':')) && !empty($params) && is_array($params)) {
+        if (is_numeric(strpos($value, ':'))
+            && !empty($params)
+            && is_array($params)
+        ) {
             $value = static::_setParams($value, $params);
         }
         return $value;
@@ -254,10 +259,12 @@ class I18n
          * ( If the params-array is empty or it's an object)
          * And ( If the toTranslate-string contain '[' where would be the parameters )
          */
-        if (((is_array($params) && empty($params)) || is_object($params)) && ($pos = strpos($toTranslate, '['))) {
+        if (((is_array($params) && empty($params)) || is_object($params))
+            && ($pos = strpos($toTranslate, '['))
+        ) {
             $params = [];
             $_params = $params;
-            // +1 and -1 It's for to remove the brackets '[]'
+            // +1 and -1 => to remove the brackets '[]'
             $strParams = substr($toTranslate, $pos + 1, strlen($strParams) - 1);
             $toTranslate = substr($toTranslate, 0, $pos);
             // Split by a comma the parameters
@@ -277,7 +284,6 @@ class I18n
      * @param array $params optional parameters.
      * @param string $forceLang optional lang to force.
      * @return string Value translated.
-     *
      */
     public static function transu($key, $params = [], $forceLang = false)
     {
