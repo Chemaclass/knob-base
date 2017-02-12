@@ -21,8 +21,10 @@ class I18n
 {
     // Current language
     const CURRENT_LANG = 'current-lang';
+    const DEFAULT_LANG_KEY = 'en';
+    const DEFAULT_LANG_VALUE = 'english';
 
-    static $config = null;
+    private static $config = [];
 
     /**
      * Return the lang default
@@ -32,18 +34,26 @@ class I18n
     public static function getLangDefault()
     {
         $config = Utils::getConfigFile();
-        return $config['langDefault'];
+        if (isset($config['langDefault'])) {
+            return $config['langDefault'];
+        }
+
+        return self::DEFAULT_LANG_KEY;
     }
 
     /**
      * Return a list with all languages availables
      *
-     * @return array<string> names of directories availables
+     * @return string[] names of directories availables
      */
     public static function getAllLangAvailable()
     {
         $config = Utils::getConfigFile();
-        return array_keys($config['langAvailable']);
+        if (isset($config['langAvailable'])) {
+            return array_keys($config['langAvailable']);
+        }
+
+        return [self::DEFAULT_LANG_KEY];
     }
 
     /**
@@ -56,7 +66,13 @@ class I18n
     public static function getLangFullnameBrowser($lang)
     {
         $config = Utils::getConfigFile();
-        return $config['langAvailable'][$lang];
+        if (isset($config['langAvailable'])
+            && isset($config['langAvailable'][$lang])
+        ) {
+            return $config['langAvailable'][$lang];
+        }
+
+        return self::DEFAULT_LANG_VALUE;
     }
 
     /**
@@ -67,20 +83,27 @@ class I18n
     public static function getLangBrowserByCurrentUser($forceLang = false)
     {
         $langAvailables = self::getAllLangAvailable();
-        $isLangAvailable = function ($langToCheck) use($langAvailables)
-        {
+        $isLangAvailable = function ($langToCheck) use ($langAvailables) {
             return in_array($langToCheck, $langAvailables);
         };
-        // we can fonce the lang
+        // we can force the lang
         if ($forceLang && $isLangAvailable($forceLang)) {
             return $forceLang;
         }
         // or set by session
-        if (session_start() && $_SESSION[self::CURRENT_LANG] && $isLangAvailable($_SESSION[self::CURRENT_LANG])) {
+        if (session_start()
+            && isset($_SESSION[self::CURRENT_LANG])
+            && $isLangAvailable($_SESSION[self::CURRENT_LANG])
+        ) {
             return $_SESSION[self::CURRENT_LANG];
         }
+
         $langBrowser = Utils::getLangBrowser();
-        return $isLangAvailable($langBrowser) ? $langBrowser : static::getLangDefault();
+        if ($isLangAvailable($langBrowser)) {
+            return $langBrowser;
+        }
+
+        return static::getLangDefault();
     }
 
     /**
@@ -92,6 +115,7 @@ class I18n
     public static function getLangFullnameBrowserByCurrentUser($forceLang = false)
     {
         $lang = static::getLangBrowserByCurrentUser($forceLang);
+
         return static::getLangFullnameBrowser($lang);
     }
 
@@ -112,8 +136,7 @@ class I18n
         /*
          * Sort by key
          */
-        usort($languages, function ($a, $b)
-        {
+        usort($languages, function ($a, $b) {
             return strcasecmp($a['key'], $b['key']);
         });
         return $languages;
@@ -132,7 +155,7 @@ class I18n
 
         $dir = self::getLangBrowserByCurrentUser($forceLang);
 
-        list ($file, $key) = explode('.', $toTranslate);
+        list($file, $key) = explode('.', $toTranslate);
         /*
          * Get the file called 'global' by default. Only if we didn't specify any file
          */
@@ -164,7 +187,13 @@ class I18n
                 $lang = Utils::getLangBrowser();
             }
         }
-        return require ('/' . APP_DIR . "/i18n/$lang/$file.php");
+
+        $filePath = APP_DIR . "/i18n/$lang/$file.php";
+        if (!file_exists($filePath)) {
+            throw new \Exception("Missing lang file: $filePath");
+        }
+
+        return require $filePath;
     }
 
     /**
@@ -234,7 +263,7 @@ class I18n
             // Split by a comma the parameters
             $_params = explode(',', $strParams);
             foreach ($_params as $value) {
-                list ($k, $v) = explode(':', $value);
+                list($k, $v) = explode(':', $value);
                 $params[$k] = $v;
             }
         }
@@ -264,10 +293,11 @@ class I18n
      */
     public static function substr($key, $params = [], $forceLang = false)
     {
-        list ($string, $len) = explode(' ', $key);
-        if ($len)
+        list($string, $len) = explode(' ', $key);
+        if ($len) {
             return substr($string, 0, $len);
-        else
+        } else {
             return $string;
+        }
     }
 }
