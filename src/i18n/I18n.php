@@ -91,8 +91,10 @@ class I18n
             return $forceLang;
         }
         // or set by session
-        if (session_start()
-            && isset($_SESSION[self::CURRENT_LANG])
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+        if (isset($_SESSION[self::CURRENT_LANG])
             && $isLangAvailable($_SESSION[self::CURRENT_LANG])
         ) {
             return $_SESSION[self::CURRENT_LANG];
