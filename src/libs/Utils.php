@@ -58,11 +58,17 @@ class Utils
      */
     public static function getConfigFile()
     {
-        $configPath = '/' . APP_DIR . '/config/' . self::CONFIG_FILE . '.php';
+        $configPath = APP_DIR . '/config/' . self::CONFIG_FILE . '.php';
+        if (!file_exists($configPath)) {
+            // Internal base config file
+            $configPath = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::CONFIG_FILE . '.php';
+        }
+
         if (null === static::$config && file_exists($configPath)) {
-            static::$config = require($filePath);
+            static::$config = require($configPath);
             static::replaceParameters(static::$config);
         }
+
         return static::$config;
     }
 
