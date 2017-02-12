@@ -80,7 +80,7 @@ class Utils
     private static function replaceParameters(&$configOptions)
     {
         if (!$params = static::getParametersFile()) {
-            return null;
+            return;
         }
 
         foreach ($configOptions as $configKey => &$configItem) {
@@ -108,19 +108,18 @@ class Utils
     }
 
     /**
-     * Devuelve el ID del attachment apartir de su url
+     * Return the attachment ID from his url
      *
      * @param string $attachmentUrl URL del attachment
      * @return integer ID del attachment
      */
-    public function getAttachmentIdFromUrl($attachmentUrl = '')
+    public static function getAttachmentIdFromUrl($attachmentUrl = '')
     {
-        global $wpdb;
-        $attachmentId = false;
-        // If there is no url, return.
-        if ('' == $attachmentUrl) {
+        if (empty($attachmentUrl)) {
             return;
         }
+        global $wpdb;
+        $attachmentId = false;
         // Get the upload directory paths
         $upload_dir_paths = wp_upload_dir();
         // Make sure the upload path base directory exists in the attachment URL,
@@ -166,14 +165,14 @@ class Utils
 
     /**
      *
-     * @param unknown $str
+     * @param string $str
      * @param number $cant
      * @param string $separator
      * @return string
      */
     public static function getWordsByStr($str, $cant = 8, $separator = ' ')
     {
-        // Generate an arraz from the str cut by the separator
+        // Generate an array from the str cut by the separator
         $words = explode($separator, $str, $cant + 1);
         $numWords = count($words);
         // remove all empty values
