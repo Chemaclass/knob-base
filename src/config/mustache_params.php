@@ -40,7 +40,7 @@ return [
     'blogStylesheetUrl' => get_bloginfo('stylesheet_url'),
     'blogTemplateDirectory' => get_bloginfo('template_directory'),
     'blogTemplateUrl' => get_bloginfo('template_url'),
-    'blogTextDirection' => get_bloginfo('text_direction'),
+    'blogTextDirection' => is_rtl(),
     'blogVersion' => get_bloginfo('version'),
     'blogWpurl' => get_bloginfo('wpurl'),
 
