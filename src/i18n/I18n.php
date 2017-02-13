@@ -267,7 +267,7 @@ class I18n
             $params = [];
             $_params = $params;
             // +1 and -1 => to remove the brackets '[]'
-            $strParams = substr($toTranslate, $pos + 1, strlen($strParams) - 1);
+            $strParams = substr($toTranslate, $pos + 1, strlen($toTranslate) - 1);
             $toTranslate = substr($toTranslate, 0, $pos);
             // Split by a comma the parameters
             $_params = explode(',', $strParams);
