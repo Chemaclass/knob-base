@@ -153,9 +153,9 @@ class HomeController extends BaseController implements HomeControllerInterface {
 }
 ```
 
-# Before the start... you'll need! #
+# Before the start... you'll need! 
 
-### Install ruby and compass ###
+### Install ruby and compass 
 * sudo apt-get install ruby
 * sudo gem update --system
 * sudo apt-get install ruby1.9.1-dev
