@@ -2,27 +2,28 @@
 
 ### What's this repository? ###
 
-* Knob-base
-* Project base to use Knob MVC PHP. Framework
-* This is a PHP MVC Framework for creating Wordpress templates easier and with more fun than ever before.
+* Knob-base: project base to use Knob MVC PHP Framework
+* This is a PHP MVC Framework to create WordPress templates easier and funnier than ever before.
 * Author: José María Valera Reales
 
 ## Knob-base is the kernel from [Knob-mvc](https://github.com/Chemaclass/knob-mvc/)
+
 * This is a Framework based on MVC pattern. 
-* Inspired by latest frameworks we have nowadays to web development like Symfony or Laravel.
-* Use the [WP kernel](https://codex.wordpress.org/). So don't forget you allways have the [reference](https://developer.wordpress.org/reference/).
+* Knob-base should not be focus on any style of the page, but deal with WP and provide models instead. 
+* Inspired by latest frameworks we have nowadays for web development such Symfony or Laravel.
+* Regarding any question about WP kernel: take a look the official WP documentation: [WP Codex](https://codex.wordpress.org/) and  [WP Reference](https://developer.wordpress.org/reference/).
 
 ## Creating basic controllers and views
 
-* HomeController: Controller for all files from WP:
-	- author.php -> getAuthor() -> render the base/author.mustache template
-	- archive.php -> getArchive() -> render the base/search.mustache template
-	- category.php -> getCategory() -> render the base/search.mustache template
-	- home.php -> getHome() -> render the base/home.mustache template
-	- search.php -> getSearch() -> render the base/search.mustache template
-	- single.php -> getSingle($type = 'post') -> render the base/[post|page].mustache template
-	- tag.php -> getTag() -> render the base/search.mustache template
-	- 404.php -> get404() -> render the base/error_404.mustache template
+* `HomeController`: Controller for all files from WP:
+	- author.php `->getAuthor()`: render the `base/author.mustache` template
+	- archive.php `->getArchive()`: render the `base/search.mustache` template
+	- category.php `->getCategory()`: render the `base/search.mustache` template
+	- home.php `->getHome()`: render the `base/home.mustache` template
+	- search.php `->getSearch()`: render the `base/search.mustache` template
+	- single.php `->getSingle($type = 'post')`: render the `base/[post|page].mustache` template
+	- tag.php `->getTag()`: render the `base/search.mustache` template
+	- 404.php `->get404()`: render the `base/error_404.mustache` template
 
 ### Calling a controller from a WordPress template page.
 
@@ -38,7 +39,8 @@ $controller->getSingle('post');
 
 ### Models to get all values from your DB
 
-* You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory). For example Post:
+* You can find all models as Entities from your DB in 'Knob\Models' (src/models/ directory). 
+For example `Post`:
 
 ```php 
 // vendor/chemaclass/knob-base/src/models/Post.php
@@ -62,7 +64,8 @@ class Post extends ModelBase
 }
 ```
 
-* You will be provided with libraries to prepare your Actions and Filters (from Wordpress). For example Actions:
+* You will be provided with libraries to prepare your `Actions` and `Filters` (from WordPress). 
+For example `Actions`:
 ```php 
 // vendor/chemaclass/knob-base/src/libs/Actions.php
 namespace Knob\Libs;
@@ -81,7 +84,8 @@ class Actions
 }
 ```
 
-* Also you will be able to get or create your own widgets as new models. You have the basics in 'Knob\Widgets' (src/widgets/ directory).
+* Also you will be able to create your own widgets as new models. 
+You have the basics in `Knob\Widgets` (src/widgets/ directory).
 For example PagesWidget:
 ```php 
 // vendor/chemaclass/knob-base/src/widgets/PagesWidget.php
@@ -99,16 +103,17 @@ class PagesWidget extends WidgetBase
 }
 ```
 
-* All of these on the best&easy way ever in 'Knob\libs' (src/libs/ directory)
+* All of these on the best&easy way ever in `Knob\libs` (src/libs/ directory)
 
 ### Views based on [Mustache](http://mustache.github.com/) templates
-* All you have to care basically are your templates. Thats why we choose Mustache. Is simple, flexible and funny.
-* This will be your main part; that's because your "Wordpress Template", dont forget it ;-)
+
+* All you have to care basically are your templates. That's why we choose Mustache. 
+Is simple, flexible and fun.
 
 ### Controllers to pull everything together
-* From 'Knob\Controllers' (src/controllers/ directory) 
-* You will be provided a ```Knob\Controllers\BaseController``` to extends your own controllers. 
-Then from your controller just need to do something like:
+
+* From `Knob\Controllers` (src/controllers/ directory) 
+* You will be provided a `Knob\Controllers\BaseController` to extends your own controllers. 
 
 ```php 
 // app/controllers/BaseController.php
@@ -122,7 +127,7 @@ class BaseController extends KnobBaseController
 }
 ```
 
-* How should looks your HomeController?
+* Then your `HomeController` could seems like: 
 
 ```php 
 // app/controllers/HomeController.php
@@ -133,7 +138,7 @@ use Models\Option;
 
 class HomeController extends BaseController implements HomeControllerInterface {
 	
-	/**
+    /**
      * home.php
      */
     public function getHome()
@@ -161,7 +166,7 @@ class HomeController extends BaseController implements HomeControllerInterface {
 * /knob-mvc $> rake watch_scss
 
 ### You'll need a PHP graphics library to be able to use the image editor: ###
-* apt-get install php5-imagick php5-gd
+* apt-get install php-imagick php7.0-gd
 * service apache2 reload 
 
 
