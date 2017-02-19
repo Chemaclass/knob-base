@@ -10,6 +10,7 @@
 namespace Config;
 
 use Knob\I18n\I18n;
+use Knob\Libs\Utils;
 
 /**
  * ============================
@@ -32,11 +33,19 @@ use Knob\I18n\I18n;
  * @link https://github.com/bobthecow/mustache.php/wiki/FILTERS-pragma
  *
  */
+$i18n = new I18n(new Utils(APP_DIR, [
+    Utils::AVAILABLE_LANGUAGES => [
+        Utils::LANG_KEY => Utils::LANG_VALUE,
+    ],
+    Utils::DEFAULT_LANGUAGE => Utils::DEFAULT_LANG,
+    Utils::DEFAULT_LANGUAGE_FILE => Utils::DEFAULT_LANG_FILE,
+]));
+
 return [
-    'trans' => function ($value) {
-        return I18n::trans($value);
+    'trans' => function ($value) use ($i18n) {
+        return $i18n->trans($value);
     },
-    'transu' => function ($value) {
-        return I18n::transu($value);
+    'transu' => function ($value) use ($i18n) {
+        return $i18n->transu($value);
     }
 ];

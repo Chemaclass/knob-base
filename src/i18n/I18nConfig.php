@@ -7,6 +7,11 @@ interface I18nConfig
     const DEFAULT_LANGUAGE = 'defaultLanguage';
     const DEFAULT_LANGUAGE_FILE = 'defaultLanguageFile';
 
+    const LANG_VALUE = 'english';
+    const LANG_KEY = 'en';
+    const DEFAULT_LANG = self::LANG_KEY;
+    const DEFAULT_LANG_FILE = 'global';
+
     /**
      * @return string
      */

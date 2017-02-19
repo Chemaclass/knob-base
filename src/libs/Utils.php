@@ -37,12 +37,12 @@ class Utils implements I18nConfig
 
     /**
      * @param $appDir
-     * @param I18nConfig $config
+     * @param array $i18nConfig
      */
-    public function __construct($appDir, I18nConfig $config)
+    public function __construct($appDir, array $i18nConfig)
     {
         $this->appDir = $appDir;
-        $this->i18nConfig = $config;
+        $this->i18nConfig = $i18nConfig;
     }
 
     public function config()
