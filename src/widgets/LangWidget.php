@@ -29,7 +29,7 @@ class LangWidget extends WidgetBase
         /*
          * Put all languages available to show into the instance var.
          */
-        $instance['languages'] = I18n::getAllLangAvailableKeyValue();
+        $instance['languages'] = I18n::availableLanguagesKeyValue();
         
         /*
          * And call the widget func from the parent class WidgetBase.

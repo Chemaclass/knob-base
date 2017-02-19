@@ -22,7 +22,7 @@ class WalkerNavMenu extends \Walker_Nav_Menu
      * @param unknown $output
      * @param unknown $depth
      */
-    function start_lvl(&$output, $depth)
+    public function start_lvl(&$output, $depth)
     {
         $indent = str_repeat("\t", $depth);
         $output .= "\n$indent";
@@ -32,7 +32,7 @@ class WalkerNavMenu extends \Walker_Nav_Menu
                 '<a$1
 					href="#" class="dropdown-toggle" data-toggle="dropdown"
 					role="button" aria-haspopup="true" aria-expanded="false"$3>', $output);
-            $output = str_replace('</a>', '<span class="caret"></span></a>', $output, $count);
+            //$output = str_replace('</a>', '<span class="caret"></span></a>', $output, $count);
         }
         $output .= '<ul class="dropdown-menu">';
     }
@@ -42,7 +42,7 @@ class WalkerNavMenu extends \Walker_Nav_Menu
      * @param unknown $output
      * @param unknown $depth
      */
-    function end_lvl(&$output, $depth)
+    public function end_lvl(&$output, $depth)
     {
         $indent = str_repeat("\t", $depth);
         $output .= "$indent</ul>";
@@ -56,12 +56,12 @@ class WalkerNavMenu extends \Walker_Nav_Menu
      * @param int $depth Depth of menu item. May be used for padding.
      * @param array $args Additional strings.
      */
-    function start_el(&$output, $item, $depth = 0, $args = [], $id = 0)
+    public function start_el(&$output, $item, $depth = 0, $args = [], $id = 0)
     {
         $classes = empty($item->classes) ? array() : (array) $item->classes;
 
         $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item));
-
+        dd($class_names);
         !empty($class_names) and $class_names = ' class="' . esc_attr($class_names) . '"';
 
         $output .= "<li id='menu-item-$item->ID' $class_names>";

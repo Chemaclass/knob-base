@@ -46,7 +46,7 @@ return [
 
     'componentsDir' => COMPONENTS_DIR,
     'currentLang' => I18n::getLangBrowserByCurrentUser(),
-    'currentLangFullname' => I18n::getLangFullnameBrowserByCurrentUser(),
+    'currentLangFullname' => I18n::fullNameLanguageByCurrentUserBrowser(),
     'currentUser' => User::getCurrent(),
 
     'homeUrl' => get_home_url(),

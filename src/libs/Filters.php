@@ -20,7 +20,7 @@ class Filters
     /**
      * Setup the filters
      */
-    protected static function setup()
+    public static function setup()
     {
         static::showAdminBar(false);
         static::navMenuCssClass();
@@ -44,14 +44,12 @@ class Filters
      */
     protected static function navMenuCssClass()
     {
-        add_filter('nav_menu_css_class',
-            function ($classes, $item)
-            {
-                // if (is_single() && $item->title == "Blog") { // Notice you can change the
+        add_filter('nav_menu_css_class', function ($classes, $item) {
+            // if (is_single() && $item->title == "Blog") { // Notice you can change the
                 // conditional from is_single() and $item->title
                 $classes[] = "dropdown";
                 // }
                 return $classes;
-            }, 10, 2);
+        }, 10, 2);
     }
 }
