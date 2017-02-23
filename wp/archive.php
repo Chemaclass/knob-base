@@ -8,6 +8,7 @@
  * file that was distributed with this source code.
  */
 use Controllers\HomeController;
+use Knob\App;
 
 /**
  * Archive.
@@ -15,5 +16,9 @@ use Controllers\HomeController;
  * @link https://codex.wordpress.org/Creating_an_Archive_Index
  * @link https://codex.wordpress.org/Theme_Development
  */
-$controller = new HomeController();
+$controller = new HomeController(
+    App::get('i18n'),
+    App::get('widgets'),
+    App::get('menus')
+);
 echo $controller->getArchive();
