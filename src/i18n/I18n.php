@@ -303,7 +303,7 @@ class I18n
      * @param string $forceLang optional lang to force.
      * @return string Value translated.
      */
-    public function transu($key, $params = [], $forceLang = '')
+    public function transU($key, $params = [], $forceLang = '')
     {
         return ucfirst($this->trans($key, $params, $forceLang));
     }

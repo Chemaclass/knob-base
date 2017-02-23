@@ -14,8 +14,7 @@ namespace Knob\Libs;
  *
  * @author José María Valera Reales
  */
-interface WidgetsInterface
+interface MenusInterface
 {
-
-    public function dynamicSidebarActive();
+    function activeIds();
 }

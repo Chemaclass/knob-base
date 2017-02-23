@@ -9,19 +9,34 @@
  */
 namespace Knob\Libs;
 
+use Knob\I18n\I18n;
+
 /**
- * Actions for Wordpress
+ * Actions for WordPress
  *
  * @author José María Valera Reales
  */
 class Actions
 {
+    /** @var I18n */
+    protected $i18n;
+
+    /**  @var WidgetsInterface */
+    protected $widgets;
+
+    /**  @var MenusInterface */
+    protected $menus;
 
     /**
-     * Setup the actions
+     * @param I18n $i18n
+     * @param WidgetsInterface $widgets
+     * @param MenusInterface $menus
      */
-    public static function setup()
+    protected function __construct(I18n $i18n, WidgetsInterface $widgets, MenusInterface $menus)
     {
+        $this->i18n = $i18n;
+        $this->widgets = $widgets;
+        $this->menus = $menus;
     }
 
     /**
@@ -41,7 +56,7 @@ class Actions
      *        'beforeTitle': HTML to place before every title. Optional
      *        'afterTitle': HTML to place after every title. Optional
      */
-    public static function widgetsInit($activeWidgets = [])
+    public function widgetsInit($activeWidgets = [])
     {
         if (!count($activeWidgets)) {
             return;
@@ -55,7 +70,8 @@ class Actions
                         if (isset($w['beforeWidget'])) {
                             $beforeWidget = $w['beforeWidget'];
                         } else {
-                            $classBeforeWidget = isset($w['classBeforeWidget']) ? $w['classBeforeWidget'] : str_replace('_', '-', $w['id']);
+                            $classBeforeWidget = isset($w['classBeforeWidget'])
+                                ? $w['classBeforeWidget'] : str_replace('_', '-', $w['id']);
                             $beforeWidget = '<div class="widget ' . $classBeforeWidget . '">';
                         }
                         $afterWidget = isset($w['afterWidget']) ? $w['afterWidget'] : '</div>';
@@ -69,7 +85,7 @@ class Actions
                                 'before_widget' => $beforeWidget,
                                 'after_widget' => $afterWidget,
                                 'before_title' => $beforeTitle,
-                                'after_title' => $afterTitle
+                                'after_title' => $afterTitle,
                             ]);
                     }
                 });

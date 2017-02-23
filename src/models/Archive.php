@@ -19,7 +19,7 @@ class Archive
     /*
      * Const
      */
-    const DELIMITER = '-';
+    const DELIMITER = '/';
 
     const LIMIT = 0;
 

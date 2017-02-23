@@ -9,21 +9,26 @@
  */
 namespace Knob\Libs;
 
+use Knob\I18n\I18n;
+
 /**
- * Filters from Wordpress
+ * Filters from WordPress
  *
  * @author José María Valera Reales
  */
 class Filters
 {
+    /**  @var I18n */
+    private $i18n;
 
     /**
-     * Setup the filters
+     * @param I18n $i18n
      */
-    public static function setup()
+    public function __construct(I18n $i18n)
     {
-        static::showAdminBar(false);
-        static::navMenuCssClass();
+        $this->i18n = $i18n;
+        $this->showAdminBar(false);
+        $this->navMenuCssClass();
     }
 
     /**
@@ -46,10 +51,10 @@ class Filters
     {
         add_filter('nav_menu_css_class', function ($classes, $item) {
             // if (is_single() && $item->title == "Blog") { // Notice you can change the
-                // conditional from is_single() and $item->title
-                $classes[] = "dropdown";
-                // }
-                return $classes;
+            // conditional from is_single() and $item->title
+            $classes[] = "dropdown";
+            // }
+            return $classes;
         }, 10, 2);
     }
 }

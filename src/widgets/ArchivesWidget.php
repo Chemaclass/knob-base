@@ -19,18 +19,18 @@ class ArchivesWidget extends WidgetBase
 {
 
     /**
-     * (non-PHPdoc)
-     *
+     * @param $args
+     * @param $instance
      * @see \Widgets\WidgetBase::widget()
      */
     public function widget($args, $instance)
     {
-        
+
         /*
          * Put the archives to show into the instance var.
          */
         $instance['archives'] = Archive::getMonthly();
-        
+
         /*
          * And call the widget func from the parent class WidgetBase.
          */

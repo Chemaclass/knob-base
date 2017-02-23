@@ -19,46 +19,65 @@ interface HomeControllerInterface
 
     /**
      * author.php
+     *
+     * @return string
      */
     public function getAuthor();
 
     /**
      * archive.php
+     *
+     * @return string
      */
     public function getArchive();
 
     /**
      * category.php
+     *
+     * @return string
      */
     public function getCategory();
 
     /**
      * home.php
+     *
+     * @return string
      */
     public function getHome();
 
     /**
      * index.php
+     *
+     * @return string
      */
     public function getIndex();
 
     /**
      * 404.php
+     *
+     * @return string
      */
     public function get404();
 
     /**
      * search.php
+     *
+     * @return string
      */
     public function getSearch();
 
     /**
      * single.php
+     *
+     * @param string $type
+     * @return string
      */
     public function getSingle($type = 'post');
 
     /**
      * tag.php
+     *
+     * @return string
      */
     public function getTag();
 }

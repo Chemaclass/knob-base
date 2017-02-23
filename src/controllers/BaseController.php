@@ -19,13 +19,13 @@ use Models\User;
  */
 abstract class BaseController
 {
-    protected $mustacheRender = null;
-    
-    protected $currentUser = null;
-    
-    /**
-     * Constructor
-     */
+
+    /** @var MustacheRender */
+    protected $mustacheRender;
+
+    /** @var User */
+    protected $currentUser;
+
     public function __construct()
     {
         $this->mustacheRender = MustacheRender::getInstance();
@@ -40,10 +40,10 @@ abstract class BaseController
     public abstract function getGlobalVariables();
 
     /**
-     * Render a partial
-     *
      * @param string $templateName
      * @param array $templateVars
+     * @param bool $addGlobalVariables
+     * @return string
      */
     public function render($templateName, $templateVars = [], $addGlobalVariables = true)
     {
@@ -58,6 +58,7 @@ abstract class BaseController
      *
      * @param string $templateName Template name to print
      * @param array $templateVars Parameters to template
+     * @return string
      */
     public function renderPage($templateName, $templateVars = [])
     {
@@ -74,7 +75,7 @@ abstract class BaseController
         return $this->render($templateName,
             array_merge($templateVars, [
                 'wp_head' => $wpHead,
-                'wp_footer' => $wpFooter
+                'wp_footer' => $wpFooter,
             ]));
     }
 }

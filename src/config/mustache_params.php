@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-use Knob\I18n\I18n;
+use Knob\App;
 use Knob\Libs\Env;
 use Models\Post;
 use Models\Option;
@@ -16,6 +16,8 @@ use Models\User;
 /**
  * Params to Mustache templates.
  */
+$i18n = App::get('i18n');
+
 return [
 
     'adminEmail' => ADMIN_EMAIL,
@@ -44,9 +46,9 @@ return [
     'blogVersion' => get_bloginfo('version'),
     'blogWpurl' => get_bloginfo('wpurl'),
 
+    'currentLang' => $i18n->getLangBrowserByCurrentUser(),
+    'currentLangFullname' => $i18n->fullNameLanguageByCurrentUserBrowser(),
     'componentsDir' => COMPONENTS_DIR,
-    'currentLang' => I18n::getLangBrowserByCurrentUser(),
-    'currentLangFullname' => I18n::fullNameLanguageByCurrentUserBrowser(),
     'currentUser' => User::getCurrent(),
 
     'homeUrl' => get_home_url(),
@@ -62,5 +64,5 @@ return [
     'optionCategoryBase' => ($c = Option::get('category_base')) ? $c : Post::CATEGORY_BASE_DEFAULT,
     'optionTagBase' => ($t = Option::get('tag_base')) ? $t : Post::TAG_BASE_DEFAULT,
 
-    'publicDir' => PUBLIC_DIR
+    'publicDir' => PUBLIC_DIR,
 ];

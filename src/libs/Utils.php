@@ -36,7 +36,7 @@ class Utils implements I18nConfig
     private $config = null;
 
     /**
-     * @param $appDir
+     * @param string $appDir
      * @param array $i18nConfig
      */
     public function __construct($appDir, array $i18nConfig)
