@@ -9,67 +9,118 @@
  */
 namespace Knob\Libs;
 
+use Knob\I18n\I18nConfig;
+
 /**
  * Class with Utilities
  *
  * @author José María Valera Reales
  */
-class Utils
+class Utils implements I18nConfig
 {
     const CONFIG_FILE = 'config';
-
     const PARAMETERS_FILE = 'parameters';
 
-    /*
-     * Some const.
-     */
     const TYPE_TAG = 'tag';
-
     const TYPE_CATEGORY = 'category';
-
     const TYPE_SEARCH = 'search';
-
     const TYPE_AUTHOR = 'author';
 
-    private static $config = null;
+    /** @var array */
+    private $i18nConfig;
+    /** @var string */
+    private $appDir;
+    /** @var array|null */
+    private $parameters = null;
+    /** @var array|null */
+    private $config = null;
 
-    private static $parameters = null;
+    /**
+     * @param string $appDir
+     * @param array $i18nConfig
+     */
+    public function __construct($appDir, array $i18nConfig)
+    {
+        $this->appDir = $appDir;
+        $this->i18nConfig = $i18nConfig;
+    }
+
+    public function config()
+    {
+        return $this->getConfigFile();
+    }
+
+    public function i18nLanguageDir()
+    {
+        return $this->appDir . '/i18n/';
+    }
+
+    public function languageBrowser()
+    {
+        return $this->globalLanguageFile();
+    }
+
+    public function globalLanguageFile()
+    {
+        return $this->i18nConfig[self::DEFAULT_LANGUAGE_FILE];
+    }
+
+    public function availableLanguages()
+    {
+        return $this->i18nConfig[self::AVAILABLE_LANGUAGES];
+    }
+
+    public function defaultLanguage()
+    {
+        return $this->i18nConfig[self::DEFAULT_LANGUAGE];
+    }
+
+    public function languageValue($langKey)
+    {
+        if (!isset($this->i18nConfig[self::AVAILABLE_LANGUAGES][$langKey])) {
+            return $this->defaultLanguage();
+        }
+
+        return $this->i18nConfig[self::AVAILABLE_LANGUAGES][$langKey];
+    }
 
     /**
      * Return all parameters values
+     *
+     * @return array
      */
-    protected static function getParametersFile()
+    protected function getParametersFile()
     {
-        $file_name = '/' . APP_DIR . '/config/' . self::PARAMETERS_FILE . '.php';
+        $file_name = $this->appDir . '/config/' . self::PARAMETERS_FILE . '.php';
         if (!file_exists($file_name)) {
-            return null;
+            return [];
         }
 
-        if (null == static::$parameters) {
+        if (null === $this->parameters) {
             foreach (require($file_name) as $k => $v) {
-                static::$parameters["%{$k}%"] = $v;
+                $this->parameters["%{$k}%"] = $v;
             }
         }
-        return static::$parameters;
+        return $this->parameters;
     }
 
     /**
      * Return all global config values
      */
-    public static function getConfigFile()
+    public function getConfigFile()
     {
-        $configPath = APP_DIR . '/config/' . self::CONFIG_FILE . '.php';
+        $configPath = $this->appDir . '/config/' . self::CONFIG_FILE . '.php';
         if (!file_exists($configPath)) {
             // Internal base config file
             $configPath = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::CONFIG_FILE . '.php';
         }
 
-        if (null === static::$config && file_exists($configPath)) {
-            static::$config = require($configPath);
-            static::replaceParameters(static::$config);
+        if (null === $this->config && file_exists($configPath)) {
+            $this->config = require($configPath);
+            static::replaceParameters($this->config);
         }
 
-        return static::$config;
+        return $this->config;
     }
 
     /**

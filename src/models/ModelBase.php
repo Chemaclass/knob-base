@@ -18,7 +18,7 @@ abstract class ModelBase
 {
 
     /**  @var array Columns from the table of our Model */
-    protected static $columns = array();
+    protected static $columns = [];
 
     /**  @var string Primary Key */
     protected static $PK = 'ID';
@@ -35,7 +35,7 @@ abstract class ModelBase
     /**
      * Constructor
      *
-     * @param integer $ID            
+     * @param integer $ID
      */
     public function __construct($ID = 0)
     {
@@ -55,7 +55,7 @@ abstract class ModelBase
         if (isset($this->$PK)) {
             return $this->$PK;
         }
-        
+
         return null;
     }
 
@@ -67,7 +67,7 @@ abstract class ModelBase
     public static function getTableName()
     {
         global $wpdb;
-        
+
         return $wpdb->prefix . static::$table;
     }
 
@@ -79,7 +79,7 @@ abstract class ModelBase
     public static function all()
     {
         global $wpdb;
-        
+
         $dbResults = $wpdb->get_results('SELECT * FROM ' . static::getTableName());
         $result = [];
         $model = get_called_class();
@@ -90,19 +90,19 @@ abstract class ModelBase
             }
             $result[] = $modelObject;
         }
-        
+
         return $result;
     }
 
     /**
      * Search and return the Object across his ID
      *
-     * @param integer $ID            
-     * @return object
+     * @param int $ID
+     * @return ModelBase
      */
-    public static function find($ID = false)
+    public static function find($ID = 0)
     {
-        if (empty($ID) || ! is_numeric($ID)) {
+        if (empty($ID) || !is_numeric($ID) || $ID <= 0) {
             return null;
         }
         global $wpdb;
@@ -112,23 +112,23 @@ abstract class ModelBase
             $calledClass = substr($calledClass, strpos($calledClass, '\\') + 1);
         }
         $sql = 'SELECT * FROM ' . static::getTableName() . ' WHERE ' . static::$PK . '= %d';
-        if (! $row = $wpdb->get_row($wpdb->prepare($sql, $ID))) {
+        if (!$row = $wpdb->get_row($wpdb->prepare($sql, $ID))) {
             return null;
         }
-        
+
         $new = new $calledClass();
         foreach ($row as $column => $val) {
             $new->$column = $val;
         }
-        
+
         return $new;
     }
 
     /**
      * Get all elements from DB who's contain the same criteria.
      *
-     * @param array $criteria            
-     * @param string $single            
+     * @param array $criteria
+     * @param string $single
      *
      * @return unknown|multitype:NULL
      */
@@ -138,30 +138,30 @@ abstract class ModelBase
         $return = [];
         $query = static::getQueryByCriteria($criteria);
         $dbResults = $wpdb->get_results($query);
-        
+
         if ($single && isset($dbResults[0])) {
             return static::getModelFromDBObject($dbResults[0]);
         }
-        
+
         foreach ($dbResults as $object) {
             $return[] = static::getModelFromDBObject($object);
         }
-        
+
         return $return;
     }
 
     /**
      *
-     * @param array $criteria            
-     * @param int $limit            
-     * @param int $offset            
+     * @param array $criteria
+     * @param int $limit
+     * @param int $offset
      *
      * @return string
      */
     private static function getQueryByCriteria($criteria = [], $limit = false, $offset = false)
     {
         $sqlQuery = 'SELECT * FROM ' . static::getTableName();
-        if (! count($criteria)) {
+        if (!count($criteria)) {
             return $sqlQuery;
         }
         $criteriaKeys = array_keys($criteria);
@@ -173,21 +173,21 @@ abstract class ModelBase
         foreach ($criteriaKeys as $key) {
             $sqlQuery .= ' AND ' . $key . ' = "' . $criteria[$key] . '"';
         }
-        
+
         if ($limit) {
             $sqlQuery .= ' LIMIT ' . $limit;
         }
         if ($offset) {
             $sqlQuery .= ' OFFSET ' . $offset;
         }
-        
+
         return $sqlQuery;
     }
 
     /**
      * Mount the ModelBase using the data from the DB.
      *
-     * @param object $dbObject            
+     * @param object $dbObject
      *
      * @return ModelBase
      */
@@ -198,7 +198,7 @@ abstract class ModelBase
         foreach ($dbObject as $column => $val) {
             $object->$column = $val;
         }
-        
+
         return $object;
     }
 
@@ -209,14 +209,14 @@ abstract class ModelBase
      */
     public function delete()
     {
-        if (! $this->ID) {
+        if (!$this->ID) {
             return false;
         }
-        
+
         try {
             global $wpdb;
             $sql = 'DELETE FROM ' . static::getTableName() . ' WHERE ' . static::$PK . ' = %d';
-            
+
             return $wpdb->query($wpdb->prepare($sql, $this->ID));
         } catch (Exception $e) {
             return false;
@@ -226,7 +226,7 @@ abstract class ModelBase
     /**
      * Get the first elem by criteria
      *
-     * @param array $criteria            
+     * @param array $criteria
      *
      * @return ModelBase
      */

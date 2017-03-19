@@ -9,7 +9,7 @@
  */
 namespace Knob\Models;
 
-use Knob\I18n\I18n;
+use Knob\App;
 use Knob\Libs\Utils;
 use Knob\Libs\Ajax;
 use Knob\Libs\IteratorPresenter;
@@ -189,7 +189,7 @@ class Post extends Image
      */
     public function getCategories()
     {
-        if (! $categories = get_the_category($this->ID)) {
+        if (!$categories = get_the_category($this->ID)) {
             return [];
         }
         foreach ($categories as $category) {
@@ -222,7 +222,7 @@ class Post extends Image
         $args_comments = [
             'post_id' => $this->ID,
             'orderby' => 'comment_date_gmt',
-            'status' => static::STATUS_APPROVE
+            'status' => static::STATUS_APPROVE,
         ];
         $comments = [];
         foreach (get_comments($args_comments, $this->ID) as $c) {
@@ -239,7 +239,8 @@ class Post extends Image
     public function getDate()
     {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare('SELECT post_date FROM ' . $wpdb->prefix . 'posts WHERE ID = %d', $this->ID));
+        return $wpdb->get_var($wpdb->prepare('SELECT post_date FROM ' . $wpdb->prefix . 'posts WHERE ID = %d',
+            $this->ID));
     }
 
     /**
@@ -251,7 +252,7 @@ class Post extends Image
     {
         ob_start();
 
-        $placeTextarea = I18n::transu('post.share_comment');
+        $placeTextarea = App::get('i18n')->transu('post.share_comment');
 
         $params = [
             'comment_notes_after' => '',
@@ -262,18 +263,21 @@ class Post extends Image
 		            <label for="comment">' . _x('Comment', 'noun') . '</label>
 		            <textarea class="form-control" id="comment" name="comment" cols="45" rows="2"
 							maxlength="1000" aria-required="true" placeholder="' . $placeTextarea . '"></textarea>
-		        </div>'
+		        </div>',
         ];
 
-        $placeAuthor = I18n::transu('name');
-        $placeEmail = I18n::transu('email');
-        $placeUrl = I18n::transu('website');
+        $placeAuthor = App::get('i18n')->transu('name');
+        $placeEmail = App::get('i18n')->transu('email');
+        $placeUrl = App::get('i18n')->transu('website');
 
         comment_form($params, $this->ID);
         $comment_form = ob_get_clean();
-        $comment_form = str_replace('id="author"', 'class="author form-control" placeholder="' . $placeAuthor . '"', $comment_form);
-        $comment_form = str_replace('id="email"', 'class="email form-control" placeholder="' . $placeEmail . '"', $comment_form);
-        $comment_form = str_replace('id="url"', 'class="url form-control" placeholder="' . $placeUrl . '"', $comment_form);
+        $comment_form = str_replace('id="author"', 'class="author form-control" placeholder="' . $placeAuthor . '"',
+            $comment_form);
+        $comment_form = str_replace('id="email"', 'class="email form-control" placeholder="' . $placeEmail . '"',
+            $comment_form);
+        $comment_form = str_replace('id="url"', 'class="url form-control" placeholder="' . $placeUrl . '"',
+            $comment_form);
         $comment_form = str_replace('id="submit"', 'class="btn btn-default"', $comment_form);
         return $comment_form;
     }
@@ -286,7 +290,8 @@ class Post extends Image
     public function getDateModified()
     {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare('SELECT post_modified FROM ' . $wpdb->prefix . 'posts WHERE ID = %d', $this->ID));
+        return $wpdb->get_var($wpdb->prepare('SELECT post_modified FROM ' . $wpdb->prefix . 'posts WHERE ID = %d',
+            $this->ID));
     }
 
     /**
@@ -297,7 +302,7 @@ class Post extends Image
     public function getExcerpt()
     {
         $excerpt = $this->post_excerpt;
-        if (! Utils::isValidStr($excerpt)) {
+        if (!Utils::isValidStr($excerpt)) {
             $excerpt = strip_tags(strip_shortcodes($this->post_content));
             $excerpt = trim(preg_replace('/\s\s+/', ' ', $excerpt));
         }
@@ -313,6 +318,10 @@ class Post extends Image
     public function getFirstCategory()
     {
         $categories = get_the_category($this->ID);
+        if (!isset($categories[0])) {
+            return new \StdClass;
+        }
+
         return $categories[0];
     }
 
@@ -342,24 +351,29 @@ class Post extends Image
      */
     public function getPreviousPost()
     {
-        return Post::find(get_previous_post()->ID);
+        if ($p = get_previous_post()) {
+            return Post::find($p->ID);
+        }
+
+        return new Post();
     }
 
     /**
-     *
      * @return Post
      */
     public function getNextPost()
     {
-        return Post::find(get_next_post()->ID);
+        if ($p = get_next_post()) {
+            return Post::find($p->ID);
+        }
+
+        return new Post();
     }
 
     /**
      * Return the title Post
      *
-     * @param string $short
-     * @param integer $countShort
-     * @return string The Title
+     * @return string
      */
     public function getTitle()
     {
@@ -471,20 +485,20 @@ class Post extends Image
         // if it's the same doesn't matter. If it's different we have to rest the different.
         $limit = (count($posts) == $countSticky) ? $limit - $countSticky : $limit;
 
-        if (! isset($moreQuerySettings['post_type'])) {
+        if (!isset($moreQuerySettings['post_type'])) {
             $moreQuerySettings['post_type'] = Post::TYPE_POST;
         }
 
         $querySettings = [
             'orderby' => [
-                'date' => 'DESC'
+                'date' => 'DESC',
             ],
             'post_type' => [
-                $moreQuerySettings['post_type']
+                $moreQuerySettings['post_type'],
             ],
             'post__not_in' => $postsStickyIds,
             'posts_per_page' => $limit,
-            'post_status' => Post::STATUS_PUBLISH
+            'post_status' => Post::STATUS_PUBLISH,
         ];
         if ($offset) {
             $querySettings['offset'] = $offset;
@@ -502,18 +516,18 @@ class Post extends Image
     private static function getStickyPosts($limit = -1, $offset = false, $moreQuerySettings = [])
     {
         $sticky_posts = Option::get('sticky_posts');
-        if (! $sticky_posts) {
+        if (!$sticky_posts) {
             return [];
         }
-        if (! isset($moreQuerySettings['post_type'])) {
+        if (!isset($moreQuerySettings['post_type'])) {
             $moreQuerySettings['post_type'] = Post::TYPE_POST;
         }
         $querySettings = [
             'post_type' => [
-                $moreQuerySettings['post_type']
+                $moreQuerySettings['post_type'],
             ],
             'post__in' => $sticky_posts,
-            'posts_per_page' => $limit
+            'posts_per_page' => $limit,
         ];
         if ($offset) {
             $querySettings['offset'] = $offset;
@@ -533,7 +547,7 @@ class Post extends Image
     private static function loopQueryPosts($loop)
     {
         $posts = [];
-        for ($index = 0; $loop->have_posts(); $index ++) {
+        for ($index = 0; $loop->have_posts(); $index++) {
             $loop->the_post();
             $posts[] = Post::find(get_the_ID());
         }
@@ -605,19 +619,19 @@ class Post extends Image
     }
 
     /**
-     * Get posts by type
-     *
      * @param string $type
      * @param integer|string $by
-     * @param integer $limit
+     * @param bool|int $limit
+     * @param bool|int $offset
      * @param array $moreQuerySettings
-     * @return array<Post>
+     * @return Post[]
      */
     private static function getBy($type, $by, $limit = false, $offset = false, $moreQuerySettings = [])
     {
-        if (! $limit) {
+        if (!$limit) {
             $limit = Option::get('posts_per_page');
         }
+
         if ($type == Ajax::TAG) {
             $tagId = is_numeric($by) ? $by : get_term_by('name', $by, 'post_tag')->term_id;
             $moreQuerySettings['tag_id'] = "$tagId";
@@ -629,8 +643,8 @@ class Post extends Image
         } elseif ($type == Ajax::AUTHOR) {
             $moreQuerySettings['author'] = $by;
         } elseif ($type == Ajax::ARCHIVE) {
-            list($year, $monthnum) = explode(Archive::DELIMITER, $by);
-            if (! isset($moreQuerySettings['year'])) {
+            list($year, $monthnum) = explode(Archive::DELIMITER, trim($by, Archive::DELIMITER));
+            if (!isset($moreQuerySettings['year'])) {
                 $moreQuerySettings['year'] = $year;
                 $moreQuerySettings['monthnum'] = $monthnum;
             }

@@ -9,8 +9,6 @@
  */
 namespace Config;
 
-use Knob\I18n\I18n;
-
 /**
  * ============================
  * Your Mustache helpers
@@ -32,11 +30,15 @@ use Knob\I18n\I18n;
  * @link https://github.com/bobthecow/mustache.php/wiki/FILTERS-pragma
  *
  */
+
+use Knob\App;
+use Knob\I18n\I18n;
+
 return [
     'trans' => function ($value) {
-        return I18n::trans($value);
+        return App::get(I18n::class)->trans($value);
     },
     'transu' => function ($value) {
-        return I18n::transu($value);
-    }
+        return App::get(I18n::class)->transU($value);
+    },
 ];

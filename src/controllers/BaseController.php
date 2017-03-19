@@ -9,27 +9,73 @@
  */
 namespace Knob\Controllers;
 
-use Knob\Libs\MustacheRender;
-use Models\User;
+use Knob\App;
+use Knob\I18n\I18n;
+use Knob\Libs\Mustache\MustacheRender;
+use Knob\Libs\Widgets;
+use Knob\Models\User;
+use Knob\Repository\UserRepository;
+use Knob\Libs\Menus;
 
 /**
- * Base Controller.
- *
  * @author José María Valera Reales
  */
 abstract class BaseController
 {
-    protected $mustacheRender = null;
-    
-    protected $currentUser = null;
-    
-    /**
-     * Constructor
-     */
+    /** @var User */
+    protected $currentUser;
+
+    /** @var MustacheRender */
+    protected $mustacheRender;
+
+    /** @var Widgets */
+    protected $widgets;
+
+    /** @var Menus */
+    protected $menus;
+
+    /** @var I18n */
+    protected $i18n;
+
     public function __construct()
     {
-        $this->mustacheRender = MustacheRender::getInstance();
-        $this->currentUser = User::getCurrent();
+        $this->i18n = App::get(I18n::class);
+        $this->widgets = App::get(Widgets::class);
+        $this->menus = App::get(Menus::class);
+        $this->currentUser = App::get(UserRepository::class)->getCurrent();
+        $this->mustacheRender = App::get(MustacheRender::class);
+    }
+
+    /**
+     * head + template + footer
+     *
+     * @param string $templateName Template name to print
+     * @param array $templateVars Parameters to template
+     * @return string
+     */
+    public function renderPage($templateName, $templateVars = [])
+    {
+        return $this->render($templateName,
+            array_merge($templateVars, [
+                'wp_head' => $this->wpHead(),
+                'wp_footer' => $this->wpFooter(),
+            ])
+        );
+    }
+
+    /**
+     * @param string $templateName
+     * @param array $templateVars
+     * @param bool $addGlobalVariables
+     * @return string
+     */
+    public function render($templateName, $templateVars = [], $addGlobalVariables = true)
+    {
+        if ($addGlobalVariables) {
+            $templateVars = array_merge($templateVars, $this->globalVariables());
+        }
+
+        return $this->mustacheRender->render($templateName, $templateVars);
     }
 
     /**
@@ -37,44 +83,25 @@ abstract class BaseController
      *
      * @return array
      */
-    public abstract function getGlobalVariables();
+    public abstract function globalVariables();
 
     /**
-     * Render a partial
-     *
-     * @param string $templateName
-     * @param array $templateVars
+     * @return string
      */
-    public function render($templateName, $templateVars = [], $addGlobalVariables = true)
+    private function wpHead()
     {
-        if ($addGlobalVariables) {
-            $templateVars = array_merge($templateVars, $this->getGlobalVariables());
-        }
-        return $this->mustacheRender->render($templateName, $templateVars);
+        ob_start();
+        wp_head();
+        return ob_get_clean();
     }
 
     /**
-     * Print head + template + footer
-     *
-     * @param string $templateName Template name to print
-     * @param array $templateVars Parameters to template
+     * @return string
      */
-    public function renderPage($templateName, $templateVars = [])
+    private function wpFooter()
     {
-        // HEAD
-        ob_start();
-        wp_head();
-        $wpHead = ob_get_clean();
-
-        // FOOTER
         ob_start();
         wp_footer();
-        $wpFooter = ob_get_clean();
-
-        return $this->render($templateName,
-            array_merge($templateVars, [
-                'wp_head' => $wpHead,
-                'wp_footer' => $wpFooter
-            ]));
+        return ob_get_clean();
     }
 }

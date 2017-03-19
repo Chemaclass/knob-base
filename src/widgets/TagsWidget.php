@@ -29,7 +29,7 @@ class TagsWidget extends WidgetBase
         /*
          * Put the tags to show into the instance var.
          */
-        $instance['tags'] = Term::getTags();
+        $instance['tags'] = []; //Term::getTags();
         
         /*
          * And call the widget func from the parent class WidgetBase.

@@ -9,19 +9,30 @@
  */
 namespace Knob\Libs;
 
+use Knob\App;
+use Knob\I18n\I18n;
+
 /**
- * Actions for Wordpress
+ * Actions for WordPress
  *
  * @author José María Valera Reales
  */
 class Actions
 {
+    /** @var I18n */
+    protected $i18n;
 
-    /**
-     * Setup the actions
-     */
-    public static function setup()
+    /**  @var Widgets */
+    protected $widgets;
+
+    /**  @var Menus */
+    protected $menus;
+
+    protected function __construct()
     {
+        $this->i18n = App::get(I18n::class);;
+        $this->widgets = App::get(Widgets::class);
+        $this->menus = App::get(Menus::class);
     }
 
     /**
@@ -41,7 +52,7 @@ class Actions
      *        'beforeTitle': HTML to place before every title. Optional
      *        'afterTitle': HTML to place after every title. Optional
      */
-    public static function widgetsInit($activeWidgets = [])
+    public function widgetsInit($activeWidgets = [])
     {
         if (!count($activeWidgets)) {
             return;
@@ -55,7 +66,8 @@ class Actions
                         if (isset($w['beforeWidget'])) {
                             $beforeWidget = $w['beforeWidget'];
                         } else {
-                            $classBeforeWidget = isset($w['classBeforeWidget']) ? $w['classBeforeWidget'] : str_replace('_', '-', $w['id']);
+                            $classBeforeWidget = isset($w['classBeforeWidget'])
+                                ? $w['classBeforeWidget'] : str_replace('_', '-', $w['id']);
                             $beforeWidget = '<div class="widget ' . $classBeforeWidget . '">';
                         }
                         $afterWidget = isset($w['afterWidget']) ? $w['afterWidget'] : '</div>';
@@ -69,7 +81,7 @@ class Actions
                                 'before_widget' => $beforeWidget,
                                 'after_widget' => $afterWidget,
                                 'before_title' => $beforeTitle,
-                                'after_title' => $afterTitle
+                                'after_title' => $afterTitle,
                             ]);
                     }
                 });

@@ -27,9 +27,9 @@ abstract class Image extends ModelBase
      *
      * @param string $keyImg Key from the image
      * @param file $imgFile The image
-     * 
+     *
      * @throws \Exception
-     * 
+     *
      * @return void|string
      */
     protected function setImage($keyImg, $imgFile)
@@ -42,28 +42,27 @@ abstract class Image extends ModelBase
             throw new \Exception('For security reasons, the extension ".php" cannot be in your file name.');
         }
         $avatar = wp_handle_upload($_FILES[$keyImg],
-            array(
-                'mimes' => array(
+            [
+                'mimes' => [
                     'jpg|jpeg|jpe' => 'image/jpeg',
                     'gif' => 'image/gif',
-                    'png' => 'image/png'
-                ),
+                    'png' => 'image/png',
+                ],
                 'test_form' => false,
-                'unique_filename_callback' => function ($dir, $name, $ext) use($keyImg)
-                {
+                'unique_filename_callback' => function ($dir, $name, $ext) use ($keyImg) {
                     $name = $base_name = sanitize_file_name($this->user_login . '_' . $keyImg);
                     $number = 1;
                     while (file_exists($dir . "/$name$ext")) {
                         $name = $base_name . '_' . $number;
-                        $number ++;
+                        $number++;
                     }
                     return $name . $ext;
-                }
-            ));
+                },
+            ]);
         // Remove the last image
         $this->removeImage($keyImg);
 
-        $metaValue = array();
+        $metaValue = [];
 
         $url_or_media_id = $avatar['url'];
         // Set the new image
@@ -98,7 +97,8 @@ abstract class Image extends ModelBase
             // get path for image by converting URL, unless its already been set, thanks to using
             // media library approach
             if (!isset($avatar_full_path)) {
-                $avatar_full_path = str_replace($upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full']);
+                $avatar_full_path = str_replace($upload_path['baseurl'], $upload_path['basedir'],
+                    $local_avatars['full']);
             }
             // generate the new size
             $editor = wp_get_image_editor($avatar_full_path);
@@ -108,7 +108,8 @@ abstract class Image extends ModelBase
                     $dest_file = $editor->generate_filename();
                     $saved = $editor->save($dest_file);
                     if (!is_wp_error($saved)) {
-                        $local_avatars[$sizeW] = str_replace($upload_path['basedir'], $upload_path['baseurl'], $dest_file);
+                        $local_avatars[$sizeW] = str_replace($upload_path['basedir'], $upload_path['baseurl'],
+                            $dest_file);
                     }
                 }
             }
@@ -180,7 +181,7 @@ abstract class Image extends ModelBase
             'current' => $path,
             'base' => $pathBase,
             'virgen' => $virgen,
-            'ext' => $ext[0]
+            'ext' => $ext[0],
         ];
     }
 }
