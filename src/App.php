@@ -3,7 +3,15 @@ namespace Knob;
 
 final class App
 {
-    static private $dependencies = [];
+    private static $dependencies = [];
+
+    /**
+     * @return array
+     */
+    public static function allDependencies()
+    {
+        return static::$dependencies;
+    }
 
     /**
      * @param string $key
@@ -14,6 +22,10 @@ final class App
         static::$dependencies[$key] = $value;
     }
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public static function get($key)
     {
         return static::$dependencies[$key];

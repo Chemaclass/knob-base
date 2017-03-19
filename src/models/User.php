@@ -107,20 +107,13 @@ abstract class User extends Image
      *
      * @see https://developer.wordpress.org/reference/classes/wp_user/
      */
-    public function __construct($ID = 0, $withWPUser = true)
+    public function __construct($ID = 0, $withWPUser = false)
     {
         parent::__construct($ID);
         if ($withWPUser) {
             $this->wpUser = new \WP_User($this->ID);
         }
     }
-
-    /**
-     * Return the instance of the current user, or null if they're not logged
-     *
-     * @return User
-     */
-    public abstract static function getCurrent();
 
     /**
      * Return the WP_User.
@@ -138,7 +131,7 @@ abstract class User extends Image
     /**
      * Return all valid user types
      *
-     * @return arraz<string>
+     * @return string[]
      */
     public static function getValidTypes()
     {

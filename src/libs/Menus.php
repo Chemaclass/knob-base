@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Knob-base package.
+ * This file is part of the Knob-mvc package.
  *
  * (c) José María Valera Reales <chemaclass@outlook.es>
  *
@@ -10,12 +10,14 @@
 namespace Knob\Libs;
 
 /**
- * Actions for WordPress
+ * Widget Controller
  *
  * @author José María Valera Reales
  */
-interface WidgetsInterface
+interface Menus
 {
-
-    public function dynamicSidebarActive();
+    /**
+     * @return string[]
+     */
+    public function activeIds();
 }

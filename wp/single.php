@@ -8,16 +8,11 @@
  * file that was distributed with this source code.
  */
 use Controllers\HomeController;
-use Knob\App;
 
 /**
  * Single.
  *
  * @link https://codex.wordpress.org/Theme_Development
  */
-$controller = new HomeController(
-    App::get('i18n'),
-    App::get('widgets'),
-    App::get('menus')
-);
+$controller = new HomeController();
 echo $controller->getSingle('post');

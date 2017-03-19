@@ -9,8 +9,10 @@
  */
 namespace Knob\Widgets;
 
+use Knob\App;
+use Mustache_Engine;
 use Knob\I18n\I18n;
-use Knob\Libs\MustacheRender;
+use Knob\Libs\Mustache\MustacheRender;
 
 /**
  *
@@ -19,30 +21,19 @@ use Knob\Libs\MustacheRender;
  */
 abstract class WidgetBase extends \WP_Widget
 {
-
-    /**
-     * @var string Title prefix from the Widget
-     */
+    /**  @var string Title prefix from the Widget */
     static $titlePrefix = 'Knob ';
 
-    /**
-     * @var string base directory-name from the templates
-     */
+    /** @var string base directory-name from the templates */
     static $widgetTemplateDir = 'widget';
 
-    /**
-     * @var string directory-name from the default templates inside the base template directory
-     */
+    /** @var string directory-name from the default templates inside the base template directory */
     static $widgetTemplateDirDefault = 'default';
 
-    /**
-     * @var string Name file from the 'backend' template
-     */
+    /** @var string Name file from the 'backend' template */
     static $backFileName = 'back';
 
-    /**
-     * @var string Name file from the 'frontend' template
-     */
+    /** @var string Name file from the 'frontend' template */
     static $frontFileName = 'front';
 
     /** @var string */
@@ -52,7 +43,7 @@ abstract class WidgetBase extends \WP_Widget
     protected $mustacheRender;
 
     /** @var I18n */
-    private $i18n;
+    protected $i18n;
 
     /**
      * Each widget could implement his own isActive method, for example
@@ -63,6 +54,7 @@ abstract class WidgetBase extends \WP_Widget
     public abstract function isActive();
 
     /**
+     * @param Mustache_Engine $mustacheRender
      * @param string $id
      * @param string $title
      * @param array $widgetOps
@@ -70,9 +62,13 @@ abstract class WidgetBase extends \WP_Widget
      *
      * @see https://developer.wordpress.org/reference/classes/wp_widget/__staticruct/
      */
-    public function __construct($id = '', $title = '', array $widgetOps = [], array $controlOps = [])
-    {
-        $className = static::getId();
+    public function __construct(
+        $id = '',
+        $title = '',
+        array $widgetOps = [],
+        array $controlOps = []
+    ) {
+        $className = $this->getId();
         $className = substr($className, strrpos($className, '\\') + 1);
         $this->className = substr($className, 0, strpos($className, 'Widget'));
 
@@ -83,26 +79,18 @@ abstract class WidgetBase extends \WP_Widget
             'description' => $this->className . ' widget',
         ];
         parent::__construct($id, $title, $widgetOps, $controlOps);
-
-        $this->mustacheRender = MustacheRender::getInstance();
     }
 
-    /**
-     * getId.
-     */
-    public static function getId()
+    public function getId()
     {
         return get_called_class();
     }
 
     /**
      * Register the widget.
-     *
-     * @param I18n $i18n
      */
-    public function register($i18n)
+    public function register()
     {
-        $this->i18n = $i18n;
         $id = static::getId();
         if (!is_active_widget($id)) {
             register_widget($id);
@@ -113,9 +101,13 @@ abstract class WidgetBase extends \WP_Widget
      * Creating widget front-end.
      *
      * @see https://codex.wordpress.org/Widgets_API
+     * @param $args
+     * @param $instance
      */
     public function widget($args, $instance)
     {
+        $this->mustacheRender = App::get(MustacheRender::class);
+        $this->i18n = App::get(I18n::class);
         $instance['active'] = $this->isActive();
         echo $this->renderFrontendWidget($args, $instance);
     }
@@ -147,7 +139,8 @@ abstract class WidgetBase extends \WP_Widget
     public function update($newInstance, $oldInstance)
     {
         $instance = [];
-        $instance['title'] = (!empty($newInstance['title'])) ? strip_tags($newInstance['title']) : '';
+        $instance['title'] = (!empty($newInstance['title']))
+            ? strip_tags($newInstance['title']) : '';
         return $instance;
     }
 
@@ -178,9 +171,12 @@ abstract class WidgetBase extends \WP_Widget
             'fieldName' => $fieldNames,
         ]);
 
-        return $this->mustacheRender->render($this->getTemplateName(static::$backFileName), [
-            'instance' => $instance,
-        ]);
+        return $this->mustacheRender->render(
+            $this->getTemplateName(static::$backFileName),
+            [
+                'instance' => $instance,
+            ]
+        );
     }
 
     /**
@@ -195,10 +191,13 @@ abstract class WidgetBase extends \WP_Widget
         // Add the widget name.
         $instance['widgetName'] = $this->className;
 
-        return $this->mustacheRender->render($this->getTemplateName(static::$frontFileName), [
-            'args' => $args,
-            'instance' => $instance,
-        ]);
+        return $this->mustacheRender->render(
+            $this->getTemplateName(static::$frontFileName),
+            [
+                'args' => $args,
+                'instance' => $instance,
+            ]
+        );
     }
 
     /**

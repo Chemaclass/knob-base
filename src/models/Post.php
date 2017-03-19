@@ -10,7 +10,6 @@
 namespace Knob\Models;
 
 use Knob\App;
-use Knob\I18n\I18n;
 use Knob\Libs\Utils;
 use Knob\Libs\Ajax;
 use Knob\Libs\IteratorPresenter;

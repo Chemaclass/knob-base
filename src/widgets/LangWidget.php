@@ -10,6 +10,7 @@
 namespace Knob\Widgets;
 
 use Knob\App;
+use Knob\I18n\I18n;
 
 /**
  *
@@ -29,7 +30,8 @@ class LangWidget extends WidgetBase
         /*
          * Put all languages available to show into the instance var.
          */
-        $instance['languages'] = App::get('i18n')->availableLanguagesKeyValue();
+        $instance['languages'] = App::get(I18n::class)
+            ->availableLanguagesKeyValue();
 
         /*
          * And call the widget func from the parent class WidgetBase.

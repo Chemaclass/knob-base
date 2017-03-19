@@ -8,6 +8,7 @@
  * file that was distributed with this source code.
  */
 use Knob\App;
+use Knob\I18n\I18n;
 use Knob\Libs\Env;
 use Models\Post;
 use Models\Option;
@@ -16,7 +17,7 @@ use Models\User;
 /**
  * Params to Mustache templates.
  */
-$i18n = App::get('i18n');
+$i18n = App::get(I18n::class);
 
 return [
 
@@ -61,8 +62,10 @@ return [
     'loginUrl' => wp_login_url($_SERVER['REQUEST_URI']),
 
     'optionPostsPerPage' => Option::get('posts_per_page'),
-    'optionCategoryBase' => ($c = Option::get('category_base')) ? $c : Post::CATEGORY_BASE_DEFAULT,
-    'optionTagBase' => ($t = Option::get('tag_base')) ? $t : Post::TAG_BASE_DEFAULT,
+    'optionCategoryBase' => ($category = Option::get('category_base'))
+        ? $category : Post::CATEGORY_BASE_DEFAULT,
+    'optionTagBase' => ($term = Option::get('tag_base'))
+        ? $term : Post::TAG_BASE_DEFAULT,
 
     'publicDir' => PUBLIC_DIR,
 ];

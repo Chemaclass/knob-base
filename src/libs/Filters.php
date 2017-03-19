@@ -9,8 +9,6 @@
  */
 namespace Knob\Libs;
 
-use Knob\I18n\I18n;
-
 /**
  * Filters from WordPress
  *
@@ -18,15 +16,8 @@ use Knob\I18n\I18n;
  */
 class Filters
 {
-    /**  @var I18n */
-    private $i18n;
-
-    /**
-     * @param I18n $i18n
-     */
-    public function __construct(I18n $i18n)
+    public function __construct()
     {
-        $this->i18n = $i18n;
         $this->showAdminBar(false);
         $this->navMenuCssClass();
     }

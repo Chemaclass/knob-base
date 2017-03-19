@@ -8,7 +8,6 @@
  * file that was distributed with this source code.
  */
 use Controllers\HomeController;
-use Knob\App;
 
 /**
  * Search.
@@ -16,9 +15,5 @@ use Knob\App;
  * @link https://codex.wordpress.org/Creating_a_Search_Page
  * @link https://codex.wordpress.org/Theme_Development
  */
-$controller = new HomeController(
-    App::get('i18n'),
-    App::get('widgets'),
-    App::get('menus')
-);
+$controller = new HomeController();
 echo $controller->getSearch();

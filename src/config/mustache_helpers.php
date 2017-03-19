@@ -32,14 +32,13 @@ namespace Config;
  */
 
 use Knob\App;
-
-$i18n = App::get('i18n');
+use Knob\I18n\I18n;
 
 return [
-    'trans' => function ($value) use ($i18n) {
-        return $i18n->trans($value);
+    'trans' => function ($value) {
+        return App::get(I18n::class)->trans($value);
     },
-    'transu' => function ($value) use ($i18n) {
-        return $i18n->transU($value);
-    }
+    'transu' => function ($value) {
+        return App::get(I18n::class)->transU($value);
+    },
 ];

@@ -9,6 +9,7 @@
  */
 namespace Knob\Widgets;
 
+use Knob\App;
 use Knob\Models\Archive;
 
 /**
@@ -21,6 +22,7 @@ class ArchivesWidget extends WidgetBase
     /**
      * @param $args
      * @param $instance
+     * @param App $app
      * @see \Widgets\WidgetBase::widget()
      */
     public function widget($args, $instance)
@@ -34,7 +36,7 @@ class ArchivesWidget extends WidgetBase
         /*
          * And call the widget func from the parent class WidgetBase.
          */
-        parent::widget($args, $instance);
+        parent::widget($args, $instance, $app);
     }
 
     /**

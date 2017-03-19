@@ -9,6 +9,7 @@
  */
 namespace Knob\Libs;
 
+use Knob\App;
 use Knob\I18n\I18n;
 
 /**
@@ -21,22 +22,17 @@ class Actions
     /** @var I18n */
     protected $i18n;
 
-    /**  @var WidgetsInterface */
+    /**  @var Widgets */
     protected $widgets;
 
-    /**  @var MenusInterface */
+    /**  @var Menus */
     protected $menus;
 
-    /**
-     * @param I18n $i18n
-     * @param WidgetsInterface $widgets
-     * @param MenusInterface $menus
-     */
-    protected function __construct(I18n $i18n, WidgetsInterface $widgets, MenusInterface $menus)
+    protected function __construct()
     {
-        $this->i18n = $i18n;
-        $this->widgets = $widgets;
-        $this->menus = $menus;
+        $this->i18n = App::get(I18n::class);;
+        $this->widgets = App::get(Widgets::class);
+        $this->menus = App::get(Menus::class);
     }
 
     /**
