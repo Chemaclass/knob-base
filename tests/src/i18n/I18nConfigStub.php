@@ -14,11 +14,6 @@ final class I18nConfigStub implements I18nConfig
         $this->config = $config;
     }
 
-    public function globalLanguageFile(): string
-    {
-        return $this->config[self::DEFAULT_LANGUAGE_FILE];
-    }
-
     public function availableLanguages(): array
     {
         return $this->config[self::AVAILABLE_LANGUAGES];
@@ -32,6 +27,11 @@ final class I18nConfigStub implements I18nConfig
     public function languageBrowser(): string
     {
         return $this->globalLanguageFile();
+    }
+
+    public function globalLanguageFile(): string
+    {
+        return $this->config[self::DEFAULT_LANGUAGE_FILE];
     }
 
     public function languageValue(string $langKey): string

@@ -24,45 +24,38 @@ use Models\Term;
  */
 class Post extends Image
 {
-    public static $table = "posts";
+    const CATEGORY_BASE_DEFAULT = 'category';
 
     /*
      * Default values
      */
-    const CATEGORY_BASE_DEFAULT = 'category';
-
     const TAG_BASE_DEFAULT = 'tag';
+    const IMG_SIZE_THUMBNAIL = 'thumbnail';
 
     /*
      * Images sizes
      */
-    const IMG_SIZE_THUMBNAIL = 'thumbnail';
-
     const IMG_SIZE_MEDIUM = 'medium';
-
     const IMG_SIZE_LARGE = 'large';
-
     const IMG_SIZE_FULL = 'full';
+    const STATUS_PUBLISH = "publish";
 
     /*
      * STATUS
      */
-    const STATUS_PUBLISH = "publish";
-
     const STATUS_PENDING = "pending";
-
     const STATUS_APPROVE = 'approve';
+    const COUNT_EXCERPT = 20;
 
     /*
      * Counts
      */
-    const COUNT_EXCERPT = 20;
+    const TYPE_POST = 'post';
 
     /*
      * Types
      */
-    const TYPE_POST = 'post';
-
+    public static $table = "posts";
     /**
      *
      * @var \WP_Post
@@ -86,15 +79,6 @@ class Post extends Image
         if ($withWPPost) {
             $this->wpPost = \WP_Post::get_instance($this->ID);
         }
-    }
-
-    public function getWPPost(): \WP_Post
-    {
-        if (null === $this->wpPost) {
-            $this->wpPost = \WP_Post::get_instance($this->ID);
-        }
-
-        return $this->wpPost;
     }
 
     /**
@@ -126,20 +110,251 @@ class Post extends Image
         return $pages;
     }
 
+    /**
+     * Return the title Post
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return get_the_title($this->ID);
+    }
+
     public static function getCurrent(): Post
     {
         return new Post(get_the_ID());
     }
 
     /**
-     * (non-PHPdoc)
+     * Return a clousure
      *
-     * @see \Models\Image::getImageSizesToDelete()
+     * @param string $by
      */
-    protected function getImageSizesToDelete(): array
+    public static function getFuncBy($by)
     {
-        // TODO:
-        return [];
+        return function ($value = false, $limit = false, $offset = false, $moreQuerySettings = []) use ($by) {
+            switch ($by) {
+                case Ajax::ARCHIVE:
+                    return static::getByArchive($value, $limit, $offset, $moreQuerySettings);
+                case Ajax::AUTHOR:
+                    return static::getByAuthor($value, $limit, $offset, $moreQuerySettings);
+                case Ajax::CATEGORY:
+                    return static::getByCategory($value, $limit, $offset, $moreQuerySettings);
+                case Ajax::SEARCH:
+                    return static::getBySearch($value, $limit, $offset, $moreQuerySettings);
+                case Ajax::TAG:
+                    return static::getByTag($value, $limit, $offset, $moreQuerySettings);
+                case Ajax::HOME:
+                default:
+                    return static::getAll($limit, $offset, $moreQuerySettings);
+            }
+        };
+    }
+
+    /**
+     * Get posts from an archive
+     *
+     * @param string $value
+     * @param integer $limit
+     * @param array $moreQuerySettings
+     * @return array<Post>
+     */
+    public static function getByArchive($value, $limit = false, $offset = false, $moreQuerySettings = [])
+    {
+        return self::getBy(Ajax::ARCHIVE, $value, $limit, $offset, $moreQuerySettings);
+    }
+
+    /**
+     * @param string $type
+     * @param integer|string $by
+     * @param bool|int $limit
+     * @param bool|int $offset
+     * @param array $moreQuerySettings
+     * @return Post[]
+     */
+    private static function getBy($type, $by, $limit = false, $offset = false, $moreQuerySettings = [])
+    {
+        if (!$limit) {
+            $limit = Option::get('posts_per_page');
+        }
+
+        if ($type == Ajax::TAG) {
+            $tagId = is_numeric($by) ? $by : get_term_by('name', $by, 'post_tag')->term_id;
+            $moreQuerySettings['tag_id'] = "$tagId";
+        } elseif ($type == Ajax::CATEGORY) {
+            $catId = is_numeric($by) ? $by : get_cat_ID($by);
+            $moreQuerySettings['cat'] = "$catId";
+        } elseif ($type == Ajax::SEARCH) {
+            $moreQuerySettings['s'] = "$by";
+        } elseif ($type == Ajax::AUTHOR) {
+            $moreQuerySettings['author'] = $by;
+        } elseif ($type == Ajax::ARCHIVE) {
+            list($year, $monthnum) = explode(Archive::DELIMITER, trim($by, Archive::DELIMITER));
+            if (!isset($moreQuerySettings['year'])) {
+                $moreQuerySettings['year'] = $year;
+                $moreQuerySettings['monthnum'] = $monthnum;
+            }
+        }
+        return self::getAll($limit, $offset, $moreQuerySettings);
+    }
+
+    /**
+     * Get Posts
+     *
+     * @param integer $limit
+     * @param string $offset
+     * @param array $moreQuerySettings
+     * @param string $postType
+     * @param string $oddOrEven
+     *
+     * @return array<Post>
+     *
+     * @link https://codex.wordpress.org/Class_Reference/WP_Query
+     */
+    public static function getAll($limit = -1, $offset = false, $moreQuerySettings = [])
+    {
+        // Get all fixed posts.
+        $posts = self::getStickyPosts($limit, $offset, $moreQuerySettings);
+        $isCat = isset($moreQuerySettings['cat']);
+        $postsStickyIds = [];
+        // Check all fixed posts with the category we're searching.
+        foreach (Option::get('sticky_posts') as $postId) {
+            if ($isCat && ($post = Post::find($postId)) && $post->getCategory()->term_id == $moreQuerySettings['cat']) {
+                $postsStickyIds[] = $postId;
+            }
+        }
+        // Check the total fixed posts with the total post we got it.
+        $countSticky = count($postsStickyIds);
+        // if it's the same doesn't matter. If it's different we have to rest the different.
+        $limit = (count($posts) == $countSticky) ? $limit - $countSticky : $limit;
+
+        if (!isset($moreQuerySettings['post_type'])) {
+            $moreQuerySettings['post_type'] = Post::TYPE_POST;
+        }
+
+        $querySettings = [
+            'orderby' => [
+                'date' => 'DESC',
+            ],
+            'post_type' => [
+                $moreQuerySettings['post_type'],
+            ],
+            'post__not_in' => $postsStickyIds,
+            'posts_per_page' => $limit,
+            'post_status' => Post::STATUS_PUBLISH,
+        ];
+        if ($offset) {
+            $querySettings['offset'] = $offset;
+        }
+        $querySettings = array_merge($querySettings, $moreQuerySettings);
+        $loop = new \WP_Query($querySettings);
+        return array_merge($posts, self::loopQueryPosts($loop));
+    }
+
+    /**
+     * Return the fixed posts
+     *
+     * @return array<Post>
+     */
+    private static function getStickyPosts($limit = -1, $offset = false, $moreQuerySettings = [])
+    {
+        $sticky_posts = Option::get('sticky_posts');
+        if (!$sticky_posts) {
+            return [];
+        }
+        if (!isset($moreQuerySettings['post_type'])) {
+            $moreQuerySettings['post_type'] = Post::TYPE_POST;
+        }
+        $querySettings = [
+            'post_type' => [
+                $moreQuerySettings['post_type'],
+            ],
+            'post__in' => $sticky_posts,
+            'posts_per_page' => $limit,
+        ];
+        if ($offset) {
+            $querySettings['offset'] = $offset;
+        }
+        $querySettings = array_merge($querySettings, $moreQuerySettings);
+        $loop = new \WP_Query($querySettings);
+
+        return self::loopQueryPosts($loop);
+    }
+
+    /**
+     * Loop the query and mount the Post objects
+     *
+     * @param WP_Query $loop
+     * @return array<Post>
+     */
+    private static function loopQueryPosts($loop)
+    {
+        $posts = [];
+        for ($index = 0; $loop->have_posts(); $index++) {
+            $loop->the_post();
+            $posts[] = Post::find(get_the_ID());
+        }
+        return $posts;
+    }
+
+    /**
+     * Get posts from an author
+     *
+     * @param integer $autorId
+     * @param integer $limit
+     * @param array $moreQuerySettings
+     * @return array<Post>
+     */
+    public static function getByAuthor($autorId, $limit = false, $offset = false, $moreQuerySettings = [])
+    {
+        return self::getBy(Ajax::AUTHOR, $autorId, $limit, $offset, $moreQuerySettings);
+    }
+
+    /**
+     * Get posts from a category
+     *
+     * @param integer $catId
+     * @param integer $limit
+     * @param array $moreQuerySettings
+     * @return array<Post>
+     */
+    public static function getByCategory($catId, $limit = false, $offset = false, $moreQuerySettings = [])
+    {
+        return self::getBy(Ajax::CATEGORY, $catId, $limit, $offset, $moreQuerySettings);
+    }
+
+    /**
+     * Get posts from query search
+     *
+     * @param string $searchQuery
+     * @param integer $limit
+     * @param array $moreQuerySettings
+     * @return array<Post>
+     */
+    public static function getBySearch($searchQuery, $limit = false, $offset = false, $moreQuerySettings = [])
+    {
+        return self::getBy(Ajax::SEARCH, $searchQuery, $limit, $offset, $moreQuerySettings);
+    }
+
+    /**
+     *
+     * @param integer $tagId
+     * @param integer $limit
+     * @param array $moreQuerySettings
+     * @return array<Post>
+     */
+    public static function getByTag($tagId, $limit = false, $offset = false, $moreQuerySettings = [])
+    {
+        return self::getBy(Ajax::TAG, $tagId, $limit, $offset, $moreQuerySettings);
+    }
+
+    public function getWPPost(): \WP_Post
+    {
+        if (null === $this->wpPost) {
+            $this->wpPost = \WP_Post::get_instance($this->ID);
+        }
+
+        return $this->wpPost;
     }
 
     /**
@@ -157,7 +372,7 @@ class Post extends Image
      */
     public function getAuthor(): User
     {
-        if(!isset($this->post_author)) {
+        if (!isset($this->post_author)) {
             return new NonLoggedUser();
         }
 
@@ -366,16 +581,6 @@ class Post extends Image
     }
 
     /**
-     * Return the title Post
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return get_the_title($this->ID);
-    }
-
-    /**
      * Return the thumbnail medium
      *
      * @return string src
@@ -430,225 +635,13 @@ class Post extends Image
     }
 
     /**
-     * Return a clousure
+     * (non-PHPdoc)
      *
-     * @param string $by
+     * @see \Models\Image::getImageSizesToDelete()
      */
-    public static function getFuncBy($by)
+    protected function getImageSizesToDelete(): array
     {
-        return function ($value = false, $limit = false, $offset = false, $moreQuerySettings = []) use ($by) {
-            switch ($by) {
-                case Ajax::ARCHIVE:
-                    return static::getByArchive($value, $limit, $offset, $moreQuerySettings);
-                case Ajax::AUTHOR:
-                    return static::getByAuthor($value, $limit, $offset, $moreQuerySettings);
-                case Ajax::CATEGORY:
-                    return static::getByCategory($value, $limit, $offset, $moreQuerySettings);
-                case Ajax::SEARCH:
-                    return static::getBySearch($value, $limit, $offset, $moreQuerySettings);
-                case Ajax::TAG:
-                    return static::getByTag($value, $limit, $offset, $moreQuerySettings);
-                case Ajax::HOME:
-                default:
-                    return static::getAll($limit, $offset, $moreQuerySettings);
-            }
-        };
-    }
-
-    /**
-     * Get Posts
-     *
-     * @param integer $limit
-     * @param string $offset
-     * @param array $moreQuerySettings
-     * @param string $postType
-     * @param string $oddOrEven
-     *
-     * @return array<Post>
-     *
-     * @link https://codex.wordpress.org/Class_Reference/WP_Query
-     */
-    public static function getAll($limit = -1, $offset = false, $moreQuerySettings = [])
-    {
-        // Get all fixed posts.
-        $posts = self::getStickyPosts($limit, $offset, $moreQuerySettings);
-        $isCat = isset($moreQuerySettings['cat']);
-        $postsStickyIds = [];
-        // Check all fixed posts with the category we're searching.
-        foreach (Option::get('sticky_posts') as $postId) {
-            if ($isCat && ($post = Post::find($postId)) && $post->getCategory()->term_id == $moreQuerySettings['cat']) {
-                $postsStickyIds[] = $postId;
-            }
-        }
-        // Check the total fixed posts with the total post we got it.
-        $countSticky = count($postsStickyIds);
-        // if it's the same doesn't matter. If it's different we have to rest the different.
-        $limit = (count($posts) == $countSticky) ? $limit - $countSticky : $limit;
-
-        if (!isset($moreQuerySettings['post_type'])) {
-            $moreQuerySettings['post_type'] = Post::TYPE_POST;
-        }
-
-        $querySettings = [
-            'orderby' => [
-                'date' => 'DESC',
-            ],
-            'post_type' => [
-                $moreQuerySettings['post_type'],
-            ],
-            'post__not_in' => $postsStickyIds,
-            'posts_per_page' => $limit,
-            'post_status' => Post::STATUS_PUBLISH,
-        ];
-        if ($offset) {
-            $querySettings['offset'] = $offset;
-        }
-        $querySettings = array_merge($querySettings, $moreQuerySettings);
-        $loop = new \WP_Query($querySettings);
-        return array_merge($posts, self::loopQueryPosts($loop));
-    }
-
-    /**
-     * Return the fixed posts
-     *
-     * @return array<Post>
-     */
-    private static function getStickyPosts($limit = -1, $offset = false, $moreQuerySettings = [])
-    {
-        $sticky_posts = Option::get('sticky_posts');
-        if (!$sticky_posts) {
-            return [];
-        }
-        if (!isset($moreQuerySettings['post_type'])) {
-            $moreQuerySettings['post_type'] = Post::TYPE_POST;
-        }
-        $querySettings = [
-            'post_type' => [
-                $moreQuerySettings['post_type'],
-            ],
-            'post__in' => $sticky_posts,
-            'posts_per_page' => $limit,
-        ];
-        if ($offset) {
-            $querySettings['offset'] = $offset;
-        }
-        $querySettings = array_merge($querySettings, $moreQuerySettings);
-        $loop = new \WP_Query($querySettings);
-
-        return self::loopQueryPosts($loop);
-    }
-
-    /**
-     * Loop the query and mount the Post objects
-     *
-     * @param WP_Query $loop
-     * @return array<Post>
-     */
-    private static function loopQueryPosts($loop)
-    {
-        $posts = [];
-        for ($index = 0; $loop->have_posts(); $index++) {
-            $loop->the_post();
-            $posts[] = Post::find(get_the_ID());
-        }
-        return $posts;
-    }
-
-    /**
-     * Get posts from an archive
-     *
-     * @param string $value
-     * @param integer $limit
-     * @param array $moreQuerySettings
-     * @return array<Post>
-     */
-    public static function getByArchive($value, $limit = false, $offset = false, $moreQuerySettings = [])
-    {
-        return self::getBy(Ajax::ARCHIVE, $value, $limit, $offset, $moreQuerySettings);
-    }
-
-    /**
-     * Get posts from an author
-     *
-     * @param integer $autorId
-     * @param integer $limit
-     * @param array $moreQuerySettings
-     * @return array<Post>
-     */
-    public static function getByAuthor($autorId, $limit = false, $offset = false, $moreQuerySettings = [])
-    {
-        return self::getBy(Ajax::AUTHOR, $autorId, $limit, $offset, $moreQuerySettings);
-    }
-
-    /**
-     * Get posts from query search
-     *
-     * @param string $searchQuery
-     * @param integer $limit
-     * @param array $moreQuerySettings
-     * @return array<Post>
-     */
-    public static function getBySearch($searchQuery, $limit = false, $offset = false, $moreQuerySettings = [])
-    {
-        return self::getBy(Ajax::SEARCH, $searchQuery, $limit, $offset, $moreQuerySettings);
-    }
-
-    /**
-     * Get posts from a category
-     *
-     * @param integer $catId
-     * @param integer $limit
-     * @param array $moreQuerySettings
-     * @return array<Post>
-     */
-    public static function getByCategory($catId, $limit = false, $offset = false, $moreQuerySettings = [])
-    {
-        return self::getBy(Ajax::CATEGORY, $catId, $limit, $offset, $moreQuerySettings);
-    }
-
-    /**
-     *
-     * @param integer $tagId
-     * @param integer $limit
-     * @param array $moreQuerySettings
-     * @return array<Post>
-     */
-    public static function getByTag($tagId, $limit = false, $offset = false, $moreQuerySettings = [])
-    {
-        return self::getBy(Ajax::TAG, $tagId, $limit, $offset, $moreQuerySettings);
-    }
-
-    /**
-     * @param string $type
-     * @param integer|string $by
-     * @param bool|int $limit
-     * @param bool|int $offset
-     * @param array $moreQuerySettings
-     * @return Post[]
-     */
-    private static function getBy($type, $by, $limit = false, $offset = false, $moreQuerySettings = [])
-    {
-        if (!$limit) {
-            $limit = Option::get('posts_per_page');
-        }
-
-        if ($type == Ajax::TAG) {
-            $tagId = is_numeric($by) ? $by : get_term_by('name', $by, 'post_tag')->term_id;
-            $moreQuerySettings['tag_id'] = "$tagId";
-        } elseif ($type == Ajax::CATEGORY) {
-            $catId = is_numeric($by) ? $by : get_cat_ID($by);
-            $moreQuerySettings['cat'] = "$catId";
-        } elseif ($type == Ajax::SEARCH) {
-            $moreQuerySettings['s'] = "$by";
-        } elseif ($type == Ajax::AUTHOR) {
-            $moreQuerySettings['author'] = $by;
-        } elseif ($type == Ajax::ARCHIVE) {
-            list($year, $monthnum) = explode(Archive::DELIMITER, trim($by, Archive::DELIMITER));
-            if (!isset($moreQuerySettings['year'])) {
-                $moreQuerySettings['year'] = $year;
-                $moreQuerySettings['monthnum'] = $monthnum;
-            }
-        }
-        return self::getAll($limit, $offset, $moreQuerySettings);
+        // TODO:
+        return [];
     }
 }

@@ -7,12 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Widgets;
 
 use Knob\App;
-use Mustache_Engine;
 use Knob\I18n\I18n;
 use Knob\Libs\Mustache\MustacheRender;
+use Mustache_Engine;
 
 /**
  *
@@ -44,14 +45,6 @@ abstract class WidgetBase extends \WP_Widget
 
     /** @var I18n */
     protected $i18n;
-
-    /**
-     * Each widget could implement his own isActive method, for example
-     * in order to be active only for logged users.
-     *
-     * @return bool
-     */
-    public abstract function isActive();
 
     /**
      * @param Mustache_Engine $mustacheRender
@@ -113,71 +106,12 @@ abstract class WidgetBase extends \WP_Widget
     }
 
     /**
-     * Widget Backend.
+     * Each widget could implement his own isActive method, for example
+     * in order to be active only for logged users.
      *
-     * @param unknown $instance
-     *
-     * @see https://codex.wordpress.org/Widgets_API
+     * @return bool
      */
-    public function form($instance)
-    {
-        $fields = [
-            'title',
-        ];
-        echo $this->renderBackendForm($instance, $fields);
-    }
-
-    /**
-     * Updating widget replacing old instances with new.
-     *
-     * @param array $newInstance
-     * @param array $oldInstance
-     * @return array
-     *
-     * @see https://codex.wordpress.org/Widgets_API
-     */
-    public function update($newInstance, $oldInstance)
-    {
-        $instance = [];
-        $instance['title'] = (!empty($newInstance['title']))
-            ? strip_tags($newInstance['title']) : '';
-        return $instance;
-    }
-
-    /**
-     * Render backend form.
-     *
-     * @param array $instance
-     * @param array $fields
-     * @return string
-     */
-    protected function renderBackendForm($instance, array $fields)
-    {
-        /*
-         * Prepare all names & ids
-         */
-        $fieldIds = [];
-        $fieldNames = [];
-        foreach ($fields as $f) {
-            $fieldIds = array_merge($fieldIds, [
-                $f => $this->get_field_id($f),
-            ]);
-            $fieldNames = array_merge($fieldNames, [
-                $f => $this->get_field_name($f),
-            ]);
-        }
-        $instance = array_merge($instance, [
-            'fieldId' => $fieldIds,
-            'fieldName' => $fieldNames,
-        ]);
-
-        return $this->mustacheRender->render(
-            $this->getTemplateName(static::$backFileName),
-            [
-                'instance' => $instance,
-            ]
-        );
-    }
+    public abstract function isActive();
 
     /**
      * Render fronted widget.
@@ -232,5 +166,72 @@ abstract class WidgetBase extends \WP_Widget
         }
 
         return $path;
+    }
+
+    /**
+     * Widget Backend.
+     *
+     * @param unknown $instance
+     *
+     * @see https://codex.wordpress.org/Widgets_API
+     */
+    public function form($instance)
+    {
+        $fields = [
+            'title',
+        ];
+        echo $this->renderBackendForm($instance, $fields);
+    }
+
+    /**
+     * Render backend form.
+     *
+     * @param array $instance
+     * @param array $fields
+     * @return string
+     */
+    protected function renderBackendForm($instance, array $fields)
+    {
+        /*
+         * Prepare all names & ids
+         */
+        $fieldIds = [];
+        $fieldNames = [];
+        foreach ($fields as $f) {
+            $fieldIds = array_merge($fieldIds, [
+                $f => $this->get_field_id($f),
+            ]);
+            $fieldNames = array_merge($fieldNames, [
+                $f => $this->get_field_name($f),
+            ]);
+        }
+        $instance = array_merge($instance, [
+            'fieldId' => $fieldIds,
+            'fieldName' => $fieldNames,
+        ]);
+
+        return $this->mustacheRender->render(
+            $this->getTemplateName(static::$backFileName),
+            [
+                'instance' => $instance,
+            ]
+        );
+    }
+
+    /**
+     * Updating widget replacing old instances with new.
+     *
+     * @param array $newInstance
+     * @param array $oldInstance
+     * @return array
+     *
+     * @see https://codex.wordpress.org/Widgets_API
+     */
+    public function update($newInstance, $oldInstance)
+    {
+        $instance = [];
+        $instance['title'] = (!empty($newInstance['title']))
+            ? strip_tags($newInstance['title']) : '';
+        return $instance;
     }
 }

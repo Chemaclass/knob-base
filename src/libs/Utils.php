@@ -46,108 +46,6 @@ class Utils implements I18nConfig
         $this->i18nConfig = $i18nConfig;
     }
 
-    public function config()
-    {
-        return $this->getConfigFile();
-    }
-
-    public function i18nLanguageDir(): string
-    {
-        return $this->appDir . '/i18n/';
-    }
-
-    public function languageBrowser(): string
-    {
-        return $this->globalLanguageFile();
-    }
-
-    public function globalLanguageFile(): string
-    {
-        return $this->i18nConfig[self::DEFAULT_LANGUAGE_FILE];
-    }
-
-    public function availableLanguages(): array
-    {
-        return $this->i18nConfig[self::AVAILABLE_LANGUAGES];
-    }
-
-    public function defaultLanguage(): string
-    {
-        return $this->i18nConfig[self::DEFAULT_LANGUAGE];
-    }
-
-    public function languageValue(string $langKey): string
-    {
-        if (!isset($this->i18nConfig[self::AVAILABLE_LANGUAGES][$langKey])) {
-            return $this->defaultLanguage();
-        }
-
-        return $this->i18nConfig[self::AVAILABLE_LANGUAGES][$langKey];
-    }
-
-    /**
-     * Return all parameters values
-     *
-     * @return array
-     */
-    protected function getParametersFile(): array
-    {
-        $file_name = $this->appDir . '/config/' . self::PARAMETERS_FILE . '.php';
-        if (!file_exists($file_name)) {
-            return [];
-        }
-
-        if (null === $this->parameters) {
-            foreach (require($file_name) as $k => $v) {
-                $this->parameters["%{$k}%"] = $v;
-            }
-        }
-        return $this->parameters;
-    }
-
-    /**
-     * Return all global config values
-     */
-    public function getConfigFile(): array
-    {
-        $configPath = $this->appDir . '/config/' . self::CONFIG_FILE . '.php';
-        if (!file_exists($configPath)) {
-            // Internal base config file
-            $configPath = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::CONFIG_FILE . '.php';
-        }
-
-        if (null === $this->config && file_exists($configPath)) {
-            $this->config = require($configPath);
-            static::replaceParameters($this->config);
-        }
-
-        return $this->config;
-    }
-
-    /**
-     * Replace all possible parameters from config/parameters to config/config files
-     *
-     * @param array $configOptions Reference of config options
-     */
-    private static function replaceParameters(&$configOptions)
-    {
-        if (!$params = static::getParametersFile()) {
-            return;
-        }
-
-        foreach ($configOptions as $configKey => &$configItem) {
-            // Check if it's an array
-            if (is_array($configItem)) {
-                static::replaceParameters($configItem);
-            } elseif (is_string($configItem)) {
-                // check if the str contain %...%
-                if (substr_count($configItem, '%') >= 2) {
-                    $configItem = $params[$configItem];
-                }
-            }
-        }
-    }
-
     /**
      * Check the value: not only spaces, with value and more than 0.
      *
@@ -245,5 +143,107 @@ class Utils implements I18nConfig
         $str = preg_replace('/[^a-z0-9 -]+/', '', strtolower($str));
 
         return trim(str_replace(' ', '-', $str), '-');
+    }
+
+    public function config()
+    {
+        return $this->getConfigFile();
+    }
+
+    /**
+     * Return all global config values
+     */
+    public function getConfigFile(): array
+    {
+        $configPath = $this->appDir . '/config/' . self::CONFIG_FILE . '.php';
+        if (!file_exists($configPath)) {
+            // Internal base config file
+            $configPath = VENDOR_KNOB_BASE_DIR . '/src/config/' . self::CONFIG_FILE . '.php';
+        }
+
+        if (null === $this->config && file_exists($configPath)) {
+            $this->config = require($configPath);
+            static::replaceParameters($this->config);
+        }
+
+        return $this->config;
+    }
+
+    /**
+     * Replace all possible parameters from config/parameters to config/config files
+     *
+     * @param array $configOptions Reference of config options
+     */
+    private static function replaceParameters(&$configOptions)
+    {
+        if (!$params = static::getParametersFile()) {
+            return;
+        }
+
+        foreach ($configOptions as $configKey => &$configItem) {
+            // Check if it's an array
+            if (is_array($configItem)) {
+                static::replaceParameters($configItem);
+            } elseif (is_string($configItem)) {
+                // check if the str contain %...%
+                if (substr_count($configItem, '%') >= 2) {
+                    $configItem = $params[$configItem];
+                }
+            }
+        }
+    }
+
+    /**
+     * Return all parameters values
+     *
+     * @return array
+     */
+    protected function getParametersFile(): array
+    {
+        $file_name = $this->appDir . '/config/' . self::PARAMETERS_FILE . '.php';
+        if (!file_exists($file_name)) {
+            return [];
+        }
+
+        if (null === $this->parameters) {
+            foreach (require($file_name) as $k => $v) {
+                $this->parameters["%{$k}%"] = $v;
+            }
+        }
+        return $this->parameters;
+    }
+
+    public function i18nLanguageDir(): string
+    {
+        return $this->appDir . '/i18n/';
+    }
+
+    public function languageBrowser(): string
+    {
+        return $this->globalLanguageFile();
+    }
+
+    public function globalLanguageFile(): string
+    {
+        return $this->i18nConfig[self::DEFAULT_LANGUAGE_FILE];
+    }
+
+    public function availableLanguages(): array
+    {
+        return $this->i18nConfig[self::AVAILABLE_LANGUAGES];
+    }
+
+    public function languageValue(string $langKey): string
+    {
+        if (!isset($this->i18nConfig[self::AVAILABLE_LANGUAGES][$langKey])) {
+            return $this->defaultLanguage();
+        }
+
+        return $this->i18nConfig[self::AVAILABLE_LANGUAGES][$langKey];
+    }
+
+    public function defaultLanguage(): string
+    {
+        return $this->i18nConfig[self::DEFAULT_LANGUAGE];
     }
 }

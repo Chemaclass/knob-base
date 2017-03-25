@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'my_key' => 'my value from other_file'
+    'my_key' => 'my value from other_file',
 ];

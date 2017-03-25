@@ -7,9 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Knob\Widgets;
 
-use Knob\Models\Term;
+namespace Knob\Widgets;
 
 /**
  *
@@ -25,12 +24,12 @@ class TagsWidget extends WidgetBase
      */
     public function widget($args, $instance)
     {
-        
+
         /*
          * Put the tags to show into the instance var.
          */
         $instance['tags'] = []; //Term::getTags();
-        
+
         /*
          * And call the widget func from the parent class WidgetBase.
          */

@@ -34,35 +34,16 @@ class I18n
     }
 
     /**
-     * Return the lang default
+     * Return the fullName of the lang by current user.
      *
-     * @return string Language default
-     */
-    public function defaultLanguage()
-    {
-        return $this->config->defaultLanguage();
-    }
-
-    /**
-     * Return a list with all languages available
-     *
-     * @return string[] names of directories available
-     */
-    public function availableLanguages(): array
-    {
-        return $this->config->availableLanguages();
-    }
-
-    /**
-     * Return the fullname of the lang by current user.
-     *
-     * @param $lang string
-     *
+     * @param $forceLang boolean
      * @return string Lang from the current user
      */
-    public function langValue($lang): string
+    public function fullNameLanguageByCurrentUserBrowser($forceLang = false)
     {
-        return $this->config->languageValue($lang);
+        $lang = $this->getLangBrowserByCurrentUser($forceLang);
+
+        return $this->langValue($lang);
     }
 
     /**
@@ -98,16 +79,35 @@ class I18n
     }
 
     /**
-     * Return the fullName of the lang by current user.
+     * Return a list with all languages available
      *
-     * @param $forceLang boolean
+     * @return string[] names of directories available
+     */
+    public function availableLanguages(): array
+    {
+        return $this->config->availableLanguages();
+    }
+
+    /**
+     * Return the lang default
+     *
+     * @return string Language default
+     */
+    public function defaultLanguage()
+    {
+        return $this->config->defaultLanguage();
+    }
+
+    /**
+     * Return the fullname of the lang by current user.
+     *
+     * @param $lang string
+     *
      * @return string Lang from the current user
      */
-    public function fullNameLanguageByCurrentUserBrowser($forceLang = false)
+    public function langValue($lang): string
     {
-        $lang = $this->getLangBrowserByCurrentUser($forceLang);
-
-        return $this->langValue($lang);
+        return $this->config->languageValue($lang);
     }
 
     /**
@@ -129,6 +129,19 @@ class I18n
         });
 
         return $languages;
+    }
+
+    /**
+     * Return the translated word with the first letter in uppercase.
+     *
+     * @param string $key Language key file.
+     * @param array $params optional parameters.
+     * @param string $forceLang optional lang to force.
+     * @return string Value translated.
+     */
+    public function transU($key, $params = [], $forceLang = '')
+    {
+        return ucfirst($this->trans($key, $params, $forceLang));
     }
 
     /**
@@ -161,6 +174,38 @@ class I18n
         }
 
         return $value;
+    }
+
+    /**
+     * Format, if necessary, and translate the text with his parameters.
+     * Put into &$params (2nd parameter) all possible parameters from the text $toTranslate.
+     *
+     * @param string $toTranslate Text to translate their parameters as "JSON".
+     *        That array are identified as being in square brackets '[]'
+     *        and each key / value pairs are separated by ':' and each element of a ','
+     * @param array $params
+     */
+    private function _getParams(&$toTranslate, &$params)
+    {
+        /*
+         * ( If the params-array is empty or it's an object)
+         * And ( If the toTranslate-string contain '[' where would be the parameters )
+         */
+        if (((is_array($params) && empty($params)) || is_object($params))
+            && ($pos = strpos($toTranslate, '['))
+        ) {
+            $params = [];
+            // +1 and -1 => to remove the brackets '[]'
+            $strParams = substr($toTranslate, $pos + 1, -1);
+            $toTranslate = substr($toTranslate, 0, $pos);
+            // Split by a comma the parameters
+            $strParams = preg_replace('/\s+/', '', $strParams);
+            $_params = explode(',', $strParams);
+            foreach ($_params as $value) {
+                list($k, $v) = explode(':', $value);
+                $params[$k] = $v;
+            }
+        }
     }
 
     /**
@@ -262,51 +307,6 @@ class I18n
             }
         }
         return $strFinal;
-    }
-
-    /**
-     * Format, if necessary, and translate the text with his parameters.
-     * Put into &$params (2nd parameter) all possible parameters from the text $toTranslate.
-     *
-     * @param string $toTranslate Text to translate their parameters as "JSON".
-     *        That array are identified as being in square brackets '[]'
-     *        and each key / value pairs are separated by ':' and each element of a ','
-     * @param array $params
-     */
-    private function _getParams(&$toTranslate, &$params)
-    {
-        /*
-         * ( If the params-array is empty or it's an object)
-         * And ( If the toTranslate-string contain '[' where would be the parameters )
-         */
-        if (((is_array($params) && empty($params)) || is_object($params))
-            && ($pos = strpos($toTranslate, '['))
-        ) {
-            $params = [];
-            // +1 and -1 => to remove the brackets '[]'
-            $strParams = substr($toTranslate, $pos + 1, -1);
-            $toTranslate = substr($toTranslate, 0, $pos);
-            // Split by a comma the parameters
-            $strParams = preg_replace('/\s+/', '', $strParams);
-            $_params = explode(',', $strParams);
-            foreach ($_params as $value) {
-                list($k, $v) = explode(':', $value);
-                $params[$k] = $v;
-            }
-        }
-    }
-
-    /**
-     * Return the translated word with the first letter in uppercase.
-     *
-     * @param string $key Language key file.
-     * @param array $params optional parameters.
-     * @param string $forceLang optional lang to force.
-     * @return string Value translated.
-     */
-    public function transU($key, $params = [], $forceLang = '')
-    {
-        return ucfirst($this->trans($key, $params, $forceLang));
     }
 
     /**

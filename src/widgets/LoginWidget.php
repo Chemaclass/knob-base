@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Widgets;
 
 /**
@@ -31,7 +32,7 @@ class LoginWidget extends WidgetBase
         $instance['registrationUrl'] = wp_registration_url();
         $instance['lostPasswordUrl'] = wp_lostpassword_url();
         $instance['postsUrl'] = '/wp-admin/edit.php';
-        
+
         /*
          * And call the widget func from the parent class WidgetBase.
          */

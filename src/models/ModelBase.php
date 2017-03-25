@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Models;
 
 /**
@@ -45,33 +46,6 @@ abstract class ModelBase
     }
 
     /**
-     * Return the ID
-     *
-     * @return string|NULL
-     */
-    public function getId()
-    {
-        $PK = static::$PK;
-        if (isset($this->$PK)) {
-            return $this->$PK;
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the table name with the WP prefix
-     *
-     * @return string
-     */
-    public static function getTableName()
-    {
-        global $wpdb;
-
-        return $wpdb->prefix . static::$table;
-    }
-
-    /**
      * Return all objects
      *
      * @return array
@@ -92,6 +66,18 @@ abstract class ModelBase
         }
 
         return $result;
+    }
+
+    /**
+     * Get the table name with the WP prefix
+     *
+     * @return string
+     */
+    public static function getTableName()
+    {
+        global $wpdb;
+
+        return $wpdb->prefix . static::$table;
     }
 
     /**
@@ -122,6 +108,18 @@ abstract class ModelBase
         }
 
         return $new;
+    }
+
+    /**
+     * Get the first elem by criteria
+     *
+     * @param array $criteria
+     *
+     * @return ModelBase
+     */
+    public static function first($criteria)
+    {
+        return static::findBy($criteria, true);
     }
 
     /**
@@ -203,6 +201,21 @@ abstract class ModelBase
     }
 
     /**
+     * Return the ID
+     *
+     * @return string|NULL
+     */
+    public function getId()
+    {
+        $PK = static::$PK;
+        if (isset($this->$PK)) {
+            return $this->$PK;
+        }
+
+        return null;
+    }
+
+    /**
      * Delete the object
      *
      * @return boolean
@@ -221,18 +234,6 @@ abstract class ModelBase
         } catch (Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * Get the first elem by criteria
-     *
-     * @param array $criteria
-     *
-     * @return ModelBase
-     */
-    public static function first($criteria)
-    {
-        return static::findBy($criteria, true);
     }
 
     /**

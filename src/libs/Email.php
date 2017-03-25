@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Libs;
 
 use PHPMailer;
@@ -17,6 +18,26 @@ use PHPMailer;
  */
 class Email
 {
+
+    /**
+     * Send new generic email
+     *
+     * @param array|string $email to
+     * @param string $subject Subject
+     * @param string $bodyHtml Body
+     * @param string $bodyHtmlAlt
+     * @return boolean
+     */
+    public static function sendGenericEmail($email, $subject, $bodyHtml, $bodyHtmlAlt = '')
+    {
+        $mail = self::getNewMailer($email);
+        $mail->WordWrap = 50; // Set word wrap to 50 characters
+        $mail->isHTML(true); // Set email format to HTML
+        $mail->Subject = $subject;
+        $mail->Body = $bodyHtml;
+        $mail->AltBody = $bodyHtmlAlt;
+        return $mail->send();
+    }
 
     /**
      * Return one new PHPMailer
@@ -41,31 +62,13 @@ class Email
 
         if (is_string($email)) {
             $mail->addAddress($email);
-        } else if (is_array($email)) {
-            foreach ($email as $e) {
-                $mail->addAddress($e);
+        } else {
+            if (is_array($email)) {
+                foreach ($email as $e) {
+                    $mail->addAddress($e);
+                }
             }
         }
         return $mail;
-    }
-
-    /**
-     * Send new generic email
-     *
-     * @param array|string $email to
-     * @param string $subject Subject
-     * @param string $bodyHtml Body
-     * @param string $bodyHtmlAlt
-     * @return boolean
-     */
-    public static function sendGenericEmail($email, $subject, $bodyHtml, $bodyHtmlAlt = '')
-    {
-        $mail = self::getNewMailer($email);
-        $mail->WordWrap = 50; // Set word wrap to 50 characters
-        $mail->isHTML(true); // Set email format to HTML
-        $mail->Subject = $subject;
-        $mail->Body = $bodyHtml;
-        $mail->AltBody = $bodyHtmlAlt;
-        return $mail->send();
     }
 }

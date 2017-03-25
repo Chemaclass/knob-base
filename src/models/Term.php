@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Models;
 
 /**
@@ -20,18 +21,15 @@ namespace Knob\Models;
 class Term extends ModelBase
 {
 
-    public static $table = "terms";
-
-    static $PK = 'term_id';
+    const TRANSIENT_ALL_TAGS = 'ALL_TAGS';
+    const TYPE_CATEGORY = 'category';
 
     /*
      * Some constants
      */
-    const TRANSIENT_ALL_TAGS = 'ALL_TAGS';
-
-    const TYPE_CATEGORY = 'category';
-
     const TYPE_TAG = 'post_tag';
+    public static $table = "terms";
+    static $PK = 'term_id';
 
     /*
      * Members
@@ -41,7 +39,7 @@ class Term extends ModelBase
     /**
      * Return all categories
      *
-     * @param array $args            
+     * @param array $args
      *
      * @return array<Term>
      *
@@ -53,9 +51,37 @@ class Term extends ModelBase
     }
 
     /**
+     *
+     * @param string $type
+     * @param array $args
+     *
+     * @return array
+     *
+     * @see https://developer.wordpress.org/reference/functions/get_terms/
+     */
+    protected static function getTermsWithTotalsBy($type, $args = [])
+    {
+        if (!count($args)) {
+            $args = [
+                'orderby' => 'name,count',
+                'hide_empty' => true,
+            ];
+        }
+
+        $terms = [];
+        foreach (get_terms($type, $args) as $_t) {
+            $term = Term::find($_t->term_id);
+            $term->total = $_t->count;
+            $terms[] = $term;
+        }
+
+        return $terms;
+    }
+
+    /**
      * Return all tags
      *
-     * @param array $args            
+     * @param array $args
      *
      * @return array<Term>
      *
@@ -67,47 +93,42 @@ class Term extends ModelBase
     }
 
     /**
-     *
-     * @param string $type            
-     * @param array $args            
-     *
-     * @return array
-     * 
-     * @see https://developer.wordpress.org/reference/functions/get_terms/
-     */
-    protected static function getTermsWithTotalsBy($type, $args = [])
-    {
-        if (! count($args)) {
-            $args = [
-                'orderby' => 'name,count',
-                'hide_empty' => true
-            ];
-        }
-        
-        $terms = [];
-        foreach (get_terms($type, $args) as $_t) {
-            $term = Term::find($_t->term_id);
-            $term->total = $_t->count;
-            $terms[] = $term;
-        }
-        
-        return $terms;
-    }
-
-    /**
      * Return the ID from the tag name
      *
      * @param string $name
      *            Term name
      * @param string $type
      *            Term type
-     *            
+     *
      * @return int ID from the term name
      */
     public static function getTermIdbyName($name, $type = self::TYPE_TAG)
     {
         $tag = get_term_by('name', $name, $type);
         return ($tag) ? $tag->term_id : 0;
+    }
+
+    /**
+     * Get all tags
+     *
+     * @see http://codex.wordpress.org/Transients_API
+     * @return array<Etiqueta> List with all tags
+     */
+    public static function getAll()
+    {
+        global $wpdb;
+        if (false === ($results = get_transient(self::TRANSIENT_ALL_TAGS))) {
+            $results = $wpdb->get_results('
+				SELECT ta.term_taxonomy_id as taxonomy_id, name, slug, count(*) total
+				FROM ' . $wpdb->prefix . 'term_taxonomy ta
+				JOIN ' . $wpdb->prefix . 'terms te ON (te.term_id = ta.term_id)
+				JOIN ' . $wpdb->prefix . 'term_relationships re ON (re.term_taxonomy_id = ta.term_taxonomy_id)
+				WHERE taxonomy = "post_tag"
+				GROUP BY name, slug, taxonomy_id
+				ORDER BY total DESC, name, slug');
+            set_transient(self::TRANSIENT_ALL_TAGS, $results, 12 * HOUR_IN_SECONDS);
+        }
+        return $results;
     }
 
     /**
@@ -135,28 +156,5 @@ class Term extends ModelBase
     public function getTotal()
     {
         return $this->total;
-    }
-
-    /**
-     * Get all tags
-     *
-     * @see http://codex.wordpress.org/Transients_API
-     * @return array<Etiqueta> List with all tags
-     */
-    public static function getAll()
-    {
-        global $wpdb;
-        if (false === ($results = get_transient(self::TRANSIENT_ALL_TAGS))) {
-            $results = $wpdb->get_results('
-				SELECT ta.term_taxonomy_id as taxonomy_id, name, slug, count(*) total
-				FROM ' . $wpdb->prefix . 'term_taxonomy ta
-				JOIN ' . $wpdb->prefix . 'terms te ON (te.term_id = ta.term_id)
-				JOIN ' . $wpdb->prefix . 'term_relationships re ON (re.term_taxonomy_id = ta.term_taxonomy_id)
-				WHERE taxonomy = "post_tag"
-				GROUP BY name, slug, taxonomy_id
-				ORDER BY total DESC, name, slug');
-            set_transient(self::TRANSIENT_ALL_TAGS, $results, 12 * HOUR_IN_SECONDS);
-        }
-        return $results;
     }
 }

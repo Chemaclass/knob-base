@@ -10,8 +10,8 @@
 use Knob\App;
 use Knob\I18n\I18n;
 use Knob\Libs\Env;
-use Models\Post;
 use Models\Option;
+use Models\Post;
 use Models\User;
 
 /**

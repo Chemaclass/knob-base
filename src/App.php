@@ -1,4 +1,5 @@
 <?php
+
 namespace Knob;
 
 final class App

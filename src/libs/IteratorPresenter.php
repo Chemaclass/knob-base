@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Libs;
 
 /**
@@ -40,14 +41,14 @@ class IteratorPresenter implements \IteratorAggregate
      */
     public function getIterator()
     {
-        $values = array();
+        $values = [];
         foreach ($this->values as $key => $val) {
-            $values[$key] = array(
+            $values[$key] = [
                 'key' => $key,
                 'value' => $val,
                 'first' => false,
-                'last' => false
-            );
+                'last' => false,
+            ];
         }
         $keys = array_keys($values);
         if (!empty($keys)) {

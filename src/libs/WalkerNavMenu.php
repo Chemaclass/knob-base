@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Libs;
 
 /**
@@ -58,7 +59,7 @@ class WalkerNavMenu extends \Walker_Nav_Menu
      */
     public function start_el(&$output, $item, $depth = 0, $args = [], $id = 0)
     {
-        $classes = empty($item->classes) ? array() : (array) $item->classes;
+        $classes = empty($item->classes) ? [] : (array)$item->classes;
 
         $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item));
         dd($class_names);
@@ -79,7 +80,7 @@ class WalkerNavMenu extends \Walker_Nav_Menu
         $title = apply_filters('the_title', $item->title, $item->ID);
 
         $item_output = $args->before . "<a $attributes>" . $args->link_before . $title . '</a> ' . $args->link_after . $description .
-             $args->after;
+            $args->after;
 
         // Since $output is called by reference we don't need to return anything.
         $output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
