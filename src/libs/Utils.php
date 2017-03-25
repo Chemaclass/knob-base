@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * This file is part of the Knob-base package.
  *
@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Libs;
 
 use Knob\I18n\I18nConfig;
@@ -50,32 +51,32 @@ class Utils implements I18nConfig
         return $this->getConfigFile();
     }
 
-    public function i18nLanguageDir()
+    public function i18nLanguageDir(): string
     {
         return $this->appDir . '/i18n/';
     }
 
-    public function languageBrowser()
+    public function languageBrowser(): string
     {
         return $this->globalLanguageFile();
     }
 
-    public function globalLanguageFile()
+    public function globalLanguageFile(): string
     {
         return $this->i18nConfig[self::DEFAULT_LANGUAGE_FILE];
     }
 
-    public function availableLanguages()
+    public function availableLanguages(): array
     {
         return $this->i18nConfig[self::AVAILABLE_LANGUAGES];
     }
 
-    public function defaultLanguage()
+    public function defaultLanguage(): string
     {
         return $this->i18nConfig[self::DEFAULT_LANGUAGE];
     }
 
-    public function languageValue($langKey)
+    public function languageValue(string $langKey): string
     {
         if (!isset($this->i18nConfig[self::AVAILABLE_LANGUAGES][$langKey])) {
             return $this->defaultLanguage();
@@ -89,7 +90,7 @@ class Utils implements I18nConfig
      *
      * @return array
      */
-    protected function getParametersFile()
+    protected function getParametersFile(): array
     {
         $file_name = $this->appDir . '/config/' . self::PARAMETERS_FILE . '.php';
         if (!file_exists($file_name)) {
@@ -107,7 +108,7 @@ class Utils implements I18nConfig
     /**
      * Return all global config values
      */
-    public function getConfigFile()
+    public function getConfigFile(): array
     {
         $configPath = $this->appDir . '/config/' . self::CONFIG_FILE . '.php';
         if (!file_exists($configPath)) {
@@ -153,7 +154,7 @@ class Utils implements I18nConfig
      * @param string $value String to check.
      * @return boolean true: valid, false: not valid.
      */
-    public static function isValidStr($value)
+    public static function isValidStr($value): bool
     {
         return (isset($value) && !ctype_space($value) && strlen($value) > 0);
     }
@@ -164,13 +165,13 @@ class Utils implements I18nConfig
      * @param string $attachmentUrl URL del attachment
      * @return integer ID del attachment
      */
-    public static function getAttachmentIdFromUrl($attachmentUrl = '')
+    public static function getAttachmentIdFromUrl(string $attachmentUrl = ''): int
     {
         if (empty($attachmentUrl)) {
-            return;
+            return 0;
         }
         global $wpdb;
-        $attachmentId = false;
+        $attachmentId = 0;
         // Get the upload directory paths
         $upload_dir_paths = wp_upload_dir();
         // Make sure the upload path base directory exists in the attachment URL,
@@ -199,7 +200,7 @@ class Utils implements I18nConfig
      *
      * @return string Just the first two chars. Ex: de, es, en, fr
      */
-    public static function getLangBrowser()
+    public static function getLangBrowser(): string
     {
         return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
     }
@@ -209,19 +210,12 @@ class Utils implements I18nConfig
      *
      * @return string
      */
-    public static function getRequestUri()
+    public static function getRequestUri(): string
     {
         return $_SERVER[REQUEST_URI];
     }
 
-    /**
-     *
-     * @param string $str
-     * @param number $cant
-     * @param string $separator
-     * @return string
-     */
-    public static function getWordsByStr($str, $cant = 8, $separator = ' ')
+    public static function getWordsByStr(string $str, int $cant = 8, string $separator = ' '): string
     {
         // Generate an array from the str cut by the separator
         $words = explode($separator, $str, $cant + 1);
@@ -242,13 +236,11 @@ class Utils implements I18nConfig
         return implode($separator, $words);
     }
 
-
     /**
-     * Slugify
-     *
-     * @param string $str
+     * @param $str
+     * @return string
      */
-    public static function slugify($str)
+    public static function slugify(string $str): string
     {
         $str = preg_replace('/[^a-z0-9 -]+/', '', strtolower($str));
 

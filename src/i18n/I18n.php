@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * This file is part of the Knob-base package.
  *
@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\I18n;
 
 /**
@@ -47,7 +48,7 @@ class I18n
      *
      * @return string[] names of directories available
      */
-    public function availableLanguages()
+    public function availableLanguages(): array
     {
         return $this->config->availableLanguages();
     }
@@ -59,7 +60,7 @@ class I18n
      *
      * @return string Lang from the current user
      */
-    public function langValue($lang)
+    public function langValue($lang): string
     {
         return $this->config->languageValue($lang);
     }
@@ -70,7 +71,7 @@ class I18n
      * @param string $forceLang
      * @return string Lang from the current user
      */
-    public function getLangBrowserByCurrentUser($forceLang = '')
+    public function getLangBrowserByCurrentUser($forceLang = ''): string
     {
         $allLangAvailable = $this->availableLanguages();
         $isLangAvailable = function ($langToCheck) use ($allLangAvailable) {
@@ -118,7 +119,7 @@ class I18n
         foreach ($this->availableLanguages() as $l) {
             $languages[] = [
                 'key' => $l,
-                'value' => $this->langValue($l)
+                'value' => $this->langValue($l),
             ];
         }
 
@@ -240,7 +241,7 @@ class I18n
                                 ',',
                                 '\\',
                                 '\'',
-                                '"'
+                                '"',
                             ]) || $isLastOne
                     ) { // 2º
                         $_b = $j;
