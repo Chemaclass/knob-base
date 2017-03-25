@@ -22,6 +22,20 @@ final class I18nTest extends TestCase
         );
     }
 
+    /**
+     * @return I18n
+     */
+    private function aI18n()
+    {
+        return new I18n(new I18nConfigStub([
+            'availableLanguages' => [
+                self::LANG_KEY => self::LANG_VALUE,
+            ],
+            'defaultLanguage' => self::DEFAULT_LANG,
+            'defaultLanguageFile' => self::DEFAULT_LANG_FILE,
+        ]));
+    }
+
     public function testTransDefaultFile()
     {
         $i18n = $this->aI18n();
@@ -125,60 +139,4 @@ final class I18nTest extends TestCase
             $i18n->langValue(self::LANG_KEY)
         );
     }
-
-    /**
-     * @return I18n
-     */
-    private function aI18n()
-    {
-        return new I18n(new I18nConfigStub([
-            'availableLanguages' => [
-                self::LANG_KEY => self::LANG_VALUE,
-            ],
-            'defaultLanguage' => self::DEFAULT_LANG,
-            'defaultLanguageFile' => self::DEFAULT_LANG_FILE,
-        ]));
-    }
-
-//    public function testTrans1Key1Param()
-//    {
-//        $toTranslate = 'key [param1:value1]';
-//        $transFile = [
-//            'key' => 'value0 :param1'
-//        ];
-//
-//        $i18n = new I18n($transFile);
-//        $this->assertEquals(
-//            'value0 value1',
-//            $i18n->trans($toTranslate)
-//        );
-//    }
-//
-//    public function testTrans1Key2Param()
-//    {
-//        $toTranslate = 'key [param1:value1,param2:value2 ]';
-//        $transFile = [
-//            'key' => 'value0 :param1 :param2'
-//        ];
-//
-//        $i18n = new I18n($transFile);
-//        $this->assertEquals(
-//            'value0 value1 value2',
-//            $i18n->trans($toTranslate)
-//        );
-//    }
-//
-//    public function testTrans2Keys()
-//    {
-//        $toTranslate = 'key';
-//        $transFile = [
-//            'key' => 'value'
-//        ];
-//
-//        $i18n = new I18n($transFile);
-//        $this->assertEquals(
-//            'value',
-//            $i18n->trans($toTranslate)
-//        );
-//    }
 }
