@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Knob\I18n;
 
 interface I18nConfig
@@ -12,34 +13,15 @@ interface I18nConfig
     const DEFAULT_LANG = self::LANG_KEY;
     const DEFAULT_LANG_FILE = 'global';
 
-    /**
-     * @return string
-     */
-    public function globalLanguageFile();
+    public function globalLanguageFile(): string;
 
-    /**
-     * @return array
-     */
-    public function availableLanguages();
+    public function availableLanguages(): array;
 
-    /**
-     * @return string
-     */
-    public function defaultLanguage();
+    public function defaultLanguage(): string;
 
-    /**
-     * @return string
-     */
-    public function i18nLanguageDir();
+    public function i18nLanguageDir(): string;
 
-    /**
-     * @return string
-     */
-    public function languageBrowser();
+    public function languageBrowser(): string;
 
-    /**
-     * @param string $langKey
-     * @return string
-     */
-    public function languageValue($langKey);
+    public function languageValue(string $langKey): string;
 }

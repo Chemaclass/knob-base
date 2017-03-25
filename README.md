@@ -1,5 +1,7 @@
 # README #
 
+[![Build Status](https://travis-ci.org/Chemaclass/knob-base.svg?branch=master)](https://travis-ci.org/Chemaclass/knob-base)
+
 ### What's this repository? ###
 
 * Knob-base: project base to use Knob MVC PHP Framework

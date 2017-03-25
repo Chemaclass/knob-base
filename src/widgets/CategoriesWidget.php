@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Widgets;
 
 use Knob\Models\Term;
@@ -25,12 +26,12 @@ class CategoriesWidget extends WidgetBase
      */
     public function widget($args, $instance)
     {
-        
+
         /*
          * Put the categories to show into the instance var.
          */
         $instance['categories'] = Term::getCategories();
-        
+
         /*
          * And call the widget func from the parent class WidgetBase.
          */

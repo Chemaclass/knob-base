@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Models;
 
 use Models\User as AppUser;
@@ -18,18 +19,15 @@ use Models\User as AppUser;
 class Comment extends ModelBase
 {
 
-    static $table = "comments";
-
-    static $PK = 'comment_ID';
+    const MAX_LENGTH = 1000;
+    const PENDING = 0;
 
     /*
      * Some constants
      */
-    const MAX_LENGTH = 1000;
-
-    const PENDING = 0;
-
     const APROVE = 1;
+    static $table = "comments";
+    static $PK = 'comment_ID';
 
     /**
      * Delete comment
@@ -134,9 +132,12 @@ class Comment extends ModelBase
 						{$c}karma = %s, {$c}approved = %s,
 						{$c}agent = %s, {$c}type = %s,
 						{$c}parent = %s, user_id = %s
-					WHERE comment_ID = %d", $this->comment_post_ID, $this->comment_author, $this->comment_author_email, $this->comment_author_url,
-                    $this->comment_author_IP, $this->comment_date, $this->comment_date_gmt, $this->comment_content, $this->comment_karma,
-                    $this->comment_approved, $this->comment_agent, $this->comment_type, $this->comment_parent, $this->user_id,
+					WHERE comment_ID = %d", $this->comment_post_ID, $this->comment_author, $this->comment_author_email,
+                    $this->comment_author_url,
+                    $this->comment_author_IP, $this->comment_date, $this->comment_date_gmt, $this->comment_content,
+                    $this->comment_karma,
+                    $this->comment_approved, $this->comment_agent, $this->comment_type, $this->comment_parent,
+                    $this->user_id,
                     $this->comment_ID));
         }
     }

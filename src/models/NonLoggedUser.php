@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Knob-mvc package.
+ * This file is part of the Knob-base package.
  *
  * (c) José María Valera Reales <chemaclass@outlook.es>
  *
@@ -8,17 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Knob\Libs;
+namespace Knob\Models;
 
 /**
- * Widget Controller
- *
  * @author José María Valera Reales
  */
-interface Menus
+class NonLoggedUser extends User
 {
-    /**
-     * @return string[]
-     */
-    public function activeIds();
+    public function __construct()
+    {
+        parent::__construct(0);
+    }
 }

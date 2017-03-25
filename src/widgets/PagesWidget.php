@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Widgets;
 
 use Knob\Models\Post;
@@ -25,12 +26,12 @@ class PagesWidget extends WidgetBase
      */
     public function widget($args, $instance)
     {
-        
+
         /*
          * Put the pages to show into the instance var.
          */
         $instance['pages'] = Post::getPages();
-        
+
         /*
          * And call the widget func from the parent class WidgetBase.
          */

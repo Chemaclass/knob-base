@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\I18n;
 
@@ -25,10 +25,7 @@ final class I18nTest extends TestCase
         );
     }
 
-    /**
-     * @return I18n
-     */
-    private function aI18n()
+    private function aI18n(): I18n
     {
         return new I18n(new I18nConfigStub([
             'availableLanguages' => [

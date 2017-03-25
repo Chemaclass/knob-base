@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Models;
 
 /**
@@ -23,21 +24,6 @@ class Option
      */
     protected function __construct()
     {
-    }
-
-    /**
-     * Returns the value from an option name
-     *
-     * @param string option name to search
-     *
-     * @see https://codex.wordpress.org/Function_Reference/get_option
-     * @see https://core.trac.wordpress.org/browser/tags/4.3.1/src/wp-includes/option.php#L27
-     *
-     * @return string Option value
-     */
-    public static function get($optionName, $defaultValue = false)
-    {
-        return get_option($optionName, $defaultValue);
     }
 
     /**
@@ -58,9 +44,24 @@ class Option
     {
         if (false !== static::get($name)) {
             return update_option($name, $value, $autoload);
-        } 
-        
+        }
+
         return add_option($name, $value, $deprecated, $autoload);
+    }
+
+    /**
+     * Returns the value from an option name
+     *
+     * @param string option name to search
+     *
+     * @see https://codex.wordpress.org/Function_Reference/get_option
+     * @see https://core.trac.wordpress.org/browser/tags/4.3.1/src/wp-includes/option.php#L27
+     *
+     * @return string Option value
+     */
+    public static function get($optionName, $defaultValue = false)
+    {
+        return get_option($optionName, $defaultValue);
     }
 
     /**
@@ -77,20 +78,20 @@ class Option
     {
         return delete_option($option);
     }
-    
+
     /**
      * Get all params from one widget name (option_name)
      *
      * @param string $str
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public static function getParamsFromWidget($str)
     {
         $option = static::get($str, []);
         unset($option['_multiwidget']);
         $values = array_values($option);
-    
+
         return isset($values[0]) ? $values[0] : [];
     }
 }

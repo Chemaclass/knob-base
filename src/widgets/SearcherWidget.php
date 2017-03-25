@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Widgets;
 
 /**
@@ -21,7 +22,7 @@ class SearcherWidget extends WidgetBase
      * these are autoimplement in every template.
      * So this widget is done :-)
      */
-    
+
     /**
      * (non-PHPdoc)
      *

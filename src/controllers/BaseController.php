@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * This file is part of the Knob-base package.
  *
@@ -7,15 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Controllers;
 
 use Knob\App;
 use Knob\I18n\I18n;
+use Knob\Libs\Menus;
 use Knob\Libs\Mustache\MustacheRender;
 use Knob\Libs\Widgets;
 use Knob\Models\User;
 use Knob\Repository\UserRepository;
-use Knob\Libs\Menus;
 
 /**
  * @author José María Valera Reales
@@ -49,11 +50,11 @@ abstract class BaseController
     /**
      * head + template + footer
      *
-     * @param string $templateName Template name to print
-     * @param array $templateVars Parameters to template
-     * @return string
+     * @param string $templateName
+     * @param array $templateVars
+     * @return Response
      */
-    public function renderPage($templateName, $templateVars = [])
+    public function renderPage(string $templateName, array $templateVars = []): Response
     {
         return $this->render($templateName,
             array_merge($templateVars, [
@@ -67,38 +68,36 @@ abstract class BaseController
      * @param string $templateName
      * @param array $templateVars
      * @param bool $addGlobalVariables
-     * @return string
+     * @return Response
      */
-    public function render($templateName, $templateVars = [], $addGlobalVariables = true)
-    {
+    public function render(
+        string $templateName,
+        array $templateVars = [],
+        bool $addGlobalVariables = true
+    ): Response {
+
         if ($addGlobalVariables) {
             $templateVars = array_merge($templateVars, $this->globalVariables());
         }
 
-        return $this->mustacheRender->render($templateName, $templateVars);
+        return new Response(
+            $this->mustacheRender->render($templateName, $templateVars)
+        );
     }
 
     /**
      * Add the global variables for all controllers
-     *
-     * @return array
      */
-    public abstract function globalVariables();
+    public abstract function globalVariables(): array;
 
-    /**
-     * @return string
-     */
-    private function wpHead()
+    private function wpHead(): string
     {
         ob_start();
         wp_head();
         return ob_get_clean();
     }
 
-    /**
-     * @return string
-     */
-    private function wpFooter()
+    private function wpFooter(): string
     {
         ob_start();
         wp_footer();

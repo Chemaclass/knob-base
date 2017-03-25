@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Models;
 
 /**
@@ -40,33 +41,6 @@ class Archive
         $this->text = $text;
         $this->url = $url;
         $this->total = $total;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
-    /**
-     *
-     * @return integer
-     */
-    public function getTotal()
-    {
-        return $this->total;
     }
 
     /**
@@ -111,6 +85,33 @@ class Archive
         }
 
         return $archives;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     *
+     * @return integer
+     */
+    public function getTotal()
+    {
+        return $this->total;
     }
 }
 

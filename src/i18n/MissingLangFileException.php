@@ -1,4 +1,5 @@
 <?php
+
 namespace Knob\I18n;
 
 class MissingLangFileException extends \Exception

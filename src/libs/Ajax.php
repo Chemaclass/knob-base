@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Libs;
 
 /**
@@ -46,6 +47,16 @@ class Ajax
     }
 
     /**
+     * Response OK
+     *
+     * @param array|string $content Content to send
+     */
+    public static function responseOK($content = "")
+    {
+        return self::envelope(KeysRequest::OK, 'OK', $content);
+    }
+
+    /**
      * Envelop the array for the response to ajax
      *
      * @param integer $code Code error
@@ -55,21 +66,11 @@ class Ajax
      */
     public static function envelope($code = 0, $message = 'OK', $content = "")
     {
-        return array(
+        return [
             'code' => $code,
-            'message' => (string) $message,
-            'content' => $content
-        );
-    }
-
-    /**
-     * Response OK
-     *
-     * @param array|string $content Content to send
-     */
-    public static function responseOK($content = "")
-    {
-        return self::envelope(KeysRequest::OK, 'OK', $content);
+            'message' => (string)$message,
+            'content' => $content,
+        ];
     }
 
     /**
