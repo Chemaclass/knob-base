@@ -13,7 +13,10 @@ final class I18nTest extends TestCase
     const DEFAULT_LANG = self::LANG_KEY;
     const DEFAULT_LANG_FILE = 'default';
 
-    public function testTransDefault()
+    /**
+     * @test
+     */
+    public function tryToTransANonExistingKey()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -36,7 +39,10 @@ final class I18nTest extends TestCase
         ]));
     }
 
-    public function testTransDefaultFile()
+    /**
+     * @test
+     */
+    public function transDefaultFile()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -45,7 +51,10 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function testTransWithFileNameAndKey()
+    /**
+     * @test
+     */
+    public function transWithFileNameAndKey()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -54,7 +63,10 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function testForceLanguage()
+    /**
+     * @test
+     */
+    public function forceLanguage()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -63,7 +75,10 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function testMissingLangFileButCallback()
+    /**
+     * @test
+     */
+    public function missingLangFileButCallback()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -72,7 +87,10 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function testNonExistingFile()
+    /**
+     * @test
+     */
+    public function nonExistingFile()
     {
         $this->expectException(MissingLangFileException::class);
 
@@ -83,7 +101,10 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function test1ParamByString()
+    /**
+     * @test
+     */
+    public function tryTo1ParamByString()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -92,7 +113,10 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function test2ParamByString()
+    /**
+     * @test
+     */
+    public function tryTo2ParamByString()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -101,7 +125,10 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function test1ParamByArray()
+    /**
+     * @test
+     */
+    public function tryTo1ParamByArray()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -110,19 +137,22 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function test2ParamByArray()
+    /**
+     * @test
+     */
+    public function tryTo2ParamByArray()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
             'my value1 and value2',
             $i18n->trans('with_2_params', [
                 'param1' => 'value1',
-                'param2' => 'value2'
+                'param2' => 'value2',
             ])
         );
     }
 
-    public function testDefaultLanguageValue()
+    public function tryToDefaultLanguageValue()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
@@ -131,7 +161,7 @@ final class I18nTest extends TestCase
         );
     }
 
-    public function testLanguageValue()
+    public function tryToLanguageValue()
     {
         $i18n = $this->aI18n();
         $this->assertEquals(
