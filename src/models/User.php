@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * This file is part of the Knob-base package.
  *
@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Models;
 
 /**
@@ -16,81 +17,59 @@ namespace Knob\Models;
  */
 abstract class User extends Image
 {
-
-    public static $table = "users";
+    const EMPTY_VALUE = '';
+    const AVATAR_SIZE_ICO = 26;
 
     /*
      * Avatar Size
      */
-    const AVATAR_SIZE_ICO = 26;
-
     const AVATAR_SIZE_SMALL = 64;
-
     const AVATAR_SIZE_DEFAULT = 96;
-
     const AVATAR_SIZE_PROFILE = 190;
+    const KEY_FIRST_NAME = 'first_name';
 
     /*
      * Const
      */
-    const KEY_FIRST_NAME = 'first_name';
-
     const KEY_LAST_NAME = 'last_name';
-
     const KEY_AVATAR = 'img_avatar';
-
     const KEY_HEADER = 'img_header';
-
     const KEY_LANGUAGE = 'language';
-
     const KEY_TWITTER = 'twitter';
-
     const KEY_TWITTER_URL = 'twitter_url';
-
     const KEY_FACEBOOK = 'facebook';
-
     const KEY_FACEBOOK_URL = 'facebook_url';
-
     const KEY_GOOGLE_PLUS = 'google_plus';
-
     const KEY_GOOGLE_PLUS_URL = 'google_plus_url';
-
     const KEY_TYPE = 'user_type';
+    const ROL_ADMIN = 'administrator';
 
     /*
      * Possible roles
      */
-    const ROL_ADMIN = 'administrator';
-
     const ROL_EDITOR = 'editor';
-
     const ROL_AUTHOR = 'author';
-
     const ROL_CONTRIBUTOR = 'contributor';
-
     const ROL_SUBSCRIBER = 'subscriber';
+    const TYPE_AUTHOR = 'author';
 
     /*
      * Possible kind of users
      */
-    const TYPE_AUTHOR = 'author';
-
     const TYPE_USER = 'user';
-
     const TYPE_DEFAULT = self::TYPE_USER;
+    const HEADER_WIDTH = 1200;
 
     /*
      * Header sizes
      */
-    const HEADER_WIDTH = 1200;
-
     const HEADER_HEIGHT = 270;
+    const WITH_SIDEBAR_DEFAULT = true;
 
     /*
      * Sidebar
      */
-    const WITH_SIDEBAR_DEFAULT = true;
-
+    public static $table = "users";
     /**
      *
      * @var \WP_User
@@ -100,8 +79,6 @@ abstract class User extends Image
     protected $wpUser = null;
 
     /**
-     * Constructor
-     *
      * @param integer $ID
      * @param bool $withWPUser load into the User object all members from \WP_User
      *
@@ -116,19 +93,6 @@ abstract class User extends Image
     }
 
     /**
-     * Return the WP_User.
-     * Object from WP.
-     *
-     * @see https://developer.wordpress.org/reference/classes/wp_user/
-     *
-     * @return \WP_User
-     */
-    public function getWPUser()
-    {
-        return $this->wpUser;
-    }
-
-    /**
      * Return all valid user types
      *
      * @return string[]
@@ -137,276 +101,162 @@ abstract class User extends Image
     {
         return [
             self::TYPE_AUTHOR,
-            self::TYPE_USER
+            self::TYPE_USER,
         ];
     }
 
     /**
-     * Return the user type
+     * @see https://developer.wordpress.org/reference/classes/wp_user/
      */
-    public function getType()
+    public function getWPUser(): \WP_User
     {
-        $userType = get_user_meta($this->ID, self::KEY_TYPE, true);
-        return ($userType) ? $userType : self::TYPE_DEFAULT;
+        return $this->wpUser;
     }
 
-    /**
-     *
-     * @param string $type
-     * @return boolean
-     */
-    private function isType($type)
+    public function isTypeAuthor(): bool
+    {
+        return $this->isType(self::TYPE_AUTHOR);
+    }
+
+    private function isType(string $type): bool
     {
         return ($this->getType() == $type);
     }
 
     /**
-     *
-     * @return boolean
+     * @see https://codex.wordpress.org/Function_Reference/get_user_meta
      */
-    public function isTypeAuthor()
+    public function getType(): string
     {
-        return $this->isType(self::TYPE_AUTHOR);
+        $userType = get_user_meta($this->ID, self::KEY_TYPE, true);
+        if (!$userType) {
+            return self::TYPE_DEFAULT;
+        }
+        return $userType;
     }
 
-    /**
-     *
-     * @return boolean
-     */
-    public function isTypeUser()
+    public function isTypeUser(): bool
     {
         return $this->isType(self::TYPE_USER);
     }
 
-    /**
-     * (non-PHPdoc)
-     *
-     * @see \Models\Image::getImageSizesToDelete()
-     */
-    protected function getImageSizesToDelete()
-    {
-        return $this->getSizesAvatar();
-    }
-
-    /**
-     * Return true if the user is allowed as admin
-     *
-     * @param array $args
-     * @return boolean
-     */
-    public function canAdmin($args = [])
-    {
-        $args[] = self::ROL_ADMIN;
-        return array_intersect($args, self::getRoles());
-    }
-
-    /**
-     * Return true if the user is allowed as editor
-     *
-     * @param array $args
-     * @return boolean
-     */
-    public function canEditor($args = [])
-    {
-        $args[] = self::ROL_EDITOR;
-        return $this->canAdmin($args);
-    }
-
-    /**
-     * Return true if the user is allowed as author
-     *
-     * @param array $args
-     * @return boolean
-     */
-    public function canAuthor($args = [])
-    {
-        $args[] = self::ROL_AUTHOR;
-        return $this->canEditor($args);
-    }
-
-    /**
-     * Return true if the user is allowed as author
-     *
-     * @param array $args
-     * @return boolean
-     */
-    public function canContributor($args = [])
-    {
-        $args[] = self::ROL_CONTRIBUTOR;
-        return $this->canAuthor($args);
-    }
-
-    /**
-     * Return true if the user is allowed as subscriber
-     *
-     * @param array $args
-     * @return boolean
-     */
-    public function canSubscriber($args = [])
+    public function canSubscriber(array $args = []): bool
     {
         $args[] = self::ROL_SUBSCRIBER;
         return $this->canContributor($args);
     }
 
+    public function canContributor(array $args = []): bool
+    {
+        $args[] = self::ROL_CONTRIBUTOR;
+        return $this->canAuthor($args);
+    }
+
+    public function canAuthor(array $args = []): bool
+    {
+        $args[] = self::ROL_AUTHOR;
+        return $this->canEditor($args);
+    }
+
+    public function canEditor(array $args = []): bool
+    {
+        $args[] = self::ROL_EDITOR;
+        return $this->canAdmin($args);
+    }
+
+    public function canAdmin(array $args = []): bool
+    {
+        $args[] = self::ROL_ADMIN;
+        return count(array_intersect($args, self::getRoles())) > 0;
+    }
+
     /**
-     * Return true if is the currentUser
-     *
-     * @return boolean
+     * @see https://codex.wordpress.org/Function_Reference/get_user_meta
      */
-    public function isCurrentUser()
+    public function getRoles(): array
+    {
+        global $wpdb;
+        $capabilities = get_user_meta($this->ID, $wpdb->prefix . 'capabilities', true);
+
+        return is_array($capabilities) ? array_keys($capabilities) : ['non-user'];
+    }
+
+    public function isCurrentUserOrAdmin(): bool
+    {
+        return $this->isCurrentUser()
+            || (wp_get_current_user()->roles[0] == self::ROL_ADMIN);
+    }
+
+    public function isCurrentUser(): bool
     {
         return ($this->ID == wp_get_current_user()->ID);
     }
 
-    /**
-     * Return true if is the currentUser or admin
-     *
-     * @return boolean
-     */
-    public function isCurrentUserOrAdmin()
-    {
-        return $this->isCurrentUser() || (wp_get_current_user()->roles[0] == self::ROL_ADMIN);
-    }
-
-    /**
-     * Get first Rol
-     *
-     * @return string
-     */
-    public function getFirstRol()
+    public function getFirstRol(): string
     {
         $roles = $this->getRoles();
-
         return $roles[0];
     }
 
-    /**
-     * Devuelve verdadero en caso de tener el rol de Admin
-     *
-     * @return boolean
-     */
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return in_array(self::ROL_ADMIN, $this->getRoles());
     }
 
-    /**
-     * Devuelve verdadero en caso de tener el rol de Editor
-     *
-     * @return boolean
-     */
-    public function isEditor()
+    public function isEditor(): bool
     {
         return in_array(self::ROL_EDITOR, $this->getRoles());
     }
 
-    /**
-     * Devuelve verdadero en caso de tener el rol de Author
-     *
-     * @return boolean
-     */
-    public function isAuthor()
+    public function isAuthor(): bool
     {
         return in_array(self::ROL_AUTHOR, $this->getRoles());
     }
 
-    /**
-     * Devuelve verdadero en caso de tener el rol de Contributor
-     *
-     * @return boolean
-     */
-    public function isContributor()
+    public function isContributor(): bool
     {
         return in_array(self::ROL_CONTRIBUTOR, $this->getRoles());
     }
 
-    /**
-     * Devuelve verdadero en caso de tener el rol de Subscriber
-     *
-     * @return boolean
-     */
-    public function isSubscriber()
+    public function isSubscriber(): bool
     {
         return in_array(self::ROL_SUBSCRIBER, $this->getRoles());
     }
 
-    /**
-     *
-     * @param integer $size
-     * @return string URL with the img by default for users
-     */
-    public static function getUrlAvatar($size = User::AVATAR_SIZE_DEFAULT)
+    public function getAvatarProfile(): string
     {
-        return PUBLIC_DIR . '/img/avatar/avatar_' . $size . '.png';
+        return $this->avatarUrl(self::AVATAR_SIZE_PROFILE);
     }
 
-    /**
-     * Return the URL with the avatar from the User
-     *
-     * @param integer $size
-     * @return string
-     */
-    public function getAvatar($size = self::AVATAR_SIZE_DEFAULT)
+    public function avatarUrl(int $size = self::AVATAR_SIZE_DEFAULT): string
     {
         $avatar = $this->getImage(self::KEY_AVATAR, $size, $size);
         if (empty($avatar)) {
-            return static::getUrlAvatar($size);
+            return static::defaultAvatarUrl($size);
         }
         return $avatar;
     }
 
-    /**
-     * Return the URL from the user avatar profile(190)
-     *
-     * @return string url
-     */
-    public function getAvatarProfile()
+    private static function defaultAvatarUrl(int $size = User::AVATAR_SIZE_DEFAULT): string
     {
-        return $this->getAvatar(self::AVATAR_SIZE_PROFILE);
+        return PUBLIC_DIR . '/img/avatar/avatar_' . $size . '.png';
+    }
+
+    public function getAvatarIco(): string
+    {
+        return $this->avatarUrl(self::AVATAR_SIZE_ICO);
+    }
+
+    public function getAvatarSmall(): string
+    {
+        return $this->avatarUrl(self::AVATAR_SIZE_SMALL);
     }
 
     /**
-     * Return the URL from the user avatar size ico(26)
-     *
-     * @return string url
+     * @param $newAvatar
+     * @return bool|int
      */
-    public function getAvatarIco()
-    {
-        return $this->getAvatar(self::AVATAR_SIZE_ICO);
-    }
-
-    /**
-     * Return the URL from the user avatar size small(64)
-     *
-     * @return string url
-     */
-    public function getAvatarSmall()
-    {
-        return $this->getAvatar(self::AVATAR_SIZE_SMALL);
-    }
-
-    /**
-     * Return a list with the possible sizes for the avatar
-     *
-     * @return array<integer>
-     */
-    public function getSizesAvatar()
-    {
-        return [
-            self::AVATAR_SIZE_ICO,
-            self::AVATAR_SIZE_SMALL,
-            self::AVATAR_SIZE_DEFAULT,
-            self::AVATAR_SIZE_PROFILE
-        ];
-    }
-
-    /**
-     * Set the new avatar
-     *
-     * @param file $newAvatar
-     * @return boolean
-     */
-    public function setAvatar($newAvatar = false)
+    public function setAvatar($newAvatar)
     {
         return $this->setImage(self::KEY_AVATAR, $newAvatar);
     }
@@ -418,13 +268,17 @@ abstract class User extends Image
      */
     public function getHeader()
     {
-        return $this->getImage(self::KEY_HEADER, self::HEADER_WIDTH, self::HEADER_HEIGHT);
+        return $this->getImage(
+            self::KEY_HEADER,
+            self::HEADER_WIDTH,
+            self::HEADER_HEIGHT
+        );
     }
 
     /**
      * Set the new header
      *
-     * @param file $newHeader
+     * @param $newHeader
      * @return boolean
      */
     public function setHeader($newHeader = false)
@@ -441,7 +295,7 @@ abstract class User extends Image
     {
         $cArgs = [
             'author__in' => $this->ID,
-            'orderby' => 'comment_date_gmt'
+            'orderby' => 'comment_date_gmt',
         ];
         if ($postId) {
             $cArgs['post_id'] = $postId;
@@ -488,13 +342,19 @@ abstract class User extends Image
     }
 
     /**
-     * Return the public name
+     * Return the name and surname from the User.
+     *
+     * If doesn't exists we just return his alias.
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getFullName()
     {
-        return stripslashes($this->display_name);
+        $fullName = $this->getFirstName() . ' ' . $this->getLastName();
+        if (strlen(trim($fullName))) {
+            return $fullName;
+        }
+        return $this->getDisplayName();
     }
 
     /**
@@ -518,19 +378,17 @@ abstract class User extends Image
     }
 
     /**
-     * Return the name and surname from the User.
-     *
-     * If doesn't exists we just return his alias.
+     * Return the public name
      *
      * @return string
      */
-    public function getFullName()
+    public function getDisplayName()
     {
-        $fullName = $this->getFirstName() . ' ' . $this->getLastName();
-        if (strlen(trim($fullName))) {
-            return $fullName;
+        if (!isset($this->display_name)) {
+            return self::EMPTY_VALUE;
         }
-        return $this->getDisplayName();
+
+        return stripslashes($this->display_name);
     }
 
     /**
@@ -695,21 +553,6 @@ abstract class User extends Image
     }
 
     /**
-     * Return all roles/Roles
-     *
-     * @return array<string>
-     */
-    public function getRoles()
-    {
-        global $wpdb;
-        $capabilities = get_user_meta($this->ID, $wpdb->prefix . 'capabilities', true);
-
-        return is_array($capabilities) ? array_keys($capabilities) : array(
-            'non-user'
-        );
-    }
-
-    /**
      * Set a rol to User
      *
      * @param string $rol
@@ -723,7 +566,7 @@ abstract class User extends Image
         }
         return false;
     }
-    
+
     /**
      * Return true if the User can see the sidebar.
      *
@@ -782,5 +625,28 @@ abstract class User extends Image
 				WHERE post_author = %d
 				AND post_type = %s
 				AND post_status = %s', $this->ID, Post::TYPE_POST, Post::STATUS_PUBLISH));
+    }
+
+    /**
+     * @see \Models\Image::getImageSizesToDelete()
+     */
+    protected function getImageSizesToDelete(): array
+    {
+        return $this->getSizesAvatar();
+    }
+
+    /**
+     * Return a list with the possible sizes for the avatar
+     *
+     * @return array<integer>
+     */
+    public function getSizesAvatar()
+    {
+        return [
+            self::AVATAR_SIZE_ICO,
+            self::AVATAR_SIZE_SMALL,
+            self::AVATAR_SIZE_DEFAULT,
+            self::AVATAR_SIZE_PROFILE,
+        ];
     }
 }

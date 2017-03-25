@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * This file is part of the Knob-base package.
  *
@@ -7,12 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Knob\Models;
 
 use Knob\App;
-use Knob\Libs\Utils;
+use Knob\I18n\I18n;
 use Knob\Libs\Ajax;
 use Knob\Libs\IteratorPresenter;
+use Knob\Libs\Utils;
 use Models\Term;
 
 /**
@@ -86,11 +88,7 @@ class Post extends Image
         }
     }
 
-    /**
-     *
-     * @return \WP_Post
-     */
-    public function getWPPost()
+    public function getWPPost(): \WP_Post
     {
         if (null === $this->wpPost) {
             $this->wpPost = \WP_Post::get_instance($this->ID);
@@ -103,9 +101,10 @@ class Post extends Image
      * Return all pages.
      * (Post type page)
      *
-     * @return array<Post>
+     * @param bool $withoutEmpty
+     * @return Post[]
      */
-    public static function getPages($withoutEmpty = true)
+    public static function getPages($withoutEmpty = true): array
     {
         foreach (get_all_page_ids() as $id) {
             $p = Post::find($id);
@@ -120,29 +119,16 @@ class Post extends Image
             });
         }
 
-        /*
-         * Sort by title
-         */
-        /** @var Post $a */
-        /** @var Post $b */
-        usort($pages, function ($a, $b) {
+        usort($pages, function (Post $a, Post $b) {
             strcmp($a->getTitle(), $b->getTitle());
         });
 
         return $pages;
     }
 
-    /**
-     *
-     * @return Post|null
-     */
-    public static function getCurrent()
+    public static function getCurrent(): Post
     {
-        if ($postId = get_the_ID()) {
-            return new Post($postId);
-        }
-
-        return null;
+        return new Post(get_the_ID());
     }
 
     /**
@@ -150,7 +136,7 @@ class Post extends Image
      *
      * @see \Models\Image::getImageSizesToDelete()
      */
-    protected function getImageSizesToDelete()
+    protected function getImageSizesToDelete(): array
     {
         // TODO:
         return [];
@@ -159,7 +145,7 @@ class Post extends Image
     /**
      * Return the post_name
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->post_name;
     }
@@ -169,29 +155,38 @@ class Post extends Image
      *
      * @return User
      */
-    public function getAuthor()
+    public function getAuthor(): User
     {
+        if(!isset($this->post_author)) {
+            return new NonLoggedUser();
+        }
+
         return User::find($this->post_author);
     }
 
     /**
-     *
      * @param string $taxonomy
+     * @param array $args
+     * @return array
+     * @see https://codex.wordpress.org/Function_Reference/wp_get_post_terms
      */
-    public function getTerms($taxonomy = Term::TYPE_TAG, $args = [])
+    public function getTerms($taxonomy = Term::TYPE_TAG, array $args = []): array
     {
         return wp_get_post_terms($this->getId(), $taxonomy, $args);
     }
 
     /**
      *
-     * @return array
+     * @return IteratorPresenter
+     * @see https://developer.wordpress.org/reference/functions/get_the_category/
+     * @see https://developer.wordpress.org/reference/functions/get_category_link/
      */
-    public function getCategories()
+    public function getCategories(): IteratorPresenter
     {
         if (!$categories = get_the_category($this->ID)) {
-            return [];
+            return new IteratorPresenter([]);
         }
+
         foreach ($categories as $category) {
             $category->category_link = get_category_link($category->term_id);
             $array[] = $category;
@@ -251,8 +246,8 @@ class Post extends Image
     public function getFormComments()
     {
         ob_start();
-
-        $placeTextarea = App::get('i18n')->transu('post.share_comment');
+        $i18n = App::get(I18n::class); // FIXME...
+        $placeTextarea = $i18n->transu('post.share_comment');
 
         $params = [
             'comment_notes_after' => '',
@@ -266,9 +261,9 @@ class Post extends Image
 		        </div>',
         ];
 
-        $placeAuthor = App::get('i18n')->transu('name');
-        $placeEmail = App::get('i18n')->transu('email');
-        $placeUrl = App::get('i18n')->transu('website');
+        $placeAuthor = $i18n->transu('name');
+        $placeEmail = $i18n->transu('email');
+        $placeUrl = $i18n->transu('website');
 
         comment_form($params, $this->ID);
         $comment_form = ob_get_clean();
@@ -412,6 +407,11 @@ class Post extends Image
         if (($imageObject = $getSrc($this->ID))) {
             return $imageObject;
         }
+
+        if (!isset($this->post_content)) {
+            return null;
+        }
+
         // if they aren't, we get the first img from the post, and let it as thumbnail
         preg_match('/< *img[^>]*src *= *["\']?([^"\']*)/i', $this->post_content, $matches);
         $src = isset($matches[1]) ? $matches[1] : '';
